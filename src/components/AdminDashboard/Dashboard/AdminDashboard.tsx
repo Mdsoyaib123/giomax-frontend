@@ -1,5 +1,3 @@
-import { GrCircleAlert } from "react-icons/gr";
-
 import DashboardCard from "./DashboardCard";
 
 const AdminDashboard = () => {
@@ -8,22 +6,6 @@ const AdminDashboard = () => {
       <div>
         <DashboardCard />
       </div>
-      <div className=" w-full rounded-2xl p-5 bg-[#FEF7ED] space-y-4">
-        <h1 className="text-[#F3AA4B] font-lora text-[20px] font-semibold leading-[28px] flex justify-start gap-2 items-center">
-          <span>
-            <GrCircleAlert />
-          </span>{" "}
-          HIPAA Compliance Reminder
-        </h1>
-
-        <p className="text-black text-base">
-          HIPAA requires all charting data to be signed wlthin 24 hours. Check
-          Pending Signatures immediately. All access is logged and monitored for
-          audit compliance.
-        </p>
-      </div>
-
-    
     </div>
   );
 };
