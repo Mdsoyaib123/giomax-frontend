@@ -1,3 +1,4 @@
+
 // AdminSidebar.tsx
 import logo from "@/assets/Logo/LogoMain.svg";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +19,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 
 // Types
 export interface SidebarItem {
-  icon: IconType; // changed from string to IconType
+  icon: IconType;
   label: string;
   href?: string;
   badge?: string;
@@ -33,42 +34,15 @@ export interface SidebarProps {
 // Sidebar Items
 const defaultSidebarItems: SidebarItem[] = [
   { icon: RxDashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
-  {
-    icon: FaUsers,
-    label: "User Management",
-    href: "/admin-dashboard/user-management",
-  },
-  {
-    icon: HiOutlineUserMinus,
-    label: "Patients",
-    href: "/admin-dashboard/patients",
-  },
-  {
-    icon: FaUserPlus,
-    label: "Patient Assignment",
-    href: "/admin-dashboard/patient-assignment",
-  },
-  {
-    icon: BiSolidUserBadge,
-    label: "Protocol Management",
-    href: "/admin-dashboard/protocol-management",
-  },
-  {
-    icon: TbCalendarUser,
-    label: "Audit Log",
-    href: "/admin-dashboard/audit-log",
-  },
-  {
-    icon: IoSettingsOutline,
-    label: "Settings",
-    href: "/admin-dashboard/settings",
-  },
+  { icon: FaUsers, label: "User Management", href: "/admin-dashboard/user-management" },
+  { icon: HiOutlineUserMinus, label: "Patients", href: "/admin-dashboard/patients" },
+  { icon: FaUserPlus, label: "Patient Assignment", href: "/admin-dashboard/patient-assignment" },
+  { icon: BiSolidUserBadge, label: "Protocol Management", href: "/admin-dashboard/protocol-management" },
+  { icon: TbCalendarUser, label: "Audit Log", href: "/admin-dashboard/audit-log" },
+  { icon: IoSettingsOutline, label: "Settings", href: "/admin-dashboard/settings" },
 ];
 
-const AdminSidebar: React.FC<SidebarProps> = ({
-  items = defaultSidebarItems,
-  onItemClick,
-}) => {
+const AdminSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, onItemClick }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -77,15 +51,12 @@ const AdminSidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div
-      className="flex flex-col h-full bg-[#29424C]"
-      style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
-    >
+    <div className="flex flex-col h-full bg-[#FFFFFF]" style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}>
       {/* Logo */}
       <Link to="/admin-dashboard/dashboard">
-        <div className="flex items-center justify-center p-2 sm:p-3 border-b border-[#C9C6C3] mt-1">
+        <div className="flex items-center justify-center p-2 sm:p-3 border-b border-[#E5E7EB] mt-1">
           <div className="flex justify-center mb-1">
-            <img src={logo} alt="Logo" className="h-8 w-35" />
+            <img src={logo} alt="Logo" className="h-10 w-35" />
           </div>
         </div>
       </Link>
@@ -94,9 +65,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
       <nav className="flex-1 p-2 md:p-4">
         <div className="space-y-4 md:space-y-6">
           {items.map((item) => {
-            const isActive =
-              location.pathname === item.href ||
-              item.children?.some((child) => location.pathname === child.href);
+            const isActive = location.pathname === item.href || item.children?.some((child) => location.pathname === child.href);
             const isOpen = openMenu === item.label;
 
             return (
@@ -105,56 +74,37 @@ const AdminSidebar: React.FC<SidebarProps> = ({
                   <Link
                     to={item.href}
                     onClick={onItemClick}
-                    className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out ${
+                    className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out rounded-xl ${
                       isActive
-                        ? "text-[#F3AA4B] bg-[#FEF7ED] rounded-xl shadow-md"
-                        : "text-white hover:text-[#F3AA4B] hover:bg-[#FEF7ED] hover:rounded-xl hover:shadow-md"
+                        ? "text-white bg-[#2E6FF3] shadow-md"
+                        : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <item.icon
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isActive
-                            ? "text-[#F3AA4B]"
-                            : "text-white group-hover:text-[#F3AA4B]"
-                        }`}
-                      />
+                      <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive ? "text-white" : "text-[#343A40] group-hover:text-white"}`} />
                       <span>{item.label}</span>
                     </div>
                   </Link>
                 ) : (
                   <button
                     onClick={() => toggleMenu(item.label)}
-                    className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out cursor-pointer ${
+                    className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out rounded-xl cursor-pointer ${
                       isActive
-                        ? "text-[#3A5CFF] bg-[#1C1D28] rounded-xl shadow-md"
-                        : "text-white hover:text-[#3A5CFF] hover:bg-[#1C1D28]/80 hover:rounded-xl hover:shadow-md"
+                        ? "text-white bg-[#2E6FF3] shadow-md"
+                        : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <item.icon
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isActive
-                            ? "text-[#3A5CFF]"
-                            : "text-white group-hover:text-[#3A5CFF]"
-                        }`}
-                      />
+                      <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive ? "text-white" : "text-[#343A40] group-hover:text-white"}`} />
                       <span>{item.label}</span>
                     </div>
 
                     {item.children && (
-                      <ChevronDown
-                        className={`w-4 h-4 transform transition-transform duration-300 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
-                      />
+                      <ChevronDown className={`w-4 h-4 transform transition-transform duration-300 ${isOpen ? "rotate-180 text-white" : "text-[#343A40] group-hover:text-white"}`} />
                     )}
 
                     {item.badge && (
-                      <Badge
-                        variant="secondary"
-                        className="text-xs bg-[#3A5CFF]/10 text-[#3A5CFF] border border-[#3A5CFF]/30"
-                      >
+                      <Badge variant="secondary" className="text-xs bg-[#3A5CFF]/10 text-[#3A5CFF] border border-[#3A5CFF]/30">
                         {item.badge}
                       </Badge>
                     )}
@@ -172,8 +122,8 @@ const AdminSidebar: React.FC<SidebarProps> = ({
                           onClick={onItemClick}
                           className={`group block px-3 py-2 text-sm rounded-lg transition-all ${
                             childActive
-                              ? "text-[#3A5CFF] bg-[#1C1D28]"
-                              : "text-gray-300 hover:text-[#3A5CFF] hover:bg-[#1C1D28]/70"
+                              ? "text-white bg-[#2E6FF3]"
+                              : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                           }`}
                         >
                           {child.label}
@@ -195,10 +145,10 @@ const AdminSidebar: React.FC<SidebarProps> = ({
         </div>
         <Link
           to="/client-dashboard/help-support"
-          className="flex items-center justify-center space-x-3 text-white hover:text-[#3A5BF8] transition-colors"
+          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-white hover:bg-[#2E6FF3] transition-colors px-3 py-2 rounded-lg"
         >
           <span className="text-sm font-medium">Help & Support</span>
-          <RiShareBoxLine className="w-5 h-5 text-gray-300" />
+          <RiShareBoxLine className="w-5 h-5" />
         </Link>
       </div>
     </div>
@@ -206,6 +156,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
 };
 
 export default AdminSidebar;
+
 
 // // AdminSidebar.tsx
 // import logo from "@/assets/Logo/LogoMain.svg";
@@ -216,17 +167,18 @@ export default AdminSidebar;
 // import { Link, useLocation } from "react-router-dom";
 // import { useState } from "react";
 
-// import Dashboard from "@/assets/icon/dashboard.svg";
-// import UserManagement from "@/assets/icon/UserManagement.svg";
-// import Patients from "@/assets/icon/Patients.svg";
-// import PatientAssignment from "@/assets/icon/PatientAssignment.svg";
-// import ProtocolManagement from "@/assets/icon/ProtocolManagement.svg";
-// import AuditLog from "@/assets/icon/AuditLog.svg";
-// import Settings from "@/assets/icon/Settings.svg";
+// import { RxDashboard } from "react-icons/rx";
+// import { FaUserPlus, FaUsers } from "react-icons/fa";
+// import { TbCalendarUser } from "react-icons/tb";
+// import { BiSolidUserBadge } from "react-icons/bi";
+// import { HiOutlineUserMinus } from "react-icons/hi2";
+
+// import { IconType } from "react-icons";
+// import { IoSettingsOutline } from "react-icons/io5";
 
 // // Types
 // export interface SidebarItem {
-//   icon: string; // now icon is a string (image src)
+//   icon: IconType; // changed from string to IconType
 //   label: string;
 //   href?: string;
 //   badge?: string;
@@ -240,25 +192,37 @@ export default AdminSidebar;
 
 // // Sidebar Items
 // const defaultSidebarItems: SidebarItem[] = [
-//   { icon: Dashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
+//   { icon: RxDashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
 //   {
-//     icon: UserManagement,
+//     icon: FaUsers,
 //     label: "User Management",
 //     href: "/admin-dashboard/user-management",
 //   },
-//   { icon: Patients, label: "Patients", href: "/admin-dashboard/patients" },
 //   {
-//     icon: PatientAssignment,
+//     icon: HiOutlineUserMinus,
+//     label: "Patients",
+//     href: "/admin-dashboard/patients",
+//   },
+//   {
+//     icon: FaUserPlus,
 //     label: "Patient Assignment",
 //     href: "/admin-dashboard/patient-assignment",
 //   },
 //   {
-//     icon: ProtocolManagement,
+//     icon: BiSolidUserBadge,
 //     label: "Protocol Management",
 //     href: "/admin-dashboard/protocol-management",
 //   },
-//   { icon: AuditLog, label: "Audit Log", href: "/admin-dashboard/audit-log" },
-//   { icon: Settings, label: "Settings", href: "/admin-dashboard/settings" },
+//   {
+//     icon: TbCalendarUser,
+//     label: "Audit Log",
+//     href: "/admin-dashboard/audit-log",
+//   },
+//   {
+//     icon: IoSettingsOutline,
+//     label: "Settings",
+//     href: "/admin-dashboard/settings",
+//   },
 // ];
 
 // const AdminSidebar: React.FC<SidebarProps> = ({
@@ -274,14 +238,14 @@ export default AdminSidebar;
 
 //   return (
 //     <div
-//       className="flex flex-col h-full bg-[#29424C]"
+//       className="flex flex-col h-full bg-[#FFFFFF]"
 //       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
 //     >
 //       {/* Logo */}
 //       <Link to="/admin-dashboard/dashboard">
 //         <div className="flex items-center justify-center p-2 sm:p-3 border-b border-[#C9C6C3] mt-1">
 //           <div className="flex justify-center mb-1">
-//             <img src={logo} alt="Logo" className="h-8 w-35 " />
+//             <img src={logo} alt="Logo" className="h-8 w-35" />
 //           </div>
 //         </div>
 //       </Link>
@@ -301,21 +265,19 @@ export default AdminSidebar;
 //                   <Link
 //                     to={item.href}
 //                     onClick={onItemClick}
-//                     className={`flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out ${
+//                     className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out ${
 //                       isActive
-//                         ? "text-[#F3AA4B] bg-[#FEF7ED] rounded-xl shadow-md"
-//                         : "text-white hover:text-[#F3AA4B] hover:bg-[#FEF7ED] hover:rounded-xl hover:shadow-md"
+//                         ? "text-[#343A40] bg-[#FEF7ED] rounded-xl shadow-md"
+//                         : "text-white hover:text-[#FFFFFF] hover:bg-[#FEF7ED] hover:rounded-xl hover:shadow-md"
 //                     }`}
 //                   >
 //                     <div className="flex items-center space-x-2 md:text-lg">
-//                       <img
-//                         src={item.icon}
-//                         alt={item.label}
-//                         className={`w-5 h-5 transition-colors duration-300 ${
+//                       <item.icon
+//                         className={`w-5 h-5 transition-all duration-300 ${
 //                           isActive
-//                             ? "filter brightness-0 invert sepia saturate-500 hue-rotate-[30deg] text-[#F3AA4B]"
-//                             : "filter brightness-0 invert"
-//                         } hover:filter hover:brightness-0 hover:invert hover:sepia hover:saturate-500 hover:hue-rotate-[30deg]`}
+//                             ? "text-[#F3AA4B]"
+//                             : "text-white group-hover:text-[#F3AA4B]"
+//                         }`}
 //                       />
 //                       <span>{item.label}</span>
 //                     </div>
@@ -323,18 +285,18 @@ export default AdminSidebar;
 //                 ) : (
 //                   <button
 //                     onClick={() => toggleMenu(item.label)}
-//                     className={`flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out cursor-pointer ${
+//                     className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out cursor-pointer ${
 //                       isActive
 //                         ? "text-[#3A5CFF] bg-[#1C1D28] rounded-xl shadow-md"
 //                         : "text-white hover:text-[#3A5CFF] hover:bg-[#1C1D28]/80 hover:rounded-xl hover:shadow-md"
 //                     }`}
 //                   >
 //                     <div className="flex items-center space-x-2 md:text-lg">
-//                       <img
-//                         src={item.icon}
-//                         alt={item.label}
+//                       <item.icon
 //                         className={`w-5 h-5 transition-all duration-300 ${
-//                           isActive ? "filter brightness-125" : ""
+//                           isActive
+//                             ? "text-[#3A5CFF]"
+//                             : "text-white group-hover:text-[#3A5CFF]"
 //                         }`}
 //                       />
 //                       <span>{item.label}</span>
@@ -368,7 +330,7 @@ export default AdminSidebar;
 //                           key={child.label}
 //                           to={child.href}
 //                           onClick={onItemClick}
-//                           className={`block px-3 py-2 text-sm rounded-lg transition-all ${
+//                           className={`group block px-3 py-2 text-sm rounded-lg transition-all ${
 //                             childActive
 //                               ? "text-[#3A5CFF] bg-[#1C1D28]"
 //                               : "text-gray-300 hover:text-[#3A5CFF] hover:bg-[#1C1D28]/70"

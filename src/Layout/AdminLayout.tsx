@@ -71,10 +71,10 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-r from-[#052318] via-[#0A1C19] to-[#0F131B]">
+    <div className="flex h-screen overflow-hidden ">
       {/* Sidebar - Fixed on Desktop */}
       {!shouldHideSidebar() && (
-        <div className="hidden lg:flex w-72 flex-col fixed inset-y-0 z-30  bg-[#052218]">
+        <div className="hidden lg:flex w-72 flex-col fixed inset-y-0 z-30  bg-[#FFFFFF]">
           <AdminSidebar />
         </div>
       )}
@@ -87,7 +87,7 @@ const AdminLayout = () => {
       >
         {/* Navbar */}
         {!shouldHideNavbar && (
-          <div className="fixed top-0 left-0 right-0 z-20 bg-white ">
+          <div className="fixed top-0 left-0 right-0 z-20  bg-[#FFFFFF] ">
             <AdminDashboardNavBar
               onMobileMenuToggle={handleMobileMenuToggle}
               notificationCount={3}
@@ -101,14 +101,14 @@ const AdminLayout = () => {
           <SheetTrigger asChild>
             <div className="hidden" />
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 p-0 bg-[#0E131A]">
+          <SheetContent side="left" className="w-72 p-0 bg-[#FFFFFF] border border-[#E5E7EB]">
             <AdminSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>
 
         {/* Scrollable Page Content */}
         <main
-          className={`flex-1 overflow-y-auto mt-16 text-black bg-[#EBE8E3] ${
+          className={`flex-1 overflow-y-auto mt-16 text-black bg-[#F9FAFB] ${
             isSidebarOpen ? "pt-4 md:pt-10" : "p-4 md:p-10"
           }`}
         >
