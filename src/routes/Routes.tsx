@@ -13,6 +13,8 @@ import ClientDashboardPage from "@/pages/Client/ClientDashboardPage";
 import ClientLayout from "@/Layout/ClientLayout";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
+import PatientManagementPage from "@/pages/Admin/PatientManagementPage";
+import PaymentHistory from "@/components/AdminDashboard/PatientManagement/PaymentHistory";
 
 const routes = createBrowserRouter([
   {
@@ -64,6 +66,8 @@ const routes = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: "dashboard", element: <AdminDashboardPage /> },
+      { path: "patient-management", element: <PatientManagementPage /> },
+      { path: "payment-history", element: <PaymentHistory /> },
 
       { path: "settings", element: <SettingsPage /> },
     ],
