@@ -11,7 +11,6 @@ import {
 import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { ChevronDown } from "lucide-react";
 
 const AppointmentStatistics = () => {
   const [selectedFilter, setSelectedFilter] = useState("week");
@@ -127,7 +126,6 @@ const AppointmentStatistics = () => {
           >
             <SelectTrigger className="w-full h-[48px] border border-[#B3B3B3] rounded-[12px] px-[20px] py-[10px] bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
               <SelectValue placeholder="Select Range" />
-              <ChevronDown className="w-4 h-4 ml-auto text-gray-500" />
             </SelectTrigger>
 
             <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
