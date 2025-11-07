@@ -15,7 +15,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import PatientManagementPage from "@/pages/Admin/PatientManagementPage";
 import PaymentHistory from "@/components/AdminDashboard/PatientManagement/PaymentHistory";
-
+import Settings from "@/components/AdminDashboard/Settings/Settings";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -42,6 +42,13 @@ const routes = createBrowserRouter([
         path: "/signup",
         element: <Signup />,
       },
+
+       {
+        path: "/settings",
+        element: <Settings />,
+      },
+
+      
     ],
   },
 

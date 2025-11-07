@@ -1,5 +1,8 @@
 import SectionTitle from "@/common/SectionTitle";
-
+import TeamManagement from "./TeamManagement";
+import Commission from "./Commission";
+import Configuration from "./Configuration";
+import Notification from "./Notification";
 const Settings = () => {
   return (
     <div className="space-y-6">
@@ -9,8 +12,12 @@ const Settings = () => {
           description="Manage platform settings and configurations"
         />
       </div>
-      <div>
-        <h2>more component place here</h2>
+      
+      <div className="grid lg:grid-cols-2 gap-6">
+        <TeamManagement />
+        <Commission />
+        <Configuration />
+        <Notification />
       </div>
     </div>
   );
