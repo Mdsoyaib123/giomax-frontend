@@ -116,7 +116,6 @@ const AppointmentStatistics = () => {
           <h1 className="text-[24px] leading-[130%] font-medium text-[#343A40] mb-2">
             Appointment Statistics
           </h1>
-          <p className="text-sm text-gray-500">{currentData.label}</p>
         </div>
 
         <div className="w-full sm:w-[250px] md:w-[221px]">
@@ -124,7 +123,7 @@ const AppointmentStatistics = () => {
             onValueChange={(value) => setSelectedFilter(value)}
             defaultValue="week"
           >
-            <SelectTrigger className="w-full h-[48px] border border-[#B3B3B3] rounded-[12px] px-[20px] py-[10px] bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+            <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
               <SelectValue placeholder="Select Range" />
             </SelectTrigger>
 
