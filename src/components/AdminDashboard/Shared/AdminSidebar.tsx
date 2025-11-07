@@ -40,22 +40,22 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: HiOutlineUserMinus,
-    label: "Patients",
+    label: "Booking Management",
     href: "/admin-dashboard/patients",
   },
   {
     icon: FaUserPlus,
-    label: "Patient Assignment",
+    label: "Payments",
     href: "/admin-dashboard/patient-assignment",
   },
   {
     icon: BiSolidUserBadge,
-    label: "Protocol Management",
+    label: "Doctor Management",
     href: "/admin-dashboard/protocol-management",
   },
   {
     icon: TbCalendarUser,
-    label: "Audit Log",
+    label: "Clinic Management",
     href: "/admin-dashboard/audit-log",
   },
   {

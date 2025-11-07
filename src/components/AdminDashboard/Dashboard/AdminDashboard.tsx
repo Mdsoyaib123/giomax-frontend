@@ -1,6 +1,7 @@
 import AppointmentStatistics from "./AppointmentStatistics";
 import DashboardCard from "./DashboardCard";
 import QuickActions from "./QuickActions";
+import RevenueOverview from "./RevenueOverview";
 
 const AdminDashboard = () => {
   return (
@@ -14,7 +15,7 @@ const AdminDashboard = () => {
           <AppointmentStatistics />
         </div>
         <div className="w-full xl:col-span-2">
-          <AppointmentStatistics />
+          <RevenueOverview />
         </div>
       </div>
       <div>
