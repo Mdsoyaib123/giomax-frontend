@@ -1,4 +1,5 @@
 import SectionTitle from "@/common/SectionTitle";
+import ClinicManagementTable from "./ClinicManagementTable";
 
 const ClinicManagement = () => {
   return (
@@ -9,7 +10,9 @@ const ClinicManagement = () => {
           description="Manage and approve clinic registrations"
         />
       </div>
-      <div>Table Component</div>
+      <div>
+        <ClinicManagementTable />
+      </div>
     </div>
   );
 };
