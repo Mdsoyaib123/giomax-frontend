@@ -69,7 +69,8 @@ const routes = createBrowserRouter([
       { index: true, element: <AdminDashboardPage /> },
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "patient-management", element: <PatientManagementPage /> },
-      { path: "payment-history", element: <PaymentHistory /> },
+      { path: "patient-management/:id", element: <PaymentHistory /> },
+
       { path: "booking-management", element: <BookingManagementPage /> },
       { path: "payments", element: <PaymentsPage /> },
       { path: "doctor-management", element: <DoctorManagementPage /> },

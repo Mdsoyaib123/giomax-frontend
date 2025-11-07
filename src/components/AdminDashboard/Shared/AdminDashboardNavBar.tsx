@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import user from "@/assets/icons/user.svg";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -24,10 +25,11 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   // userName = "Gemini Chachi",
   isSidebarOpen,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className=" bg-[#FFFFFF] border-b border-[#E5E7EB]">
       <header
-        className={`flex items-center justify-between h-16 px-4 md:px-8 mb-2 ${
+        className={`flex items-center justify-between h-17 px-4 md:px-8 mb-2 ${
           isSidebarOpen ? "max-w-[1400px] mx-auto" : ""
         }`}
       >
@@ -44,20 +46,52 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
           </Button>
 
           {/* Logo + Dashboard text */}
-          <div className="flex items-center space-x-2 pl-0 md:pl-2 lg:pl-70">
-            {/* <div className="flex flex-col leading-tight">
-              <span className="text-xs text-black">Dashboard</span>
-              <span className="text-sm md:text-base font-medium text-black">
-                HELLO, {userName}
-              </span>
-            </div> */}
-            <div className="relative w-full max-w-xl">
+          {/* <div className="flex items-center space-x-2 pl-0 md:pl-2 lg:pl-70">
+            <div className="relative w-full min-w-lg">
               <input
                 type="text"
-                placeholder="Search..."
-                className="w-full pl-3 pr-10 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search anything here...."
+                className="w-full bg-[#F5F7FB] pl-3 pr-10 py-3 text-sm md:text-base   rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <IoIosSearch className="bg-[#F5F7FB] absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+          </div> */}
+
+          <div className="flex items-center pl-0 md:pl-2 lg:pl-70">
+            {/* Search Container */}
+            <div className="relative w-full flex justify-end md:justify-start">
+              {/* Mobile View */}
+              <div className="block md:hidden">
+                {isOpen ? (
+                  <div className="relative transition-all duration-300 ease-in-out w-[220px] sm:w-[260px]">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Search anything here..."
+                      className="w-full bg-[#F5F7FB] pl-3 pr-10 py-2 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <IoIosSearch
+                      onClick={() => setIsOpen(false)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
+                    />
+                  </div>
+                ) : (
+                  <IoIosSearch
+                    onClick={() => setIsOpen(true)}
+                    className="text-2xl text-gray-500 cursor-pointer"
+                  />
+                )}
+              </div>
+
+              {/* Desktop / Large Devices */}
+              <div className="hidden md:block relative w-full min-w-lg lg:max-w-4xl">
+                <input
+                  type="text"
+                  placeholder="Search anything here..."
+                  className="w-full bg-[#F5F7FB] pl-3 pr-10 py-3 text-sm md:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <IoIosSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
             </div>
           </div>
         </div>

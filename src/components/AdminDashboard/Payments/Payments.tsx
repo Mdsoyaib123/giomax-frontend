@@ -1,4 +1,6 @@
 import SectionTitle from "@/common/SectionTitle";
+import PaymentTable from "./PaymentTable";
+import PaymentCard from "./PaymentCard";
 
 const Payments = () => {
   return (
@@ -10,7 +12,10 @@ const Payments = () => {
         />
       </div>
       <div>
-        <div>Table Component</div>
+        <PaymentCard />
+      </div>
+      <div>
+        <PaymentTable />
       </div>
     </div>
   );
