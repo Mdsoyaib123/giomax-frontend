@@ -113,29 +113,29 @@ const PatientManagement: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div>
+        <div className="p-5 border border-[#E4E4E4] rounded-lg">
           <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
             <div className="xl:col-span-4 w-full">
               <div className="overflow-x-auto rounded-lg border border-gray-200">
                 <table className="min-w-[800px] w-full text-sm">
                   <thead className="bg-gray-100 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700">
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Group Name
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700">
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Location
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700">
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Email Address
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700">
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Phone Number
                       </th>
-                      <th className="px-6 py-4 text-center font-medium text-gray-700">
+                      <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
                         Total Bookings
                       </th>
-                      <th className="px-6 py-4 text-center font-medium text-gray-700">
+                      <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
                         Action
                       </th>
                     </tr>
@@ -166,13 +166,13 @@ const PatientManagement: React.FC = () => {
                           <div className="flex justify-center gap-2">
                             <button
                               onClick={() => handleView(user)}
-                              className="flex items-center gap-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium px-3 py-1.5 rounded-md transition"
+                              className="flex cursor-pointer items-center gap-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium px-3 py-1.5 rounded-md transition"
                             >
                               <FaEye className="text-blue-600" /> View
                             </button>
                             <button
                               onClick={() => handleRemove(user.id)}
-                              className="flex items-center gap-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md transition"
+                              className="flex items-center cursor-pointer gap-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md transition"
                             >
                               <RiDeleteBinLine className="text-red-600" />{" "}
                               Remove

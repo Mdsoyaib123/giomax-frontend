@@ -1,8 +1,15 @@
+import SectionTitle from "@/common/SectionTitle";
 import PatientManagement from "@/components/AdminDashboard/PatientManagement/PatientManagement";
 
 const PatientManagementPage = () => {
   return (
-    <div>
+    <div className="space-y-10">
+      <div>
+        <SectionTitle
+          title="Patient Management"
+          description="Manage and monitor all registered patients."
+        />
+      </div>
       <PatientManagement />
     </div>
   );

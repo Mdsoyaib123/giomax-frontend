@@ -40,23 +40,23 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: HiOutlineUserMinus,
-    label: "Booking Management",
-    href: "/admin-dashboard/patients",
+    label: "Book Management",
+    href: "/admin-dashboard/booking-management",
   },
   {
     icon: FaUserPlus,
     label: "Payments",
-    href: "/admin-dashboard/patient-assignment",
+    href: "/admin-dashboard/payments",
   },
   {
     icon: BiSolidUserBadge,
     label: "Doctor Management",
-    href: "/admin-dashboard/protocol-management",
+    href: "/admin-dashboard/doctor-management",
   },
   {
     icon: TbCalendarUser,
     label: "Clinic Management",
-    href: "/admin-dashboard/audit-log",
+    href: "/admin-dashboard/clinic-management",
   },
   {
     icon: IoSettingsOutline,
@@ -216,7 +216,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
         </div>
         <Link
           to="/client-dashboard/help-support"
-          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-white hover:text- transition-colors px-3 py-2 rounded-lg"
+          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-sky-500 hover:text- transition-colors px-3 py-2 rounded-lg"
         >
           <span className="text-sm font-medium">Help & Support</span>
           <RiShareBoxLine className="w-5 h-5" />

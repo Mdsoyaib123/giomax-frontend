@@ -9,6 +9,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 // ✅ Sample weekly revenue data
 const data = [
   { name: "Sunday", uv: 40000 },
@@ -28,10 +38,58 @@ const margin = {
 
 export default function RevenueOverview() {
   return (
-    <div className="w-full h-[400px] bg-white rounded-2xl shadow-md border border-gray-200 p-6">
-      <h2 className="text-lg font-semibold text-gray-700 mb-4">
-        Weekly Revenue Overview
-      </h2>
+    <div className="w-full h-[500px] bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 w-full">
+        <div className="w-full md:flex-1">
+          <h1 className="text-[24px] leading-[130%] font-medium text-[#343A40] mb-2">
+            Revenue Overview
+          </h1>
+          {/* <p className="text-sm text-gray-500">{currentData.label}</p> */}
+        </div>
+
+        <div className="w-full sm:w-[250px] md:w-[221px]">
+          <Select
+            // onValueChange={(value) => setSelectedFilter(value)}
+            defaultValue="week"
+          >
+            <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+              <SelectValue placeholder="Select Range" />
+            </SelectTrigger>
+
+            <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
+              <SelectGroup>
+                <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
+                  Time Range
+                </SelectLabel>
+                <SelectItem
+                  value="week"
+                  className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                >
+                  Last 1 Week
+                </SelectItem>
+                <SelectItem
+                  value="month"
+                  className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                >
+                  Last 1 Month
+                </SelectItem>
+                <SelectItem
+                  value="threeMonths"
+                  className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                >
+                  Last 3 Months
+                </SelectItem>
+                <SelectItem
+                  value="sixMonths"
+                  className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                >
+                  Last 6 Months
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       <ResponsiveContainer width="100%" height="90%">
         <BarChart data={data} margin={margin}>

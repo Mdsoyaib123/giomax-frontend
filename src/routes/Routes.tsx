@@ -4,9 +4,7 @@ import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
-
 import AdminLayout from "@/Layout/AdminLayout";
-
 import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
 import SettingsPage from "@/pages/Admin/SettingsPage";
 import ClientDashboardPage from "@/pages/Client/ClientDashboardPage";
@@ -16,6 +14,10 @@ import ResetPassword from "@/pages/ResetPassword";
 import PatientManagementPage from "@/pages/Admin/PatientManagementPage";
 import PaymentHistory from "@/components/AdminDashboard/PatientManagement/PaymentHistory";
 import Settings from "@/components/AdminDashboard/Settings/Settings";
+import BookingManagementPage from "@/pages/Admin/BookingManagementPage";
+import PaymentsPage from "@/pages/Admin/PaymentsPage";
+import DoctorManagementPage from "@/pages/Admin/DoctorManagementPage";
+import ClinicManagementPage from "@/pages/Admin/ClinicManagementPage";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -75,7 +77,10 @@ const routes = createBrowserRouter([
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "patient-management", element: <PatientManagementPage /> },
       { path: "payment-history", element: <PaymentHistory /> },
-
+      { path: "booking-management", element: <BookingManagementPage /> },
+      { path: "payments", element: <PaymentsPage /> },
+      { path: "doctor-management", element: <DoctorManagementPage /> },
+      { path: "clinic-management", element: <ClinicManagementPage /> },
       { path: "settings", element: <SettingsPage /> },
     ],
   },
