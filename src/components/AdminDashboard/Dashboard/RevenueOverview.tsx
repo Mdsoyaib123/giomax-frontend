@@ -44,7 +44,6 @@ export default function RevenueOverview() {
           <h1 className="text-[24px] leading-[130%] font-medium text-[#343A40] mb-2">
             Revenue Overview
           </h1>
-          {/* <p className="text-sm text-gray-500">{currentData.label}</p> */}
         </div>
 
         <div className="w-full sm:w-[250px] md:w-[221px]">

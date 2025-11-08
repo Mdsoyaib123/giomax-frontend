@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
+import { IoIosSearch } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 interface Patient {
   id: string;
@@ -14,10 +16,21 @@ interface Patient {
   totalBooking: string;
 }
 
-const PatientManagement: React.FC = () => {
+interface Props {
+  id: string | number; // assuming you have an id for each user/payment
+}
+
+const PatientManagement: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    // Navigate to payment-history page with id
+    navigate(`/admin-dashboard/patient-management/${id}`);
+  };
 
   const users: Patient[] = [
     {
@@ -101,15 +114,24 @@ const PatientManagement: React.FC = () => {
   return (
     <div className="">
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          {/* Title */}
           <h2 className="text-lg font-semibold text-[#343A40]">
             All Patients Information
           </h2>
-          <input
-            type="search"
-            placeholder="Search by name or user ID..."
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-          />
+
+          {/* Search Bar */}
+          <div className="flex items-center w-full sm:w-[320px] h-9 bg-[#F5F7FB] rounded-lg px-3 py-1.5">
+            {/* Search Icon */}
+            <IoIosSearch className="text-gray-500 text-lg ml-2" />
+
+            {/* Input Field */}
+            <input
+              type="search"
+              placeholder="Search patients..."
+              className="bg-transparent flex-1 pl-2 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
+            />
+          </div>
         </div>
 
         {/* Table */}
@@ -166,16 +188,15 @@ const PatientManagement: React.FC = () => {
                           <div className="flex justify-center gap-2">
                             <button
                               onClick={() => handleView(user)}
-                              className="flex cursor-pointer items-center gap-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium px-3 py-1.5 rounded-md transition"
+                              className="flex cursor-pointer items-center gap-1 text-sm bg-[#2E6FF3] hover:bg-[#034ee6] text-white font-medium px-3 py-1.5 rounded-md transition"
                             >
-                              <FaEye className="text-blue-600" /> View
+                              <FaEye className="text-white" /> View
                             </button>
                             <button
                               onClick={() => handleRemove(user.id)}
-                              className="flex items-center cursor-pointer gap-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 font-medium px-3 py-1.5 rounded-md transition"
+                              className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition"
                             >
-                              <RiDeleteBinLine className="text-red-600" />{" "}
-                              Remove
+                              <RiDeleteBinLine className="text-white" /> Remove
                             </button>
                           </div>
                         </td>
@@ -377,7 +398,7 @@ const PatientManagement: React.FC = () => {
                 Close
               </button>
               <button
-                onClick={() => alert("View Payment History clicked!")} // Replace with actual handler
+                onClick={handleClick} // Replace with actual handler
                 className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
               >
                 View Payment History

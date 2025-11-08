@@ -10,7 +10,7 @@ const PatientManagementPage = () => {
           description="Manage and monitor all registered patients."
         />
       </div>
-      <PatientManagement />
+      <PatientManagement id={243423423} />
     </div>
   );
 };

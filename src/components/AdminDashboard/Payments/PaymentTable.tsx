@@ -15,15 +15,14 @@ import {
 interface Booking {
   id: string;
   patientName: string;
-  clinicName: string;
-  note: string;
+  doctor: string;
   type: string;
   status: "Pending" | "Confirmed" | "Cancelled";
   dateTime: string;
   payment: "Pending" | "Confirmed" | "Refused";
 }
 
-const BookingManagementTable: React.FC = () => {
+const PaymentTable: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -32,8 +31,7 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-001",
       patientName: "Samsel Arfin",
-      clinicName: "Dr. Michael Brown",
-      note: "have a good day",
+      doctor: "Dr. Michael Brown",
       type: "Online",
       status: "Confirmed",
       dateTime: "2025-11-06, 10:30 AM",
@@ -42,8 +40,7 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-002",
       patientName: "Ariana Gomez",
-      clinicName: "Dr. Sarah Lee",
-      note: "have a good day",
+      doctor: "Dr. Sarah Lee",
       type: "Offline",
       status: "Pending",
       dateTime: "2025-11-08, 02:00 PM",
@@ -52,9 +49,8 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-003",
       patientName: "Michael Johnson",
-      clinicName: "Clinic Medico",
-      note: "have a good day",
-      type: "In-Clinic",
+      doctor: "Clinic Medico",
+      type: "Hybrid",
       status: "Cancelled",
       dateTime: "2025-11-05, 09:00 AM",
       payment: "Refused",
@@ -62,8 +58,7 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-004",
       patientName: "Emily Carter",
-      clinicName: "Dr. Daniel Smith",
-      note: "have a good day",
+      doctor: "Dr. Daniel Smith",
       type: "Online",
       status: "Confirmed",
       dateTime: "2025-11-10, 03:00 PM",
@@ -72,8 +67,7 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-005",
       patientName: "David Brown",
-      clinicName: "Wellness Clinic",
-      note: "have a good day",
+      doctor: "Wellness Clinic",
       type: "Offline",
       status: "Pending",
       dateTime: "2025-11-11, 04:00 PM",
@@ -82,9 +76,8 @@ const BookingManagementTable: React.FC = () => {
     {
       id: "BK-006",
       patientName: "Sophia Turner",
-      clinicName: "Dr. Rachel Adams",
-      note: "have a good day",
-      type: "In-Clinic",
+      doctor: "Dr. Rachel Adams",
+      type: "Hybrid",
       status: "Cancelled",
       dateTime: "2025-11-04, 11:30 AM",
       payment: "Refused",
@@ -219,7 +212,7 @@ const BookingManagementTable: React.FC = () => {
                         Patient Name
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Clinic Name
+                        Doctor / Clinic
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Type
@@ -251,9 +244,9 @@ const BookingManagementTable: React.FC = () => {
                           {booking.patientName}
                         </td>
                         <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.clinicName}
+                          {booking.doctor}
                         </td>
-                        <td className="px-6 py-4 text-sky-500 whitespace-nowrap">
+                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
                           {booking.type}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -352,17 +345,17 @@ const BookingManagementTable: React.FC = () => {
 
             {/* Title */}
             <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Booking Details - BK001
+              Patient Profile
             </h2>
             <p className="text-gray-600 text-sm mb-6">
-              View complete booking information and consultation notes
+              View detailed patient information and history
             </p>
 
             {/* Input Grid */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Patient Name
+                  Name
                 </label>
                 <input
                   type="text"
@@ -374,11 +367,11 @@ const BookingManagementTable: React.FC = () => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  clinicName Name
+                  Age
                 </label>
                 <input
                   type="text"
-                  value={openProfile.clinicName}
+                  value={openProfile.doctor}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -386,19 +379,7 @@ const BookingManagementTable: React.FC = () => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Clinic Name
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.clinicName}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Booking Type
+                  Gender
                 </label>
                 <input
                   type="text"
@@ -410,7 +391,7 @@ const BookingManagementTable: React.FC = () => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Date & Time
+                  Phone
                 </label>
                 <input
                   type="text"
@@ -422,31 +403,7 @@ const BookingManagementTable: React.FC = () => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Amount
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.payment}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Consultation Note
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.note}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Status
+                  Email
                 </label>
                 <input
                   type="text"
@@ -455,9 +412,10 @@ const BookingManagementTable: React.FC = () => {
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
               </div>
+
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Payment Status
+                  Location
                 </label>
                 <input
                   type="text"
@@ -467,6 +425,71 @@ const BookingManagementTable: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Divider */}
+            <hr className="my-6 border-gray-200" />
+
+            <div className="space-y-6 w-full">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Appointment History
+              </h2>
+
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
+                {/* Appointment Card */}
+                <div className="bg-[#F4F6F8] p-5 rounded-2xl border border-[#CED4DA] shadow-sm flex justify-between items-center w-full sm:w-1/2 hover:shadow-md transition-shadow duration-200">
+                  {/* Left side: Name and Date */}
+                  <div>
+                    <h1 className="text-lg md:text-xl font-semibold text-gray-900">
+                      Dr. Michael Brown
+                    </h1>
+                    <p className="text-gray-500 text-sm mt-1">2025-10-15</p>
+                    <p className="text-gray-400 text-sm mt-0.5">
+                      Cardiologist
+                    </p>{" "}
+                    {/* Optional profession */}
+                  </div>
+
+                  {/* Right side: Status */}
+                  <div>
+                    <p className="px-3 py-1 text-sm font-medium rounded-full bg-[#1D4ED8] text-white">
+                      Completed
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-[#F4F6F8] p-5 rounded-2xl border border-[#CED4DA] shadow-sm flex justify-between items-center w-full sm:w-1/2 hover:shadow-md transition-shadow duration-200">
+                  <div>
+                    <h1 className="text-lg md:text-xl font-semibold text-gray-900">
+                      Dr. Sarah Lee
+                    </h1>
+                    <p className="text-gray-500 text-sm mt-1">2025-09-28</p>
+                    <p className="text-gray-400 text-sm mt-0.5">
+                      Dermatologist
+                    </p>
+                  </div>
+                  <div>
+                    <p className="px-3 py-1 text-sm font-medium rounded-full bg-[#1B9268] text-white">
+                      Upcoming
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex  gap-4 mt-6">
+              <button
+                onClick={() => setOpenProfile(null)}
+                className=" w-full cursor-pointer px-5 py-2 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => alert("View Payment History clicked!")} // Replace with actual handler
+                className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
+              >
+                View Payment History
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -474,4 +497,4 @@ const BookingManagementTable: React.FC = () => {
   );
 };
 
-export default BookingManagementTable;
+export default PaymentTable;
