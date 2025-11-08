@@ -11,7 +11,7 @@ const ClinicManagement = () => {
         />
       </div>
       <div>
-        <ClinicManagementTable />
+        <ClinicManagementTable id={434324} />
       </div>
     </div>
   );
