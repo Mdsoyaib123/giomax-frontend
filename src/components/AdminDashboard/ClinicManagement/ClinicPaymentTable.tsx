@@ -11,95 +11,83 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
-import { MdOutlineDoNotDisturb } from "react-icons/md";
+import { GoDownload } from "react-icons/go";
 
 interface Booking {
   id: string;
-  licenceNumber: string;
-  earnings: string;
-  clinicName: string;
-  services: string;
-  status: "Pending" | "Active" | "Cancelled";
-  totalDoctors: string;
-  address: string;
-  servicesProvided: string;
+  recever: string;
+  role: string;
+  amount: string;
+  status: "Pending" | "Confirmed" | "Cancelled";
+  dateTime: string;
+  payment: "Pending" | "Confirmed" | "Refused";
 }
 
-interface Props {
-  id: string | number; // assuming you have an id for each user/payment
-}
-
-const ClinicManagementTable: React.FC<Props> = ({ id }) => {
+const ClinicPaymentTable: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    // Navigate to payment-history page with id
-    navigate(`/admin-dashboard/clinic-management/${id}`);
-  };
-
   const bookings: Booking[] = [
     {
       id: "BK-001",
-      licenceNumber: "CL-98766",
-      earnings: "4500",
-      clinicName: "Dr. Michael Brown",
-      services: "General Consultation",
-      status: "Active",
-      totalDoctors: "11",
-      address: "Magura, Khulna, Bangladesh",
-      servicesProvided: "General Consultation, Laboratory, Radiology",
+
+      recever: "Dr. Michael Brown",
+      role: "Clinic",
+      amount: "2500.00",
+      status: "Confirmed",
+      dateTime: "2025-11-06",
+      payment: "Confirmed",
     },
     {
       id: "BK-002",
-      licenceNumber: "CL-56432",
-      earnings: "3200",
-      clinicName: "Dr. Sarah Johnson",
-      services: "Dental Care",
+
+      recever: "Dr. Sarah Lee",
+      role: "Solo recever",
+      amount: "2500.00",
       status: "Pending",
-      totalDoctors: "8",
-      address: "Dhanmondi, Dhaka, Bangladesh",
-      servicesProvided: "Dental Cleaning, Orthodontics, X-Ray Imaging",
+      dateTime: "2025-11-08",
+      payment: "Pending",
     },
     {
       id: "BK-003",
-      licenceNumber: "CL-77654",
-      earnings: "5200",
-      clinicName: "Dr. Robert Smith",
-      services: "Cardiology",
-      status: "Active",
-      totalDoctors: "15",
-      address: "Chattogram, Bangladesh",
-      servicesProvided:
-        "Heart Checkups, ECG, Stress Test, Blood Pressure Monitoring",
+
+      recever: "Clinic Medico",
+      role: "Nurse",
+      amount: "2500.00",
+      status: "Cancelled",
+      dateTime: "2025-11-05",
+      payment: "Refused",
     },
     {
       id: "BK-004",
-      licenceNumber: "CL-99231",
-      earnings: "2750",
-      clinicName: "Dr. Emily Davis",
-      services: "Pediatrics",
-      status: "Cancelled",
-      totalDoctors: "9",
-      address: "Sylhet, Bangladesh",
-      servicesProvided:
-        "Child Vaccination, Growth Monitoring, General Pediatric Care",
+
+      recever: "Dr. Daniel Smith",
+      role: "Clinic",
+      amount: "2500.00",
+      status: "Confirmed",
+      dateTime: "2025-11-10",
+      payment: "Confirmed",
     },
     {
       id: "BK-005",
-      licenceNumber: "CL-44321",
-      earnings: "6100",
-      clinicName: "Dr. David Wilson",
-      services: "Orthopedics",
-      status: "Active",
-      totalDoctors: "12",
-      address: "Rajshahi, Bangladesh",
-      servicesProvided:
-        "Bone Fracture Treatment, Joint Replacement, Physiotherapy",
+
+      recever: "Wellness Clinic",
+      role: "Solo recever",
+      amount: "2500.00",
+      status: "Pending",
+      dateTime: "2025-11-11",
+      payment: "Pending",
+    },
+    {
+      id: "BK-006",
+
+      recever: "Dr. Rachel Adams",
+      role: "Nurse",
+      amount: "2500.00",
+      status: "Cancelled",
+      dateTime: "2025-11-04",
+      payment: "Refused",
     },
   ];
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
@@ -121,15 +109,19 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             {/* Left Section - Title */}
             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-              All Clinics
+              Transaction History
             </h2>
 
             {/* Right Section - Filters */}
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <button className="px-5 cursor-pointer py-3 bg-[#EFF4FF] text-black font-medium rounded-lg  border border-[#6293F6] hover:bg-[#2E6FF3]">
+                <GoDownload className=" inline-block mr-2 h-[18px] w-[18px]" />{" "}
+                Download CSV
+              </button>
               {/* Filter 1 - Status */}
               <div className="w-full sm:w-[250px] md:w-[220px]">
                 <Select defaultValue="all">
-                  <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+                  <SelectTrigger className="w-full h-12 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
@@ -185,13 +177,21 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
                   <thead className="bg-gray-100 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Clinic Name
+                        Transaction ID
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Services
+                        Receiver
+                      </th>
+
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Role
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Total Doctor
+                        Amount
+                      </th>
+
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Date
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Status
@@ -208,19 +208,27 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
                         key={booking.id}
                         className="hover:bg-gray-50 transition-colors duration-200"
                       >
+                        <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
+                          {booking.id}
+                        </td>
+
                         <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.clinicName}
+                          {booking.recever}
                         </td>
                         <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.services}
+                          {booking.role}
                         </td>
                         <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.totalDoctors}
+                          {booking.amount}
+                        </td>
+
+                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
+                          {booking.dateTime}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-3 py-1 text-xs font-medium rounded-full ${
-                              booking.status === "Active"
+                              booking.status === "Confirmed"
                                 ? "bg-green-100 text-green-700"
                                 : booking.status === "Pending"
                                 ? "bg-yellow-100 text-yellow-700"
@@ -230,19 +238,13 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
                             {booking.status}
                           </span>
                         </td>
-                        <td className="px-6 py-3 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => handleView(booking)}
-                              className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
-                            >
-                              <FaEye className="text-sm" /> View
-                            </button>
-                            <button className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition">
-                              <MdOutlineDoNotDisturb className="text-white" />{" "}
-                              Suspend
-                            </button>
-                          </div>
+                        <td className="px-6 py-4 text-center whitespace-nowrap">
+                          <button
+                            onClick={() => handleView(booking)}
+                            className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
+                          >
+                            <FaEye className="text-sm" /> View Details
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -289,10 +291,10 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
         </div>
       </div>
 
-      {/* Patient Profile Dialog */}
+      {/* Transaction Details Dialog */}
       {openProfile && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
-          <div className="bg-white rounded-lg w-full max-w-5xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
+          <div className="bg-white rounded-lg w-full max-w-4xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
             {/* Close Icon */}
             <button
               onClick={() => setOpenProfile(null)}
@@ -303,22 +305,21 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
             {/* Title */}
             <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Clinic Details
+              Transaction Details
             </h2>
             <p className="text-gray-600 text-sm mb-6">
-              View clinic information, affiliated doctors, and verification
-              status
+              Complete information about this transaction
             </p>
 
             {/* Input Grid */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Clinic Name
+                  Transaction ID
                 </label>
                 <input
                   type="text"
-                  value={openProfile.clinicName}
+                  value={openProfile.id}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -326,11 +327,11 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  License Number
+                  Recever
                 </label>
                 <input
                   type="text"
-                  value={openProfile.licenceNumber}
+                  value={openProfile.recever}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -338,11 +339,11 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Address
+                  Role
                 </label>
                 <input
                   type="text"
-                  value={openProfile.address}
+                  value={openProfile.role}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -350,11 +351,11 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Total Doctors
+                  Amount
                 </label>
                 <input
                   type="text"
-                  value={openProfile.totalDoctors}
+                  value={openProfile.amount}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -362,11 +363,11 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Total Earnings
+                  Date
                 </label>
                 <input
                   type="text"
-                  value={openProfile.earnings}
+                  value={openProfile.dateTime}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
@@ -374,129 +375,15 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Services Provided
+                  Status
                 </label>
                 <input
                   type="text"
-                  value={openProfile.servicesProvided}
+                  value={openProfile.status}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
               </div>
-            </div>
-
-            {/* Divider */}
-            <hr className="my-6 border-gray-200" />
-
-            <div className="w-full space-y-6">
-              <div className="flex flex-col lg:flex-row gap-8 w-full">
-                {/* Left Section - Affiliated Doctors */}
-                <div className="flex-1 space-y-4 bg-white p-2">
-                  <h1 className="text-xl md:text-2xl font-semibold text-gray-900  pb-2">
-                    Affiliated Doctors
-                  </h1>
-
-                  {/* Row 1 */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                  </div>
-
-                  {/* Row 2 */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                  </div>
-
-                  {/* Row 3 */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                    <input
-                      type="text"
-                      value={openProfile.clinicName}
-                      readOnly
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-[#F9FAFB] text-gray-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2c4a54]"
-                    />
-                  </div>
-                </div>
-
-                {/* Right Section - Verification Documents */}
-                <div className="flex-1 space-y-4 bg-white p-2">
-                  <h1 className="text-xl md:text-2xl font-semibold text-gray-900  pb-2">
-                    Verification Documents
-                  </h1>
-
-                  {/* Document 1 */}
-                  <div className="p-5 rounded-xl bg-[#F8FAFC] border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300">
-                    <p className="font-medium text-gray-800">
-                      Business License
-                    </p>
-                    <button className="px-4 py-2 text-sm font-semibold text-[#2E6FF3] cursor-pointer hover:text-[#002775] transition-all duration-300">
-                      View Document
-                    </button>
-                  </div>
-
-                  {/* Document 2 */}
-                  <div className="p-5 rounded-xl bg-[#F8FAFC] border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300">
-                    <p className="font-medium text-gray-800">
-                      Medical Facility Registration
-                    </p>
-                    <button className="px-4 py-2 text-sm font-semibold text-[#2E6FF3] cursor-pointer hover:text-[#2E6FF3]  transition-all duration-300">
-                      View Document
-                    </button>
-                  </div>
-
-                  {/* Document 3 */}
-                  <div className="p-5 rounded-xl bg-[#F8FAFC] border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300">
-                    <p className="font-medium text-gray-800">
-                      Professional Accreditation
-                    </p>
-                    <button className="px-4 py-2 text-sm font-semibold text-[#2E6FF3] cursor-pointer hover:text-[#2E6FF3] transition-all duration-300">
-                      View Document
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex  gap-4 mt-6">
-              <button
-                onClick={() => setOpenProfile(null)}
-                className=" w-full cursor-pointer px-5 py-2 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleClick}
-                className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
-              >
-                View Payment History
-              </button>
             </div>
           </div>
         </div>
@@ -505,4 +392,4 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
   );
 };
 
-export default ClinicManagementTable;
+export default ClinicPaymentTable;

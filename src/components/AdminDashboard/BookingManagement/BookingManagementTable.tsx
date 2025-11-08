@@ -109,7 +109,7 @@ const BookingManagementTable: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             {/* Left Section - Title */}
             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-              All Patients Information
+              All Booking Information
             </h2>
 
             {/* Right Section - Filters */}

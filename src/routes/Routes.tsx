@@ -18,6 +18,7 @@ import BookingManagementPage from "@/pages/Admin/BookingManagementPage";
 import PaymentsPage from "@/pages/Admin/PaymentsPage";
 import DoctorManagementPage from "@/pages/Admin/DoctorManagementPage";
 import ClinicManagementPage from "@/pages/Admin/ClinicManagementPage";
+import PaymentHistoryClinic from "@/components/AdminDashboard/ClinicManagement/PaymentHistoryClinic";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -45,12 +46,10 @@ const routes = createBrowserRouter([
         element: <Signup />,
       },
 
-       {
+      {
         path: "/settings",
         element: <Settings />,
       },
-
-      
     ],
   },
 
@@ -82,6 +81,7 @@ const routes = createBrowserRouter([
       { path: "payments", element: <PaymentsPage /> },
       { path: "doctor-management", element: <DoctorManagementPage /> },
       { path: "clinic-management", element: <ClinicManagementPage /> },
+      { path: "clinic-management/:id", element: <PaymentHistoryClinic /> },
       { path: "settings", element: <SettingsPage /> },
     ],
   },
