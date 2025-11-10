@@ -32,37 +32,42 @@ export interface SidebarProps {
 
 // Sidebar Items
 const defaultSidebarItems: SidebarItem[] = [
-  { icon: RxDashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
   {
-    icon: FaUsers,
-    label: "Patient Management",
-    href: "/admin-dashboard/patient-management",
+    icon: RxDashboard,
+    label: "Dashboard",
+    href: "/clinic-dashboard/dashboard",
   },
+
   {
     icon: HiOutlineUserMinus,
     label: "Book Management",
-    href: "/admin-dashboard/booking-management",
+    href: "/clinic-dashboard/booking-management",
   },
   {
     icon: FaUserPlus,
-    label: "Payments",
-    href: "/admin-dashboard/payments",
-  },
-  {
-    icon: BiSolidUserBadge,
     label: "Doctor Management",
-    href: "/admin-dashboard/doctor-management",
+    href: "/clinic-dashboard/doctor-management",
   },
   {
-    icon: TbCalendarUser,
-    label: "Clinic Management",
-    href: "/admin-dashboard/clinic-management",
+    icon: FaUserPlus,
+    label: "Messages",
+    href: "/clinic-dashboard/doctor-management",
   },
-  {
-    icon: IoSettingsOutline,
-    label: "Settings",
-    href: "/admin-dashboard/settings",
-  },
+  // {
+  //   icon: BiSolidUserBadge,
+  //   label: "Doctor Management",
+  //   href: "/clinic-dashboard/doctor-management",
+  // },
+  // {
+  //   icon: TbCalendarUser,
+  //   label: "Clinic Management",
+  //   href: "/clinic-dashboard/clinic-management",
+  // },
+  // {
+  //   icon: IoSettingsOutline,
+  //   label: "Settings",
+  //   href: "/clinic-dashboard/settings",
+  // },
 ];
 
 const AdminSidebar: React.FC<SidebarProps> = ({
