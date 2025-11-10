@@ -7,8 +7,6 @@ import Signup from "@/pages/Signup";
 import AdminLayout from "@/Layout/AdminLayout";
 import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
 import SettingsPage from "@/pages/Admin/SettingsPage";
-import ClientDashboardPage from "@/pages/Client/ClientDashboardPage";
-import ClientLayout from "@/Layout/ClientLayout";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import PatientManagementPage from "@/pages/Admin/PatientManagementPage";
@@ -19,6 +17,11 @@ import PaymentsPage from "@/pages/Admin/PaymentsPage";
 import DoctorManagementPage from "@/pages/Admin/DoctorManagementPage";
 import ClinicManagementPage from "@/pages/Admin/ClinicManagementPage";
 import PaymentHistoryClinic from "@/components/AdminDashboard/ClinicManagement/PaymentHistoryClinic";
+import ClinicLayout from "@/Layout/ClinicLayout";
+import ClinicDashboardPage from "@/pages/Clinic/ClinicDashboardPage";
+import ClinicBookingManagementPage from "@/pages/Clinic/ClinicBookingManagementPage";
+import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPage";
+
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -55,11 +58,13 @@ const routes = createBrowserRouter([
 
   /* Client Dashboard */
   {
-    path: "/client-dashboard",
-    element: <ClientLayout />,
+    path: "/clinic-dashboard",
+    element: <ClinicLayout />,
     children: [
-      { index: true, element: <ClientDashboardPage /> },
-      { path: "dashboard", element: <ClientDashboardPage /> },
+      { index: true, element: <ClinicDashboardPage /> },
+      { path: "dashboard", element: <ClinicDashboardPage /> },
+      { path: "booking-management", element: <ClinicBookingManagementPage /> },
+      { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
     ],
   },
 
