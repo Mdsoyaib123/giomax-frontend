@@ -17,7 +17,7 @@ export interface NavbarProps {
   isSidebarOpen: boolean;
 }
 
-const ClientDashboardNavbar: React.FC<NavbarProps> = ({
+const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
   onMobileMenuToggle,
 
   userName = "Gemini Chachi",
@@ -101,6 +101,4 @@ const ClientDashboardNavbar: React.FC<NavbarProps> = ({
   );
 };
 
-
-
-export default ClientDashboardNavbar
+export default ClinicDashboardNavbar;
