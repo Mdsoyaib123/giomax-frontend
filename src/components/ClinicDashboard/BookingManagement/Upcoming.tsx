@@ -95,13 +95,19 @@ const Upcoming = () => {
                     {/* Right Side: Status and Time */}
                     <div className="flex flex-col items-end space-y-3">
                       {/* Status Badge */}
-                      <span className={`px-3 py-1 rounded text-sm font-medium border ${
-                        appointment.status === 'Confirmed'
-                          ? 'border-green-600 text-green-600 bg-white'
-                          : 'border-yellow-600 text-yellow-600 bg-white'
-                      }`}>
-                        {appointment.status}
-                      </span>
+                     <span
+                         className={`px-3 py-1 rounded text-sm font-medium border ${
+                         appointment.status === 'Confirmed'
+                         ? 'border-green-600 text-green-600'
+                         : 'border-yellow-600 text-yellow-600 bg-white'
+                         }`}
+                  style={{
+                  backgroundColor: appointment.status === 'Confirmed' ? '#D1F3DE' : 'transparent'
+                  }}
+                 >
+                   {appointment.status}
+                    </span>
+
 
                       {/* Time */}
                       <div className="flex items-center text-gray-500">
