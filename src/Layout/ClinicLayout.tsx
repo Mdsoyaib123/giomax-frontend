@@ -1,5 +1,5 @@
-import AdminDashboardNavBar from "@/components/AdminDashboard/Shared/AdminDashboardNavBar";
-import AdminSidebar from "@/components/AdminDashboard/Shared/AdminSidebar";
+import ClinicDashboardNavbar from "@/components/ClinicDashboard/Shared/ClinicDashboardNavbar";
+import ClinicSidebar from "@/components/ClinicDashboard/Shared/ClinicSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
@@ -75,7 +75,7 @@ const ClinicLayout = () => {
       {/* Sidebar - Fixed on Desktop */}
       {!shouldHideSidebar() && (
         <div className="hidden lg:flex w-72 flex-col fixed inset-y-0 z-30  bg-[#FFFFFF]">
-          <AdminSidebar />
+          <ClinicSidebar />
         </div>
       )}
 
@@ -88,7 +88,7 @@ const ClinicLayout = () => {
         {/* Navbar */}
         {!shouldHideNavbar && (
           <div className="fixed top-0 left-0 right-0 z-20  bg-[#FFFFFF] ">
-            <AdminDashboardNavBar
+            <ClinicDashboardNavbar
               onMobileMenuToggle={handleMobileMenuToggle}
               notificationCount={3}
               isSidebarOpen={isSidebarOpen}
@@ -105,7 +105,7 @@ const ClinicLayout = () => {
             side="left"
             className="w-72 p-0 bg-[#FFFFFF] border border-[#E5E7EB]"
           >
-            <AdminSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
+            <ClinicSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>
 
