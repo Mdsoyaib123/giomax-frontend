@@ -1,8 +1,8 @@
 // AdminSidebar.tsx
 import logo from "@/assets/Logo/LogoMain.svg";
+import logo1 from "@/assets/Logo/userLogout.svg";
 import { Badge } from "@/components/ui/badge";
 
-import { RiShareBoxLine } from "react-icons/ri";
 import { ChevronDown } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { FaUserPlus, FaUsers } from "react-icons/fa";
 import { TbCalendarUser } from "react-icons/tb";
 import { BiSolidUserBadge } from "react-icons/bi";
 import { HiOutlineUserMinus } from "react-icons/hi2";
+import { FiLogOut } from "react-icons/fi";
 
 import { IconType } from "react-icons";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -206,21 +207,23 @@ const AdminSidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Help & Support */}
-      <div className="  border-t border-[#C9C6C3]">
-        <div className="flex justify-center ">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-16 w-full max-w-[300px] object-contain"
-          />
+      <div className=" p-2 flex justify-between items-center gap-5 bg-[#F8F9FA]  border border-[#CED4DA]  m-4 rounded-2xl">
+        <div className="gap-3 flex items-center justify-baseline">
+          <div>
+            <img
+              src={logo1}
+              alt="Logo"
+              className="h-16  w-full max-w-[300px] object-contain"
+            />
+          </div>
+          <div>
+            <h2 className=" text-xl font-sans font-semibold">Giorgi M.</h2>
+            <p>Admin</p>
+          </div>
         </div>
-        <Link
-          to="/client-dashboard/help-support"
-          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-sky-500 hover:text- transition-colors px-3 py-2 rounded-lg"
-        >
-          <span className="text-sm font-medium">Help & Support</span>
-          <RiShareBoxLine className="w-5 h-5" />
-        </Link>
+        <div className="  cursor-pointer">
+          <FiLogOut className=" text-red-600" />
+        </div>
       </div>
     </div>
   );
