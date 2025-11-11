@@ -19,7 +19,7 @@ const Upcoming = () => {
       doctorName: 'Dr. Michael Chen',
       visitType: 'Online',
       time: '2:00 PM',
-      status: 'Confirmed'
+      status: 'Confirmed',
     },
     {
       id: '2',
@@ -27,7 +27,7 @@ const Upcoming = () => {
       doctorName: 'Dr. Michael Chen',
       visitType: 'Online',
       time: '2:00 PM',
-      status: 'Pending'
+      status: 'Pending',
     },
     {
       id: '3',
@@ -35,7 +35,7 @@ const Upcoming = () => {
       doctorName: 'Dr. Michael Chen',
       visitType: 'Online',
       time: '2:00 PM',
-      status: 'Confirmed'
+      status: 'Confirmed',
     },
     {
       id: '4',
@@ -43,12 +43,12 @@ const Upcoming = () => {
       doctorName: 'Dr. Michael Chen',
       visitType: 'Online',
       time: '2:00 PM',
-      status: 'Confirmed'
-    }
+      status: 'Confirmed',
+    },
   ];
 
   return (
-    <div className=" bg-gray-50">
+    <div className="bg-gray-50">
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 overflow-y-auto hidden lg:block">
         <div className="p-6">
@@ -68,9 +68,9 @@ const Upcoming = () => {
       </aside>
 
       {/* Main Content */}
-      <div >
+      <div>
         {/* Content Area */}
-        <div >
+        <div>
           {/* Appointments List */}
           <div className="bg-white rounded-lg shadow-sm">
             <div className="p-4 border-b border-gray-200">
@@ -78,7 +78,10 @@ const Upcoming = () => {
             </div>
             <div className="divide-y divide-gray-200">
               {appointments.map((appointment) => (
-                <div key={appointment.id} className="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-500">
+                <div
+                  key={appointment.id}
+                  className="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-500"
+                >
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
                     {/* Patient Info */}
                     <div className="flex-1">
@@ -95,19 +98,19 @@ const Upcoming = () => {
                     {/* Right Side: Status and Time */}
                     <div className="flex flex-col items-end space-y-3">
                       {/* Status Badge */}
-                     <span
-                         className={`px-3 py-1 rounded text-sm font-medium border ${
-                         appointment.status === 'Confirmed'
-                         ? 'border-green-600 text-green-600'
-                         : 'border-yellow-600 text-yellow-600 bg-white'
-                         }`}
-                  style={{
-                  backgroundColor: appointment.status === 'Confirmed' ? '#D1F3DE' : 'transparent'
-                  }}
-                 >
-                   {appointment.status}
-                    </span>
-
+                      <span
+                        className={`px-3 py-1 rounded text-sm font-medium border ${
+                          appointment.status === 'Confirmed'
+                            ? 'border-green-600 text-green-600 cursor-pointer'
+                            : 'border-yellow-600 text-yellow-600 bg-white cursor-pointer'
+                        }`}
+                        style={{
+                          backgroundColor:
+                            appointment.status === 'Confirmed' ? '#D1F3DE' : 'transparent',
+                        }}
+                      >
+                        {appointment.status}
+                      </span>
 
                       {/* Time */}
                       <div className="flex items-center text-gray-500">
@@ -120,10 +123,10 @@ const Upcoming = () => {
                   {/* Action Buttons - Only for Pending appointments */}
                   {appointment.status === 'Pending' && (
                     <div className="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                      <button className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                      <button className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer">
                         Accept
                       </button>
-                      <button className="flex-1 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg font-medium transition-colors">
+                      <button className="flex-1 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer">
                         Reject
                       </button>
                     </div>

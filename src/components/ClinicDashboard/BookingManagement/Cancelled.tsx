@@ -1,6 +1,7 @@
 import { Clock } from 'lucide-react';
 import { useState } from 'react';
 
+
 // Types
 interface Appointment {
   id: string;
@@ -12,6 +13,7 @@ interface Appointment {
 }
 
 const Cancelled = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchQuery, setSearchQuery] = useState('');
 
   // Static cancelled appointment data
@@ -87,7 +89,7 @@ const Cancelled = () => {
                     {/* Right Side: Status and Time */}
                     <div className="flex flex-col items-end space-y-3">
                       {/* Status Badge */}
-                      <span className="px-3 py-1 rounded text-sm font-medium border border-red-600 text-red-600 bg-white">
+                     <span className="flex-1 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer">
                         {appointment.status}
                       </span>
 

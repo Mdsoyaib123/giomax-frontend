@@ -12,6 +12,7 @@ interface Appointment {
 }
 
 const Completed = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchQuery, setSearchQuery] = useState('');
 
   // Static completed appointment data
@@ -77,7 +78,10 @@ const Completed = () => {
             </div>
             <div className="divide-y divide-gray-200">
               {filteredAppointments.map((appointment) => (
-                <div key={appointment.id} className="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-500">
+                <div
+                  key={appointment.id}
+                  className="p-6 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-blue-500"
+                >
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
                     {/* Patient Info */}
                     <div className="flex-1">
@@ -94,7 +98,9 @@ const Completed = () => {
                     {/* Right Side: Status and Time */}
                     <div className="flex flex-col items-end space-y-3">
                       {/* Status Badge */}
-                      <span className="px-3 py-1 rounded text-sm font-medium border border-blue-600 text-blue-600 bg-white">
+                      <span
+                        className="px-3 py-1 rounded text-sm font-medium border border-blue-600 text-blue-600 bg-white cursor-pointer"
+                      >
                         {appointment.status}
                       </span>
 
