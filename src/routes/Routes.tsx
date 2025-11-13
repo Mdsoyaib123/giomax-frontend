@@ -23,6 +23,7 @@ import ClinicBookingManagementPage from "@/pages/Clinic/ClinicBookingManagementP
 import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPage";
 import ClinicPatientListPage from "@/pages/Clinic/ClinicPatientListPage";
 
+
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -67,6 +68,8 @@ const routes = createBrowserRouter([
       { path: "patient-list", element: <ClinicPatientListPage /> },
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
+      
+      
     ],
   },
 
