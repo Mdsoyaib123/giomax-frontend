@@ -143,22 +143,22 @@ const PatientManagement: React.FC<Props> = ({ id }) => {
                   <thead className="bg-gray-100 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Group Name
+                        Patient Name
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Location
-                      </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Email Address
+                    Email Address
                       </th>
                       <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Phone Number
                       </th>
-                      <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
+                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
                         Total Bookings
                       </th>
                       <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
-                        Action
+                       Last Appoinment
+                      </th>
+                      <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
+                        Actions
                       </th>
                     </tr>
                   </thead>
