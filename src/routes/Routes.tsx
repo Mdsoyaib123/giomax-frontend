@@ -21,6 +21,7 @@ import ClinicLayout from "@/Layout/ClinicLayout";
 import ClinicDashboardPage from "@/pages/Clinic/ClinicDashboardPage";
 import ClinicBookingManagementPage from "@/pages/Clinic/ClinicBookingManagementPage";
 import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPage";
+import ClinicPatientListPage from "@/pages/Clinic/ClinicPatientListPage";
 
 const routes = createBrowserRouter([
   {
@@ -63,6 +64,7 @@ const routes = createBrowserRouter([
     children: [
       { index: true, element: <ClinicDashboardPage /> },
       { path: "dashboard", element: <ClinicDashboardPage /> },
+      { path: "patient-list", element: <ClinicPatientListPage /> },
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
     ],
