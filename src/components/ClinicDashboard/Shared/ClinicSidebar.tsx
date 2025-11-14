@@ -1,4 +1,3 @@
-
 import logo from "@/assets/Pic.png";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,7 +37,7 @@ const defaultSidebarItems: SidebarItem[] = [
   {
     icon: HiOutlineUserMinus,
     label: "Parient List",
-    href: "/clinic-dashboard/booking-management",
+    href: "/clinic-dashboard/patient-list",
   },
   {
     icon: FaUserPlus,
@@ -50,17 +49,17 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Booking Management",
     href: "/clinic-dashboard/ew",
   },
-   {
+  {
     icon: FaUserPlus,
     label: "Patment & Earning",
     href: "/clinic-dashboard/aad",
   },
-   {
+  {
     icon: FaUserPlus,
     label: "Messages",
     href: "/clinic-dashboard/jh",
   },
-   {
+  {
     icon: FaUserPlus,
     label: "Setting",
     href: "/clinic-dashboard/message",
@@ -98,36 +97,26 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       className="flex flex-col h-full bg-[#FFFFFF]"
       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
     >
-
-
-
-   {/* Logo */}
-<Link to="/admin-dashboard/dashboard">
-  <div className="flex items-center border-b border-gray-200 mt-1 p-2">
-    <div className="flex-shrink-0 w-12 h-12 mr-3">
-      <img
-        src={logo}
-        alt="Wardier Medical Clinic Logo"
-        className="object-contain w-full h-full"
-      />
-    </div>
-    <div>
-      <p className="text-base  text-[#000000] font-bold">
-        Wardier Medical Clinic
-        <span className="block text-[12px] text-gray-500">Powered by Med Connect</span>
-      </p>
-    </div>
-  </div>
-</Link>
-
-
-
-
-
-
-
-
-
+      {/* Logo */}
+      <Link to="/admin-dashboard/dashboard">
+        <div className="flex items-center border-b border-gray-200 mt-1 p-2">
+          <div className="flex-shrink-0 w-12 h-12 mr-3">
+            <img
+              src={logo}
+              alt="Wardier Medical Clinic Logo"
+              className="object-contain w-full h-full"
+            />
+          </div>
+          <div>
+            <p className="text-base  text-[#000000] font-bold">
+              Wardier Medical Clinic
+              <span className="block text-[12px] text-gray-500">
+                Powered by Med Connect
+              </span>
+            </p>
+          </div>
+        </div>
+      </Link>
 
       {/* <Link to="/admin-dashboard/dashboard">
         <div className="flex items-center justify-center border-b border-[#E5E7EB] mt-1 w-full">
