@@ -89,9 +89,12 @@ const Login = () => {
                   </div>
                 </div>
                 <div className=" flex justify-end items-center text-end">
-                  <p className="text-sm text-[#2A779E] mt-4 text-center">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-[#2A779E] mt-4 text-center"
+                  >
                     Forget Password
-                  </p>
+                  </Link>
                 </div>
                 {/* Login Button */}
                 <Link to="/admin-dashboard">

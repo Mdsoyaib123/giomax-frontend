@@ -1,5 +1,4 @@
-// AdminSidebar.tsx
-import logo from "@/assets/Logo/LogoMain.svg";
+import logo from "@/assets/Pic.png";
 import { Badge } from "@/components/ui/badge";
 
 import { RiShareBoxLine } from "react-icons/ri";
@@ -37,8 +36,8 @@ const defaultSidebarItems: SidebarItem[] = [
 
   {
     icon: HiOutlineUserMinus,
-    label: "Book Management",
-    href: "/clinic-dashboard/booking-management",
+    label: "Parient List",
+    href: "/clinic-dashboard/patient-list",
   },
   {
     icon: FaUserPlus,
@@ -47,8 +46,23 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: FaUserPlus,
+    label: "Booking Management",
+    href: "/clinic-dashboard/ew",
+  },
+  {
+    icon: FaUserPlus,
+    label: "Patment & Earning",
+    href: "/clinic-dashboard/aad",
+  },
+  {
+    icon: FaUserPlus,
     label: "Messages",
-    href: "/clinic-dashboard/doctor-management",
+    href: "/clinic-dashboard/jh",
+  },
+  {
+    icon: FaUserPlus,
+    label: "Setting",
+    href: "/clinic-dashboard/message",
   },
   // {
   //   icon: BiSolidUserBadge,
@@ -85,16 +99,25 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
     >
       {/* Logo */}
       <Link to="/admin-dashboard/dashboard">
-        <div className="flex items-center justify-center  border-b border-[#E5E7EB] mt-1">
-          <div className="flex justify-center mb-1">
+        <div className="flex items-center border-b border-gray-200 mt-1 p-2">
+          <div className="flex-shrink-0 w-12 h-12 mr-3">
             <img
               src={logo}
-              alt="Logo"
-              className="h-17 w-full max-w-[300px] object-contain"
+              alt="Wardier Medical Clinic Logo"
+              className="object-contain w-full h-full"
             />
+          </div>
+          <div>
+            <p className="text-base  text-[#000000] font-bold">
+              Wardier Medical Clinic
+              <span className="block text-[12px] text-gray-500">
+                Powered by Med Connect
+              </span>
+            </p>
           </div>
         </div>
       </Link>
+
       {/* <Link to="/admin-dashboard/dashboard">
         <div className="flex items-center justify-center border-b border-[#E5E7EB] mt-1 w-full">
           <div className="flex justify-center w-full">

@@ -12,8 +12,8 @@ const Settings = () => {
           description="Manage platform settings and configurations"
         />
       </div>
-      
-      <div className="grid lg:grid-cols-2 gap-6">
+
+      <div className="grid xl:grid-cols-2 gap-6">
         <TeamManagement />
         <Commission />
         <Configuration />
