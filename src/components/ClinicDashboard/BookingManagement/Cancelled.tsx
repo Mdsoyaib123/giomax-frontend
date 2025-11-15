@@ -1,11 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import a from "@assets/a.png";
-import b from "@assets/b.png";
 import c from "@assets/c.png";
-import d from "@assets/d.png";
-import e from "@assets/e.png";
-import f from "@assets/f.png";
 
 interface CancelledProps {
   onViewDetails: () => void;

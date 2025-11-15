@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
@@ -5,6 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
+import SectionTitle from "@/common/SectionTitle";
 
 interface Patient {
   id: number;
@@ -24,7 +26,6 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
 
   // Navigate to payment history page
   const handleClick = (patientId: number) => {
@@ -107,13 +108,19 @@ const PatientList: React.FC<Props> = ({ id }) => {
     },
   ];
 
-  const totalPages = Math.ceil(patients.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentpatients = patients.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = 9; 
+  let currentpatients: Patient[] = [];
+  
+  if (currentPage === 1) {
+    currentpatients = patients;
+  } else if (currentPage === 2) {
+    currentpatients = patients.slice(0, 5);
+  } else {
+    currentpatients = []; // Pages 3-9 are empty
+  }
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNext = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   const handleRemove = (id: number) => {
     alert(`Patient ${id} removed successfully!`);
@@ -126,7 +133,28 @@ const PatientList: React.FC<Props> = ({ id }) => {
   };
 
   return (
-    <div>
+
+    <div className=" space-y-7">
+      <div className="flex justify-between items-center flex-wrap">
+  <div className="w-full sm:w-auto">
+    <SectionTitle
+      title="Patient List"
+      description="View and manage all registed Patients"
+    />
+  </div>
+  <div className="w-full sm:w-auto mt-4 sm:mt-0">
+    {/* Add New Patient Button */}
+    <button
+      onClick={() => setShowAddPatientModal(true)}
+      className="h-9 px-4 bg-[#2E6FF3] text-white text-sm font-medium rounded-lg hover:bg-[#034ee6] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 w-full sm:w-auto"
+    >
+      <span className="text-lg font-bold">+</span>
+      Add New Patient
+    </button>
+  </div>
+</div>
+
+ <div>
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
@@ -145,14 +173,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
               />
             </div>
 
-            {/* Add New Patient Button */}
-            <button
-              onClick={() => setShowAddPatientModal(true)}
-              className="h-9 px-4 bg-[#2E6FF3] text-white text-sm font-medium rounded-lg hover:bg-[#034ee6] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5"
-            >
-              <span className="text-lg font-bold">+</span>
-              Add New Patient
-            </button>
+            
           </div>
         </div>
 
@@ -187,39 +208,47 @@ const PatientList: React.FC<Props> = ({ id }) => {
                   </thead>
 
                   <tbody className="divide-y divide-gray-100">
-                    {currentpatients.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-3 whitespace-nowrap font-semibold text-gray-900">
-                          {user.name}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap">
-                          {user.email}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap">
-                          {user.phone}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-center">
-                          {user.totalBookings}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-center">
-                          {user.lastAppointment}
-                        </td>
+                    {currentpatients.length > 0 ? (
+                      currentpatients.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <td className="px-6 py-3 whitespace-nowrap font-semibold text-gray-900">
+                            {user.name}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap">
+                            {user.email}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap">
+                            {user.phone}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-center">
+                            {user.totalBookings}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-center">
+                            {user.lastAppointment}
+                          </td>
 
-                        <td className="px-6 py-3 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => setOpenProfile(user)}
-                              className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer"
-                            >
-                              <FaEye /> View
-                            </button>
-                          </div>
+                          <td className="px-6 py-3 text-center">
+                            <div className="flex justify-center gap-2">
+                              <button
+                                onClick={() => setOpenProfile(user)}
+                                className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer"
+                              >
+                                <FaEye /> View
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                          No patients found on this page
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -230,7 +259,9 @@ const PatientList: React.FC<Props> = ({ id }) => {
         {/* Pagination */}
         <div className="mt-6 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Showing {currentpatients.length} of {patients.length} patients
+            {currentPage === 1 && `Showing 9 of 9 patients`}
+            {currentPage === 2 && `Showing 5 of 5 patients`}
+            {currentPage > 2 && `Showing 0 patients`}
           </p>
 
           <div className="flex gap-2 items-center">
@@ -420,6 +451,8 @@ const PatientList: React.FC<Props> = ({ id }) => {
         </div>
       )}
     </div>
+    </div>
+   
   );
 };
 

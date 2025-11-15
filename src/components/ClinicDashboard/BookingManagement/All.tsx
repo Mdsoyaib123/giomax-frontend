@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { X, CheckCircle } from "lucide-react";
 import a from "@assets/a.png";

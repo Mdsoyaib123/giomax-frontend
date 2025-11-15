@@ -47,7 +47,7 @@ const defaultSidebarItems: SidebarItem[] = [
   {
     icon: FaUserPlus,
     label: "Booking Management",
-    href: "/clinic-dashboard/ew",
+    href: "/clinic-dashboard/booking-management",
   },
   {
     icon: FaUserPlus,
@@ -62,7 +62,7 @@ const defaultSidebarItems: SidebarItem[] = [
   {
     icon: FaUserPlus,
     label: "Setting",
-    href: "/clinic-dashboard/message",
+    href: "/clinic-dashboard/settings",
   },
   // {
   //   icon: BiSolidUserBadge,
