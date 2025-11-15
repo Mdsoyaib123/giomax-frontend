@@ -25,7 +25,9 @@ interface Appointment {
 
 const All: React.FC<AllProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showCancelledModal, setShowCancelledModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   // Appointment data - using state to update status
@@ -125,11 +127,27 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
       setShowModal(true);
     } else if (appointment.status === "Approved") {
       setShowSuccessModal(true);
+    } else if (appointment.status === "Completed") {
+      setSelectedAppointment(appointment);
+      setShowCompletedModal(true);
+    } else if (appointment.status === "Cancelled") {
+      setSelectedAppointment(appointment);
+      setShowCancelledModal(true);
     }
   };
 
   const handleClose = () => {
     setShowModal(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleCompletedClose = () => {
+    setShowCompletedModal(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleCancelledClose = () => {
+    setShowCancelledModal(false);
     setSelectedAppointment(null);
   };
 
@@ -159,9 +177,13 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
             : apt
         )
       );
+      setShowModal(false);
+      // Show cancelled modal after cancelling
+      setShowCancelledModal(true);
+    } else {
+      setShowModal(false);
+      setSelectedAppointment(null);
     }
-    setShowModal(false);
-    setSelectedAppointment(null);
   };
 
   return (
@@ -412,6 +434,116 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
         </div>
       )}
 
+      {/* Completed Modal - Shows when Completed button is clicked */}
+      {showCompletedModal && selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Appointment Details
+                </h2>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                  Completed
+                </span>
+              </div>
+              <button
+                onClick={handleCompletedClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <p className="text-sm text-gray-500 mb-6">
+                View appointment information
+              </p>
+
+              {/* Form Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Patient Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.patientName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Doctor Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Doctor Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.doctorName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Service Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.service}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Date & Time */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date & Time
+                  </label>
+                  <input
+                    type="text"
+                    value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Service Type */}
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Type
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.visitType}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Button */}
+            <div className="flex gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
+              <button
+                onClick={handleCompletedClose}
+                className="absolute bottom-4 right-4 py-3 px-6 bg-[#EFF4FF] text-[#2E6FF3] rounded-lg hover:bg-[#d2e3ff] hover:text-[#1a5db0] font-medium text-sm transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Success Modal - Shows when Approved */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -444,6 +576,116 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 className="w-full mt-6 py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm transition-colors"
               >
                 Back to Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancelled Modal - Shows when Cancelled button is clicked */}
+      {showCancelledModal && selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Appointment Details
+                </h2>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                  Cancelled
+                </span>
+              </div>
+              <button
+                onClick={handleCancelledClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <p className="text-sm text-gray-500 mb-6">
+                View appointment information
+              </p>
+
+              {/* Form Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Patient Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.patientName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Doctor Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Doctor Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.doctorName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Service Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.service}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Date & Time */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date & Time
+                  </label>
+                  <input
+                    type="text"
+                    value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                {/* Service Type */}
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Type
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.visitType}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Button */}
+            <div className="flex gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
+              <button
+                onClick={handleCancelledClose}
+                className="ml-auto py-3 px-6 bg-[#EFF4FF] text-[#2E6FF3] rounded-lg hover:bg-[#d2e3ff] hover:text-[#1a5db0] font-medium text-sm transition-colors cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import a from "@assets/a.png";
+import c from "@assets/c.png"; // Added new doctor image
 
 interface PendingProps {
   onViewDetails: () => void;
@@ -22,7 +23,7 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
-  // Only Pending appointments
+  // Only Pending appointments with a new doctor (c.png)
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: 1,
@@ -34,6 +35,17 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
       status: "Pending",
       visitType: "Clinic Visit",
       patientImage: a,
+    },
+    {
+      id: 2,
+      patientName: "Jane Doe",
+      service: "Orthopedic Consultation",
+      doctorName: "Dr. Mike Taylor",
+      date: "Nov 14, 2025",
+      time: "2:00 PM",
+      status: "Pending",
+      visitType: "Online Consultation",
+      patientImage: c, // New doctor image (c.png)
     },
   ]);
 
