@@ -61,8 +61,14 @@ const PertientMessage: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center rounded-[16px]">
-      <div className="w-full max-w-[1592px] h-full max-h-[908px] flex bg-white shadow-2xl rounded-xl overflow-hidden">
+ 
+    <div>
+    
+   <div className="">
+    <h1 className='text-2xl font-bold mb-2 '>Message</h1>
+    <p className='mb-5'>Chat with Patients and manage conversations</p>
+    
+      <div className=" w-[1592px]  h-[908px] flex bg-white shadow-2xl rounded-xl overflow-hidden">
 
         {/* Sidebar */}
         <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-10 h-full`}>
@@ -218,6 +224,8 @@ const PertientMessage: React.FC = () => {
         </div>
       </div>
     </div>
+    </div>
+      
   );
 };
 

@@ -44,7 +44,7 @@ const PaymentEarningCard = () => {
           >
             <div className="space-y-2">
               <div className="bg-[#F9F8F6] border border-[#F6F4F2] w-12 h-12 rounded-xl p-3 flex items-center justify-center">
-                <img src={single.icon} alt={single.title} className="w-8 h-8 object-contain" />
+                <img src={single.icon} alt={single.title} className="w- h-8 object-contain " />
               </div>
               <h1 className="text-lg leading-[160%] font-medium" style={{ color: "#343A40" }}>
                 {single.title}
