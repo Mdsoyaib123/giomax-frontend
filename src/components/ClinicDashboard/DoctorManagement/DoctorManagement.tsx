@@ -127,50 +127,228 @@ const DoctorManagement: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Doctors Management</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage your clinic's medical staff</p>
+    // <div className="p-6 bg-gray-50 min-h-screen">
+    //   <div className="flex items-start justify-between mb-6">
+    //     <div>
+    //       <h1 className="text-2xl font-semibold text-gray-900">Doctors Management</h1>
+    //       <p className="text-sm text-gray-500 mt-0.5">Manage your clinic's medical staff</p>
+    //     </div>
+
+    //     {/* ⭐ ADDED: OPEN ADD DOCTOR MODAL */}
+    //     <button
+    //       onClick={() => setOpenAddDoctor(true)}
+    //       className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition"
+    //     >
+    //       <Plus size={16} />
+    //       Add New Doctor
+    //     </button>
+    //   </div>
+
+    //   <div className="bg-white rounded-lg shadow-sm p-6 gap-2 border border-gray-300 rounded-md px-5 py-2.5 ">
+    //     <div className="flex items-center justify-between mb-5">
+    //       <h2 className="text-base text-gray-900 gap-2 bg-white rounded-md px-3 py-1.5 w-60">
+    //         All Doctors Information
+    //       </h2>
+
+    //       <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 w-60">
+    //         <IoIosSearch className="text-gray-400 text-lg" />
+    //         <input
+    //           type="search"
+    //           placeholder="Search patients..."
+    //           className="bg-transparent flex-1 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
+    //         />
+    //       </div>
+    //     </div>
+
+    //     <div className="border border-gray-200 rounded-lg overflow-hidden">
+    //       <table className="w-full min-w-[1100px]">
+    //         <thead>
+    //           <tr className="bg-gray-50 border-b border-gray-200">
+    //             <th className="px-3 py-3 text-left text-xs text-gray-700 font-bold">Doctor Name</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Email Address</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Specialty</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Service Type</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Phone Number</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Total Appointments</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Actions</th>
+    //           </tr>
+    //         </thead>
+
+    //         <tbody>
+    //           {currentDoctors.map((doctor, index) => (
+    //             <tr
+    //               key={doctor.id}
+    //               className={`hover:bg-gray-50/50 transition ${
+    //                 index !== currentDoctors.length - 1 ? "border-b border-gray-200" : ""
+    //               }`}
+    //             >
+    //               <td className="px-3 py-3 text-sm text-gray-900">{doctor.name}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.email}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.specialty}</td>
+    //               <td className="px-3 py-3">
+    //                 <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3]">
+    //                   {doctor.serviceType}
+    //                 </span>
+    //               </td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.phone}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.totalAppointments}</td>
+
+    //               <td className="px-3 py-3">
+    //                 <div className="flex items-center gap-2">
+
+    //                   {/* ⭐ VIEW BUTTON OPEN PROFILE */}
+    //                   <button
+    //                     onClick={() => setOpenProfile(doctor)}
+    //                     className="flex items-center gap-1.5 bg-[#2E6FF3] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-600 transition"
+    //                   >
+    //                     <FaEye size={11} /> View
+    //                   </button>
+
+    //                   {/* ⭐ EDIT BUTTON OPENS EDIT DOCTOR MODAL */}
+    //                   <button
+    //                     onClick={() => setOpenEditDoctor(doctor)}
+    //                     className="flex items-center gap-1.5 bg-[#0B9CAC] text-white px-3 py-1 rounded text-xs font-medium hover:bg-teal-600 transition"
+    //                   >
+    //                     <FiEdit2 size={11} /> Edit
+    //                   </button>
+
+    //                 </div>
+    //               </td>
+
+    //             </tr>
+    //           ))}
+    //         </tbody>
+    //       </table>
+    //     </div>
+
+    //     {/* Pagination */}
+    //     <div className="flex items-center justify-between mt-4">
+    //       <p className="text-sm text-gray-600">
+    //         Showing <span className="font-medium">{startIndex}</span> to{" "}
+    //         <span className="font-medium">{endIndex}</span> of{" "}
+    //         <span className="font-medium">{doctors.length}</span> entries
+    //       </p>
+
+    //       <div className="flex items-center gap-1">
+    //         <button
+    //           onClick={() => setCurrentPage(1)}
+    //           disabled={currentPage === 1}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 1
+    //               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           Prev
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(1)}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 1
+    //               ? "bg-blue-500 text-white border-blue-500"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           1
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(2)}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 2
+    //               ? "bg-blue-500 text-white border-blue-500"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           2
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(2)}
+    //           disabled={currentPage === 2}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 2
+    //               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           Next
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
+
+    //   {/* ⭐ VIEW DOCTOR MODAL */}
+    //   {openProfile && (
+    //     <ViewDocterDetails
+    //       doctor={openProfile}
+    //       onClose={() => setOpenProfile(null)}
+    //     />
+    //   )}
+
+    //   {/* ⭐ ADD DOCTOR MODAL */}
+    //   {openAddDoctor && (
+    //     <AddDoctorForm onClose={() => setOpenAddDoctor(false)} />
+    //   )}
+
+    //   {/* ⭐ EDIT DOCTOR MODAL */}
+    //   {openEditDoctor && (
+    //     <EditDoctorDetails
+    //       doctor={openEditDoctor}
+    //       onClose={() => setOpenEditDoctor(null)}
+    //     />
+    //   )}
+    // </div>
+    <div>
+      <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Doctors Management</h1>
+          <p className="text-xs md:text-sm text-gray-500 mt-0.5">Manage your clinic's medical staff</p>
         </div>
 
-        {/* ⭐ ADDED: OPEN ADD DOCTOR MODAL */}
+        {/* Add Doctor Button */}
         <button
           onClick={() => setOpenAddDoctor(true)}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition"
+          className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-xs md:text-sm font-medium shadow-sm transition"
         >
           <Plus size={16} />
           Add New Doctor
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-6 gap-2 border border-gray-300 rounded-md px-5 py-2.5 ">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base text-gray-900 gap-2 bg-white rounded-md px-3 py-1.5 w-60">
+      {/* Main Content */}
+      <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 gap-2 border border-gray-300 rounded-md px-4 md:px-5 py-2.5">
+        {/* Title and Search */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-5">
+          <h2 className="text-base text-gray-900 gap-2 bg-white rounded-md px-3 py-1.5">
             All Doctors Information
           </h2>
 
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 w-60">
-            <IoIosSearch className="text-gray-400 text-lg" />
+          <div className="w-full md:w-60 flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5">
+            <IoIosSearch className="text-gray-400 text-lg flex-shrink-0" />
             <input
               type="search"
-              placeholder="Search patients..."
+              placeholder="Search doctors..."
               className="bg-transparent flex-1 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
             />
           </div>
         </div>
 
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full min-w-[1100px]">
+        {/* Table Container - Horizontal Scroll on Mobile */}
+        <div className="border border-gray-200 rounded-lg overflow-x-auto">
+          <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-3 py-3 text-left text-xs text-gray-700 font-bold">Doctor Name</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Email Address</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Specialty</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Service Type</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Phone Number</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Total Appointments</th>
-                <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Actions</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs text-gray-700 font-bold whitespace-nowrap">Doctor Name</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden sm:table-cell">Email Address</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">Specialty</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden md:table-cell">Service Type</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden lg:table-cell">Phone Number</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden xl:table-cell">Total Appointments</th>
+                <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">Actions</th>
               </tr>
             </thead>
 
@@ -182,39 +360,36 @@ const DoctorManagement: React.FC = () => {
                     index !== currentDoctors.length - 1 ? "border-b border-gray-200" : ""
                   }`}
                 >
-                  <td className="px-3 py-3 text-sm text-gray-900">{doctor.name}</td>
-                  <td className="px-3 py-3 text-sm text-gray-600">{doctor.email}</td>
-                  <td className="px-3 py-3 text-sm text-gray-600">{doctor.specialty}</td>
-                  <td className="px-3 py-3">
-                    <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3]">
+                  <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-900 font-medium">{doctor.name}</td>
+                  <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden sm:table-cell">{doctor.email}</td>
+                  <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600">{doctor.specialty}</td>
+                  <td className="px-2 md:px-3 py-3 hidden md:table-cell">
+                    <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3] whitespace-nowrap">
                       {doctor.serviceType}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-sm text-gray-600">{doctor.phone}</td>
-                  <td className="px-3 py-3 text-sm text-gray-600">{doctor.totalAppointments}</td>
+                  <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden lg:table-cell">{doctor.phone}</td>
+                  <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden xl:table-cell">{doctor.totalAppointments}</td>
 
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-
-                      {/* ⭐ VIEW BUTTON OPEN PROFILE */}
+                  <td className="px-2 md:px-3 py-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2">
+                      {/* View Button */}
                       <button
                         onClick={() => setOpenProfile(doctor)}
-                        className="flex items-center gap-1.5 bg-[#2E6FF3] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-600 transition"
+                        className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-[#2E6FF3] text-white px-2.5 md:px-3 py-1 rounded text-xs font-medium hover:bg-blue-600 transition"
                       >
                         <FaEye size={11} /> View
                       </button>
 
-                      {/* ⭐ EDIT BUTTON OPENS EDIT DOCTOR MODAL */}
+                      {/* Edit Button */}
                       <button
                         onClick={() => setOpenEditDoctor(doctor)}
-                        className="flex items-center gap-1.5 bg-[#0B9CAC] text-white px-3 py-1 rounded text-xs font-medium hover:bg-teal-600 transition"
+                        className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-[#0B9CAC] text-white px-2.5 md:px-3 py-1 rounded text-xs font-medium hover:bg-teal-600 transition"
                       >
                         <FiEdit2 size={11} /> Edit
                       </button>
-
                     </div>
                   </td>
-
                 </tr>
               ))}
             </tbody>
@@ -222,18 +397,18 @@ const DoctorManagement: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-gray-600">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+          <p className="text-xs md:text-sm text-gray-600">
             Showing <span className="font-medium">{startIndex}</span> to{" "}
             <span className="font-medium">{endIndex}</span> of{" "}
             <span className="font-medium">{doctors.length}</span> entries
           </p>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto w-full md:w-auto">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className={`px-3 py-1 text-sm border rounded transition ${
+              className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition whitespace-nowrap ${
                 currentPage === 1
                   ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -244,7 +419,7 @@ const DoctorManagement: React.FC = () => {
 
             <button
               onClick={() => setCurrentPage(1)}
-              className={`px-3 py-1 text-sm border rounded transition ${
+              className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition ${
                 currentPage === 1
                   ? "bg-blue-500 text-white border-blue-500"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -255,7 +430,7 @@ const DoctorManagement: React.FC = () => {
 
             <button
               onClick={() => setCurrentPage(2)}
-              className={`px-3 py-1 text-sm border rounded transition ${
+              className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition ${
                 currentPage === 2
                   ? "bg-blue-500 text-white border-blue-500"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -267,7 +442,7 @@ const DoctorManagement: React.FC = () => {
             <button
               onClick={() => setCurrentPage(2)}
               disabled={currentPage === 2}
-              className={`px-3 py-1 text-sm border rounded transition ${
+              className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition whitespace-nowrap ${
                 currentPage === 2
                   ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -279,7 +454,7 @@ const DoctorManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* ⭐ VIEW DOCTOR MODAL */}
+      {/* View Doctor Modal */}
       {openProfile && (
         <ViewDocterDetails
           doctor={openProfile}
@@ -287,18 +462,19 @@ const DoctorManagement: React.FC = () => {
         />
       )}
 
-      {/* ⭐ ADD DOCTOR MODAL */}
+      {/* Add Doctor Modal */}
       {openAddDoctor && (
         <AddDoctorForm onClose={() => setOpenAddDoctor(false)} />
       )}
 
-      {/* ⭐ EDIT DOCTOR MODAL */}
+      {/* Edit Doctor Modal */}
       {openEditDoctor && (
         <EditDoctorDetails
           doctor={openEditDoctor}
           onClose={() => setOpenEditDoctor(null)}
         />
       )}
+    </div>
     </div>
   );
 };

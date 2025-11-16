@@ -23,6 +23,8 @@ import ClinicBookingManagementPage from "@/pages/Clinic/ClinicBookingManagementP
 import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPage";
 import ClinicPatientListPage from "@/pages/Clinic/ClinicPatientListPage";
 import ClinicSettingsPage from "@/pages/Clinic/ClinicSettingsPage";
+import PaymentEarning from "@/components/ClinicDashboard/Dashboard/PaymentEarning";
+import PertientMessage from "@/components/ClinicDashboard/ClinicSettings/ClinicMessage/PertientMessage";
 
 const routes = createBrowserRouter([
   {
@@ -69,6 +71,8 @@ const routes = createBrowserRouter([
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
       { path: "settings", element: <ClinicSettingsPage /> },
+      { path: "payment", element: <PaymentEarning></PaymentEarning>},
+      { path: "message", element: <PertientMessage></PertientMessage>},
     ],
   },
 
