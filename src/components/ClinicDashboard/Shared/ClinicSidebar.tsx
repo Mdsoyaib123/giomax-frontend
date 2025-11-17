@@ -37,14 +37,25 @@ export interface SidebarProps {
 const defaultSidebarItems: SidebarItem[] = [
   { icon: img1, label: "Dashboard", href: "/clinic-dashboard/dashboard" },
   { icon: img2, label: "Parient List", href: "/clinic-dashboard/patient-list" },
-  { icon: img3, label: "Doctor Management", href: "/clinic-dashboard/doctor-management" },
-  { icon: img4, label: "Booking Management", href: "/clinic-dashboard/booking-management" },
+  {
+    icon: img3,
+    label: "Doctor Management",
+    href: "/clinic-dashboard/doctor-management",
+  },
+  {
+    icon: img4,
+    label: "Booking Management",
+    href: "/clinic-dashboard/booking-management",
+  },
   { icon: img5, label: "Payment & Earning", href: "/clinic-dashboard/payment" },
   { icon: img6, label: "Messages", href: "/clinic-dashboard/message" },
   { icon: img7, label: "Setting", href: "/clinic-dashboard/settings" },
 ];
 
-const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, onItemClick }) => {
+const ClinicSidebar: React.FC<SidebarProps> = ({
+  items = defaultSidebarItems,
+  onItemClick,
+}) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -53,17 +64,26 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#FFFFFF]" style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}>
+    <div
+      className="flex flex-col h-full bg-[#FFFFFF]"
+      style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
+    >
       {/* Logo */}
       <Link to="/admin-dashboard/dashboard">
         <div className="flex items-center border-b border-gray-200 mt-1 p-2">
           <div className="flex-shrink-0 w-12 h-12 mr-3">
-            <img src={logo} alt="Wardier Medical Clinic Logo" className="object-contain w-full h-full" />
+            <img
+              src={logo}
+              alt="Wardier Medical Clinic Logo"
+              className="object-contain w-full h-full"
+            />
           </div>
           <div>
             <p className="text-base text-[#000000] font-bold">
               Wardier Medical Clinic
-              <span className="block text-[12px] text-gray-500">Powered by Med Connect</span>
+              <span className="block text-[12px] text-gray-500">
+                Powered by Med Connect
+              </span>
             </p>
           </div>
         </div>
@@ -85,7 +105,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                     to={item.href}
                     onClick={onItemClick}
                     className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out rounded-xl ${
-                      isActive ? "text-white bg-[#2E6FF3] shadow-md" : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
+                      isActive
+                        ? "text-white bg-[#2E6FF3] shadow-md"
+                        : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
@@ -93,7 +115,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                         src={item.icon}
                         alt={item.label}
                         className={`w-5 h-5 transition-all duration-300 ${
-                          isActive ? "text-white" : "text-[#343A40] group-hover:text-white"
+                          isActive
+                            ? "text-white"
+                            : "text-[#343A40] group-hover:text-white"
                         }`}
                       />
                       <span>{item.label}</span>
@@ -103,7 +127,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                   <button
                     onClick={() => toggleMenu(item.label)}
                     className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out rounded-xl cursor-pointer ${
-                      isActive ? "text-white bg-[#2E6FF3] shadow-md" : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
+                      isActive
+                        ? "text-white bg-[#2E6FF3] shadow-md"
+                        : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
@@ -111,7 +137,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                         src={item.icon}
                         alt={item.label}
                         className={`w-5 h-5 transition-all duration-300 ${
-                          isActive ? "text-white" : "text-[#343A40] group-hover:text-white"
+                          isActive
+                            ? "text-white"
+                            : "text-[#343A40] group-hover:text-white"
                         }`}
                       />
                       <span>{item.label}</span>
@@ -120,7 +148,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                     {item.children && (
                       <ChevronDown
                         className={`w-4 h-4 transform transition-transform duration-300 ${
-                          isOpen ? "rotate-180 text-white" : "text-[#343A40] group-hover:text-white"
+                          isOpen
+                            ? "rotate-180 text-white"
+                            : "text-[#343A40] group-hover:text-white"
                         }`}
                       />
                     )}
@@ -146,7 +176,9 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
                           to={child.href}
                           onClick={onItemClick}
                           className={`group block px-3 py-2 text-sm rounded-lg transition-all ${
-                            childActive ? "text-white bg-[#2E6FF3]" : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
+                            childActive
+                              ? "text-white bg-[#2E6FF3]"
+                              : "text-[#343A40] hover:text-white hover:bg-[#2E6FF3]"
                           }`}
                         >
                           {child.label}
@@ -164,7 +196,11 @@ const ClinicSidebar: React.FC<SidebarProps> = ({ items = defaultSidebarItems, on
       {/* Help & Support */}
       <div className="border-t border-[#C9C6C3]">
         <div className="flex justify-center">
-          <img src={logo} alt="Logo" className="h-16 w-full max-w-[300px] object-contain" />
+          <img
+            src={logo}
+            alt="Logo"
+            className="h-16 w-full max-w-[300px] object-contain"
+          />
         </div>
         <Link
           to="/client-dashboard/help-support"
