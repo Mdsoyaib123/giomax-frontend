@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { X } from "lucide-react";
 import dr1 from "@assets/dr1.png";

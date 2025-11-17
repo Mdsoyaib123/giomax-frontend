@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
+import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
+import SectionTitle from "@/common/SectionTitle";
 
 interface Patient {
   id: number;
@@ -21,8 +24,8 @@ interface Props {
 const PatientList: React.FC<Props> = ({ id }) => {
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
+  const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
 
   // Navigate to payment history page
   const handleClick = (patientId: number) => {
@@ -105,20 +108,53 @@ const PatientList: React.FC<Props> = ({ id }) => {
     },
   ];
 
-  const totalPages = Math.ceil(patients.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentpatients = patients.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = 9; 
+  let currentpatients: Patient[] = [];
+  
+  if (currentPage === 1) {
+    currentpatients = patients;
+  } else if (currentPage === 2) {
+    currentpatients = patients.slice(0, 5);
+  } else {
+    currentpatients = []; // Pages 3-9 are empty
+  }
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNext = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   const handleRemove = (id: number) => {
     alert(`Patient ${id} removed successfully!`);
   };
 
+  const handleAddPatient = () => {
+    // Handle add patient logic here
+    alert("Patient added successfully!");
+    setShowAddPatientModal(false);
+  };
+
   return (
-    <div>
+
+    <div className=" space-y-7">
+      <div className="flex justify-between items-center flex-wrap">
+  <div className="w-full sm:w-auto">
+    <SectionTitle
+      title="Patient List"
+      description="View and manage all registed Patients"
+    />
+  </div>
+  <div className="w-full sm:w-auto mt-4 sm:mt-0">
+    {/* Add New Patient Button */}
+    <button
+      onClick={() => setShowAddPatientModal(true)}
+      className="h-9 px-4 bg-[#2E6FF3] text-white text-sm font-medium rounded-lg hover:bg-[#034ee6] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 w-full sm:w-auto"
+    >
+      <span className="text-lg font-bold">+</span>
+      Add New Patient
+    </button>
+  </div>
+</div>
+
+ <div>
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
@@ -126,20 +162,24 @@ const PatientList: React.FC<Props> = ({ id }) => {
             All Patients Information
           </h2>
 
-          {/* Search */}
-          <div className="flex items-center w-full sm:w-[320px] h-9 bg-[#F5F7FB] rounded-lg px-3 py-1.5">
-            <IoIosSearch className="text-gray-500 text-lg ml-2" />
-            <input
-              type="search"
-              placeholder="Search patients..."
-              className="bg-transparent flex-1 pl-2 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            {/* Search */}
+            <div className="flex items-center w-full sm:w-[320px] h-9 bg-[#F5F7FB] rounded-lg px-3 py-1.5">
+              <IoIosSearch className="text-gray-500 text-lg ml-2" />
+              <input
+                type="search"
+                placeholder="Search patients..."
+                className="bg-transparent flex-1 pl-2 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
+              />
+            </div>
+
+            
           </div>
         </div>
 
         {/* Table */}
         <div className="p-5 border border-[#E4E4E4] rounded-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
             <div className="xl:col-span-4 w-full">
               {/* Table */}
               <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
@@ -168,39 +208,47 @@ const PatientList: React.FC<Props> = ({ id }) => {
                   </thead>
 
                   <tbody className="divide-y divide-gray-100">
-                    {currentpatients.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-3 whitespace-nowrap font-semibold text-gray-900">
-                          {user.name}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap">
-                          {user.email}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap">
-                          {user.phone}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-center">
-                          {user.totalBookings}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-center">
-                          {user.lastAppointment}
-                        </td>
+                    {currentpatients.length > 0 ? (
+                      currentpatients.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <td className="px-6 py-3 whitespace-nowrap font-semibold text-gray-900">
+                            {user.name}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap">
+                            {user.email}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap">
+                            {user.phone}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-center">
+                            {user.totalBookings}
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-center">
+                            {user.lastAppointment}
+                          </td>
 
-                        <td className="px-6 py-3  text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => setOpenProfile(user)}
-                              className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md hover:bg-[#034ee6]"
-                            >
-                              <FaEye /> View
-                            </button>
-                          </div>
+                          <td className="px-6 py-3 text-center">
+                            <div className="flex justify-center gap-2">
+                              <button
+                                onClick={() => setOpenProfile(user)}
+                                className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer"
+                              >
+                                <FaEye /> View
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                          No patients found on this page
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -211,14 +259,16 @@ const PatientList: React.FC<Props> = ({ id }) => {
         {/* Pagination */}
         <div className="mt-6 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Showing {currentpatients.length} of {patients.length} patients
+            {currentPage === 1 && `Showing 9 of 9 patients`}
+            {currentPage === 2 && `Showing 5 of 5 patients`}
+            {currentPage > 2 && `Showing 0 patients`}
           </p>
 
           <div className="flex gap-2 items-center">
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
+              className={`px-3 py-1.5 border rounded-lg text-sm cursor-pointer ${
                 currentPage === 1
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-gray-100"
@@ -234,7 +284,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
+              className={`px-3 py-1.5 border rounded-lg text-sm cursor-pointer ${
                 currentPage === totalPages
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-gray-100"
@@ -246,7 +296,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
         </div>
       </div>
 
-      {/* Dialogue Modal */}
+      {/* View Patient Dialogue Modal */}
       {openProfile && (
         <Dialogue
           patient={openProfile}
@@ -254,7 +304,155 @@ const PatientList: React.FC<Props> = ({ id }) => {
           onViewPaymentHistory={handleClick}
         />
       )}
+
+      {/* Add New Patient Modal */}
+      {showAddPatientModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-lg w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 sm:p-6 border-b border-[#DBE0E5]">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
+                  Add New Patient
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Enter patient information
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddPatientModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 sm:p-6">
+              <div className="space-y-5">
+                {/* Patient Name & Gender Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Patient Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: David Gongonza"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender <span className="text-red-500">*</span>
+                    </label>
+                    <select className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500">
+                      <option>Select Patient Gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Email & Phone Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="Enter Patient Email Address"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="Enter Patient Phone Number"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Service & Service Type Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service <span className="text-red-500">*</span>
+                    </label>
+                    <select className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500">
+                      <option>Select Service</option>
+                      <option>General Checkup</option>
+                      <option>Consultation</option>
+                      <option>Follow-up</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service Type <span className="text-red-500">*</span>
+                    </label>
+                    <select className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500">
+                      <option>Select Service Type</option>
+                      <option>Clinic Visit</option>
+                      <option>Online Consultation</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Select Date & Select Time Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Time <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="time"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 p-5 sm:p-6 border-t border-[#DBE0E5] bg-gray-50">
+              <button
+                onClick={() => setShowAddPatientModal(false)}
+                className="flex-1 py-3 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleAddPatient}
+                className="flex-1 py-3 bg-[#2E6FF3] text-white rounded-lg hover:bg-[#034ee6] font-medium text-sm transition-colors cursor-pointer"
+              >
+                Add patient
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    </div>
+   
   );
 };
 

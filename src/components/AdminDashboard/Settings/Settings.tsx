@@ -3,6 +3,7 @@ import TeamManagement from "./TeamManagement";
 import Commission from "./Commission";
 import Configuration from "./Configuration";
 import Notification from "./Notification";
+
 const Settings = () => {
   return (
     <div className="space-y-6">

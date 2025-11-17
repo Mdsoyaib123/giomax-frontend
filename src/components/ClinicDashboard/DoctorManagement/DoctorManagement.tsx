@@ -1,532 +1,482 @@
 import React, { useState } from "react";
-import { FaEye, FaEdit, FaSearch } from "react-icons/fa";
-import SectionTitle from "@/common/SectionTitle";
+import { FaEye } from "react-icons/fa";
+import { IoIosSearch } from "react-icons/io";
+import { Plus } from "lucide-react";
+import { FiEdit2 } from "react-icons/fi";
+import ViewDocterDetails from "@/components/ClinicDashboard/DoctorManagement/ViewDocterDetails";
+import AddDoctorForm from "@/components/ClinicDashboard/DoctorManagement/AddDoctorForm";
+import EditDoctorDetails from "@/components/ClinicDashboard/DoctorManagement/EditDoctorDetails";
+// ⭐ ADDED ↑↑↑
 
 interface Doctor {
-  id: string;
+  id: number;
   name: string;
   email: string;
   specialty: string;
-  serviceType: "Both" | "Clinic Visit" | "Home Visit";
+  serviceType: string;
   phone: string;
-  appointments: number;
+  totalAppointments: number;
 }
 
-const DoctorTable: React.FC = () => {
-  const [search, setSearch] = useState("");
+const DoctorManagement: React.FC = () => {
+  const [openProfile, setOpenProfile] = useState<Doctor | null>(null);
+
+
+  // ⭐ ADDED ↓↓↓
+  const [openAddDoctor, setOpenAddDoctor] = useState(false);
+  const [openEditDoctor, setOpenEditDoctor] = useState<Doctor | null>(null);
+  // ⭐ ADDED ↑↑↑
+
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
 
   const doctors: Doctor[] = [
     {
-      id: "1",
+      id: 1,
       name: "Dr. David Giorgadze",
-      email: "david.gj@gmail.com",
+      email: "david.g@gmail.com",
       specialty: "General Practitioner",
       serviceType: "Both",
       phone: "+995 595 123 456",
-      appointments: 145,
+      totalAppointments: 145,
     },
     {
-      id: "2",
+      id: 2,
       name: "Dr. Lasha Beridze",
-      email: "michael.g@gmail.com",
+      email: "michael.c@gmail.com",
       specialty: "Cardiologist",
       serviceType: "Clinic Visit",
-      phone: "+995 577 987 854",
-      appointments: 50,
+      phone: "+995 577 987 654",
+      totalAppointments: 50,
     },
     {
-      id: "3",
+      id: 3,
       name: "Dr. Nino Kapanadze",
       email: "emily.r@gmail.com",
       specialty: "Pediatrician",
       serviceType: "Clinic Visit",
       phone: "+995 599 001 223",
-      appointments: 20,
+      totalAppointments: 20,
     },
     {
-      id: "4",
+      id: 4,
       name: "Dr. Irakli Tvalavadze",
       email: "irakli.tvalavadze@gmail.com",
       specialty: "Orthopedic Surgeon",
       serviceType: "Both",
       phone: "+995 32 245 6789",
-      appointments: 30,
+      totalAppointments: 30,
     },
     {
-      id: "5",
+      id: 5,
       name: "Dr. Salome Abashidze",
       email: "salome.abashidze@gmail.com",
       specialty: "Dermatologist",
       serviceType: "Clinic Visit",
-      phone: "+995 434 102 345",
-      appointments: 10,
+      phone: "+995 431 102 345",
+      totalAppointments: 10,
     },
     {
-      id: "6",
+      id: 6,
       name: "Dr. Giorgi Lomidze",
       email: "giorgi.lomidze@gmail.com",
       specialty: "Neurologist",
       serviceType: "Clinic Visit",
-      phone: "+995 423 789 012",
-      appointments: 15,
+      phone: "+995 422 789 012",
+      totalAppointments: 15,
     },
     {
-      id: "7",
+      id: 7,
       name: "Dr. Eka Mchedlishvili",
       email: "eka.mchedlishvili@gmail.com",
       specialty: "Gynecologist",
       serviceType: "Both",
       phone: "+995 555 334 455",
-      appointments: 25,
+      totalAppointments: 25,
     },
     {
-      id: "8",
-      name: "Dr. Levan Khutsishvili",
-      email: "levan.khutsishvili@gmail.com",
+      id: 8,
+      name: "Dr. Levan Khutishvili",
+      email: "levan.khutishvili@gmail.com",
       specialty: "ENT Specialist",
       serviceType: "Clinic Visit",
       phone: "+995 341 506 708",
-      appointments: 30,
+      totalAppointments: 30,
     },
     {
-      id: "9",
+      id: 9,
       name: "Dr. Maia Kereselidze",
       email: "maia.kereselidze@gmail.com",
       specialty: "Psychiatrist",
       serviceType: "Both",
-      phone: "+995 593 678 901",
-      appointments: 25,
+      phone: "+995 593 078 901",
+      totalAppointments: 25,
     },
   ];
 
-  const filteredDoctors = doctors.filter(
-    (doctor) =>
-      doctor.name.toLowerCase().includes(search.toLowerCase()) ||
-      doctor.email.toLowerCase().includes(search.toLowerCase()) ||
-      doctor.specialty.toLowerCase().includes(search.toLowerCase())
-  );
+  let currentDoctors: Doctor[] = [];
+  let startIndex = 0;
+  let endIndex = 0;
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayedDoctors = filteredDoctors.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  if (currentPage === 1) {
+    currentDoctors = doctors;
+    startIndex = 1;
+    endIndex = doctors.length;
+  } else {
+    currentDoctors = doctors.slice(-4);
+    startIndex = doctors.length - 3;
+    endIndex = doctors.length;
+  }
 
   return (
+    // <div className="p-6 bg-gray-50 min-h-screen">
+    //   <div className="flex items-start justify-between mb-6">
+    //     <div>
+    //       <h1 className="text-2xl font-semibold text-gray-900">Doctors Management</h1>
+    //       <p className="text-sm text-gray-500 mt-0.5">Manage your clinic's medical staff</p>
+    //     </div>
+
+    //     {/* ⭐ ADDED: OPEN ADD DOCTOR MODAL */}
+    //     <button
+    //       onClick={() => setOpenAddDoctor(true)}
+    //       className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition"
+    //     >
+    //       <Plus size={16} />
+    //       Add New Doctor
+    //     </button>
+    //   </div>
+
+    //   <div className="bg-white rounded-lg shadow-sm p-6 gap-2 border border-gray-300 rounded-md px-5 py-2.5 ">
+    //     <div className="flex items-center justify-between mb-5">
+    //       <h2 className="text-base text-gray-900 gap-2 bg-white rounded-md px-3 py-1.5 w-60">
+    //         All Doctors Information
+    //       </h2>
+
+    //       <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 w-60">
+    //         <IoIosSearch className="text-gray-400 text-lg" />
+    //         <input
+    //           type="search"
+    //           placeholder="Search patients..."
+    //           className="bg-transparent flex-1 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
+    //         />
+    //       </div>
+    //     </div>
+
+    //     <div className="border border-gray-200 rounded-lg overflow-hidden">
+    //       <table className="w-full min-w-[1100px]">
+    //         <thead>
+    //           <tr className="bg-gray-50 border-b border-gray-200">
+    //             <th className="px-3 py-3 text-left text-xs text-gray-700 font-bold">Doctor Name</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Email Address</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Specialty</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Service Type</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Phone Number</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Total Appointments</th>
+    //             <th className="px-3 py-3 text-left text-xs font-bold text-gray-700">Actions</th>
+    //           </tr>
+    //         </thead>
+
+    //         <tbody>
+    //           {currentDoctors.map((doctor, index) => (
+    //             <tr
+    //               key={doctor.id}
+    //               className={`hover:bg-gray-50/50 transition ${
+    //                 index !== currentDoctors.length - 1 ? "border-b border-gray-200" : ""
+    //               }`}
+    //             >
+    //               <td className="px-3 py-3 text-sm text-gray-900">{doctor.name}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.email}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.specialty}</td>
+    //               <td className="px-3 py-3">
+    //                 <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3]">
+    //                   {doctor.serviceType}
+    //                 </span>
+    //               </td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.phone}</td>
+    //               <td className="px-3 py-3 text-sm text-gray-600">{doctor.totalAppointments}</td>
+
+    //               <td className="px-3 py-3">
+    //                 <div className="flex items-center gap-2">
+
+    //                   {/* ⭐ VIEW BUTTON OPEN PROFILE */}
+    //                   <button
+    //                     onClick={() => setOpenProfile(doctor)}
+    //                     className="flex items-center gap-1.5 bg-[#2E6FF3] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-600 transition"
+    //                   >
+    //                     <FaEye size={11} /> View
+    //                   </button>
+
+    //                   {/* ⭐ EDIT BUTTON OPENS EDIT DOCTOR MODAL */}
+    //                   <button
+    //                     onClick={() => setOpenEditDoctor(doctor)}
+    //                     className="flex items-center gap-1.5 bg-[#0B9CAC] text-white px-3 py-1 rounded text-xs font-medium hover:bg-teal-600 transition"
+    //                   >
+    //                     <FiEdit2 size={11} /> Edit
+    //                   </button>
+
+    //                 </div>
+    //               </td>
+
+    //             </tr>
+    //           ))}
+    //         </tbody>
+    //       </table>
+    //     </div>
+
+    //     {/* Pagination */}
+    //     <div className="flex items-center justify-between mt-4">
+    //       <p className="text-sm text-gray-600">
+    //         Showing <span className="font-medium">{startIndex}</span> to{" "}
+    //         <span className="font-medium">{endIndex}</span> of{" "}
+    //         <span className="font-medium">{doctors.length}</span> entries
+    //       </p>
+
+    //       <div className="flex items-center gap-1">
+    //         <button
+    //           onClick={() => setCurrentPage(1)}
+    //           disabled={currentPage === 1}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 1
+    //               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           Prev
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(1)}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 1
+    //               ? "bg-blue-500 text-white border-blue-500"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           1
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(2)}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 2
+    //               ? "bg-blue-500 text-white border-blue-500"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           2
+    //         </button>
+
+    //         <button
+    //           onClick={() => setCurrentPage(2)}
+    //           disabled={currentPage === 2}
+    //           className={`px-3 py-1 text-sm border rounded transition ${
+    //             currentPage === 2
+    //               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+    //               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+    //           }`}
+    //         >
+    //           Next
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
+
+    //   {/* ⭐ VIEW DOCTOR MODAL */}
+    //   {openProfile && (
+    //     <ViewDocterDetails
+    //       doctor={openProfile}
+    //       onClose={() => setOpenProfile(null)}
+    //     />
+    //   )}
+
+    //   {/* ⭐ ADD DOCTOR MODAL */}
+    //   {openAddDoctor && (
+    //     <AddDoctorForm onClose={() => setOpenAddDoctor(false)} />
+    //   )}
+
+    //   {/* ⭐ EDIT DOCTOR MODAL */}
+    //   {openEditDoctor && (
+    //     <EditDoctorDetails
+    //       doctor={openEditDoctor}
+    //       onClose={() => setOpenEditDoctor(null)}
+    //     />
+    //   )}
+    // </div>
     <div>
-      <div className="ml-3 mb-10">
-        <SectionTitle
-          title="Clinic Management"
-          description="Manage and approve clinic registrations"
-        />
-      </div>
-
-      <div className="p-6 ml-2 w-full xl:w-[1599px] mx-auto bg-white rounded-xl shadow-md border border-gray-200">
-        {/* Header and search */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
-          <h2 className="text-lg font-semibold text-gray-800">
-            All Doctors Information
-          </h2>
-
-          <div className="relative w-full md:w-72">
-            <input
-              type="text"
-              placeholder="Search patients..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-            <FaSearch className="absolute left-3 top-3 text-gray-400 text-sm" />
+      <div className=" bg-gray-50 min-h-screen">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Doctors Management</h1>
+            <p className="text-xs md:text-sm text-gray-500 mt-0.5">Manage your clinic's medical staff</p>
           </div>
+
+          {/* Add Doctor Button */}
+          <button
+            onClick={() => setOpenAddDoctor(true)}
+            className="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-xs md:text-sm font-medium shadow-sm transition"
+          >
+            <Plus size={16} />
+            Add New Doctor
+          </button>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto border border-gray-200 rounded-lg">
-          <table className="min-w-[800px] w-full text-sm">
-            <thead className="bg-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Doctor Name
-                </th>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Email Address
-                </th>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Specialty
-                </th>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Service Type
-                </th>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Phone Number
-                </th>
-                <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                  Total Appointments
-                </th>
-                <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+        {/* Main Content */}
+        <div className="bg-white rounded-lg shadow-sm  md:p-6 gap-2 border border-gray-300  px-4 md:px-5 py-2.5">
+          {/* Title and Search */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-5">
+            <h2 className="text-base text-gray-900 gap-2 bg-white rounded-md px-3 py-1.5">
+              All Doctors Information
+            </h2>
 
-            <tbody className="divide-y divide-gray-100">
-              {displayedDoctors.map((doctor) => (
-                <tr
-                  key={doctor.id}
-                  className="hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <td className="px-6 py-4 text-gray-900 font-medium">
-                    {doctor.name}
-                  </td>
-                  <td className="px-6 py-4 text-gray-700">{doctor.email}</td>
-                  <td className="px-6 py-4 text-gray-700">{doctor.specialty}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full pt-[8px] pr-[12px] pb-[8px] w-[86px] ${
-                        doctor.serviceType === "Both"
-                          ? "bg-[#BEDBFF] text-[#2E6FF3]"
-                          : "bg-[#BEDBFF] text-[#2E6FF3]"
-                      }`}
-                    >
-                      {doctor.serviceType}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-700">{doctor.phone}</td>
-                  <td className="px-6 py-4 text-gray-700">
-                    {doctor.appointments}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center gap-2">
-                      <button className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md text-xs hover:bg-blue-600 transition">
-                        <FaEye className="text-xs" /> View
-                      </button>
-                      <button className="flex items-center gap-1 bg-[#0B9CAC] text-white px-3 py-1.5 rounded-md text-xs hover:bg-teal-600 transition">
-                        <FaEdit className="text-xs" /> Edit
-                      </button>
-                    </div>
-                  </td>
+            <div className="w-full md:w-60 flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5">
+              <IoIosSearch className="text-gray-400 text-lg flex-shrink-0" />
+              <input
+                type="search"
+                placeholder="Search doctors..."
+                className="bg-transparent flex-1 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
+              />
+            </div>
+          </div>
+
+          {/* Table Container - Horizontal Scroll on Mobile */}
+          <div className="border border-gray-200 rounded-lg overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-2 md:px-3 py-3 text-left text-xs text-gray-700 font-bold whitespace-nowrap">Doctor Name</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden sm:table-cell">Email Address</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">Specialty</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden md:table-cell">Service Type</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden lg:table-cell">Phone Number</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden xl:table-cell">Total Appointments</th>
+                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
 
-        {/* Pagination */}
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
-          <p className="text-center sm:text-left">
-            Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-            <span className="font-medium">
-              {startIndex + displayedDoctors.length}
-            </span>{" "}
-            of <span className="font-medium text-blue-600 cursor-pointer hover:underline">
-              {filteredDoctors.length} entries
-            </span>
-          </p>
+              <tbody>
+                {currentDoctors.map((doctor, index) => (
+                  <tr
+                    key={doctor.id}
+                    className={`hover:bg-gray-50/50 transition ${index !== currentDoctors.length - 1 ? "border-b border-gray-200" : ""
+                      }`}
+                  >
+                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-900 font-medium">{doctor.name}</td>
+                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden sm:table-cell">{doctor.email}</td>
+                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600">{doctor.specialty}</td>
+                    <td className="px-2 md:px-3 py-3 hidden md:table-cell">
+                      <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3] whitespace-nowrap">
+                        {doctor.serviceType}
+                      </span>
+                    </td>
+                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden lg:table-cell">{doctor.phone}</td>
+                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden xl:table-cell">{doctor.totalAppointments}</td>
 
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              className="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100"
-              onClick={() =>
-                setCurrentPage((prev) => Math.max(prev - 1, 1))
-              }
-            >
-              Prev
-            </button>
-            <button
-              className="w-8 h-8 rounded-md border border-gray-300 bg-blue-500 text-white font-medium"
-              onClick={() => setCurrentPage(1)}
-            >
-              1
-            </button>
-            <button
-              className="w-8 h-8 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700"
-              onClick={() => setCurrentPage(2)}
-            >
-              2
-            </button>
-            <span className="px-2 text-gray-500">...</span>
-            <button
-              className="w-8 h-8 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700"
-              onClick={() => setCurrentPage(9)}
-            >
-              9
-            </button>
-            <button
-              className="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, 9))
-              }
-            >
-              Next
-            </button>
+                    <td className="px-2 md:px-3 py-3">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        {/* View Button */}
+                        <button
+                          onClick={() => setOpenProfile(doctor)}
+                          className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-[#2E6FF3] text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-600 transition"
+                        >
+                          <FaEye size={12} /> View
+                        </button>
+
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => setOpenEditDoctor(doctor)}
+                          className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-[#0B9CAC] text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-teal-600 transition"
+                        >
+                          <FiEdit2 size={12} /> Edit
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+            <p className="text-xs md:text-sm text-gray-600">
+              Showing <span className="font-medium">{startIndex}</span> to{" "}
+              <span className="font-medium">{endIndex}</span> of{" "}
+              <span className="font-medium">{doctors.length}</span> entries
+            </p>
+
+            <div className="flex items-center gap-1 overflow-x-auto w-full md:w-auto">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition whitespace-nowrap ${currentPage === 1
+                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                Prev
+              </button>
+
+              <button
+                onClick={() => setCurrentPage(1)}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition ${currentPage === 1
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                1
+              </button>
+
+              <button
+                onClick={() => setCurrentPage(2)}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition ${currentPage === 2
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                2
+              </button>
+
+              <button
+                onClick={() => setCurrentPage(2)}
+                disabled={currentPage === 2}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm border rounded transition whitespace-nowrap ${currentPage === 2
+                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* View Doctor Modal */}
+        {openProfile && (
+          <ViewDocterDetails
+            doctor={openProfile}          
+            onClose={() => setOpenProfile(null)}
+          />
+        )}
+
+        {/* Add Doctor Modal */}
+        {openAddDoctor && (
+          <AddDoctorForm onClose={() => setOpenAddDoctor(false)} />
+        )}
+
+        {/* Edit Doctor Modal */}
+        {openEditDoctor && (
+          <EditDoctorDetails
+            doctor={openEditDoctor}    
+            onClose={() => setOpenEditDoctor(null)}
+          />
+        )}
       </div>
     </div>
   );
 };
 
-export default DoctorTable;
+export default DoctorManagement;
 
 
 
-// import React, { useState } from "react";
-// import { FaEye, FaEdit, FaSearch } from "react-icons/fa";
-// import SectionTitle from "@/common/SectionTitle";
 
-// interface Doctor {
-//   id: string;
-//   name: string;
-//   email: string;
-//   specialty: string;
-//   serviceType: "Both" | "Clinic Visit" | "Home Visit";
-//   phone: string;
-//   appointments: number;
-// }
-
-// const DoctorTable: React.FC = () => {
-//   const [search, setSearch] = useState("");
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 9;
-// console.log(setCurrentPage);
-//   const doctors: Doctor[] = [
-//     {
-//       id: "1",
-//       name: "Dr. David Giorgadze",
-//       email: "david.gj@gmail.com",
-//       specialty: "General Practitioner",
-//       serviceType: "Both",
-//       phone: "+995 595 123 456",
-//       appointments: 145,
-//     },
-//     {
-//       id: "2",
-//       name: "Dr. Lasha Beridze",
-//       email: "michael.g@gmail.com",
-//       specialty: "Cardiologist",
-//       serviceType: "Clinic Visit",
-//       phone: "+995 577 987 854",
-//       appointments: 50,
-//     },
-//     {
-//       id: "3",
-//       name: "Dr. Nino Kapanadze",
-//       email: "emily.r@gmail.com",
-//       specialty: "Pediatrician",
-//       serviceType: "Clinic Visit",
-//       phone: "+995 599 001 223",
-//       appointments: 20,
-//     },
-//     {
-//       id: "4",
-//       name: "Dr. Irakli Tvalavadze",
-//       email: "irakli.tvalavadze@gmail.com",
-//       specialty: "Orthopedic Surgeon",
-//       serviceType: "Both",
-//       phone: "+995 32 245 6789",
-//       appointments: 30,
-//     },
-//     {
-//       id: "5",
-//       name: "Dr. Salome Abashidze",
-//       email: "salome.abashidze@gmail.com",
-//       specialty: "Dermatologist",
-//       serviceType: "Clinic Visit",
-//       phone: "+995 434 102 345",
-//       appointments: 10,
-//     },
-//     {
-//       id: "6",
-//       name: "Dr. Giorgi Lomidze",
-//       email: "giorgi.lomidze@gmail.com",
-//       specialty: "Neurologist",
-//       serviceType: "Clinic Visit",
-//       phone: "+995 423 789 012",
-//       appointments: 15,
-//     },
-//     {
-//       id: "7",
-//       name: "Dr. Eka Mchedlishvili",
-//       email: "eka.mchedlishvili@gmail.com",
-//       specialty: "Gynecologist",
-//       serviceType: "Both",
-//       phone: "+995 555 334 455",
-//       appointments: 25,
-//     },
-//     {
-//       id: "8",
-//       name: "Dr. Levan Khutsishvili",
-//       email: "levan.khutsishvili@gmail.com",
-//       specialty: "ENT Specialist",
-//       serviceType: "Clinic Visit",
-//       phone: "+995 341 506 708",
-//       appointments: 30,
-//     },
-//     {
-//       id: "9",
-//       name: "Dr. Maia Kereselidze",
-//       email: "maia.kereselidze@gmail.com",
-//       specialty: "Psychiatrist",
-//       serviceType: "Both",
-//       phone: "+995 593 678 901",
-//       appointments: 25,
-//     },
-//   ];
-
-//   const filteredDoctors = doctors.filter(
-//     (doctor) =>
-//       doctor.name.toLowerCase().includes(search.toLowerCase()) ||
-//       doctor.email.toLowerCase().includes(search.toLowerCase()) ||
-//       doctor.specialty.toLowerCase().includes(search.toLowerCase())
-//   );
-
-//   const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage);
-//   const startIndex = (currentPage - 1) * itemsPerPage;
-//   const displayedDoctors = filteredDoctors.slice(
-//     startIndex,
-//     startIndex + itemsPerPage
-
-//   );
-
-//   return (
-//     <div className="">
-//       <div className="ml-3 mb-10">
-//         <SectionTitle
-//           title="Clinic Management"
-//           description="Manage and approve clinic registrations"
-//         />
-//       </div>
-
-//       <div className="p-6 ml-2 w-full xl:w-[1599px] mx-auto bg-white rounded-xl shadow-md border border-gray-200">
-//         {/* Header and search */}
-//         <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
-//           <h2 className="text-lg font-semibold text-gray-800">
-//             All Doctors Information
-//           </h2>
-
-//           <div className="relative w-full md:w-72">
-//             <input
-//               type="text"
-//               placeholder="Search patients..."
-//               value={search}
-//               onChange={(e) => setSearch(e.target.value)}
-//               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-//             />
-//             <FaSearch className="absolute left-3 top-3 text-gray-400 text-sm" />
-//           </div>
-//         </div>
-
-//         {/* Table */}
-//         <div className="overflow-x-auto border border-gray-200 rounded-lg">
-//           <table className="min-w-[800px] w-full text-sm">
-//             <thead className="bg-gray-100">
-//               <tr>
-//                 {[
-//                   "Doctor Name",
-//                   "Email Address",
-//                   "Specialty",
-//                   "Service Type",
-//                   "Phone Number",
-//                   "Total Appointments",
-//                   "Actions",
-//                 ].map((heading, index) => (
-//                   <th
-//                     key={index}
-//                     className={`px-6 py-3 font-medium text-gray-600 ${
-//                       heading === "Actions"
-//                         ? "text-center"
-//                         : "text-left"
-//                     }`}
-//                   >
-//                     {heading}
-//                   </th>
-//                 ))}
-//               </tr>
-//             </thead>
-
-//             <tbody className="divide-y divide-gray-100">
-//               {displayedDoctors.map((doctor) => (
-//                 <tr
-//                   key={doctor.id}
-//                   className="hover:bg-gray-50 transition-colors duration-200"
-//                 >
-//                   <td className="px-6 py-4 text-gray-900 font-medium">
-//                     {doctor.name}
-//                   </td>
-//                   <td className="px-6 py-4 text-gray-700">{doctor.email}</td>
-//                   <td className="px-6 py-4 text-gray-700">{doctor.specialty}</td>
-//                   <td className="px-6 py-4">
-//                     <span
-//                       className={`px-3 py-1 text-xs font-medium rounded-full pt-[8px] pr-[12px] pb-[8px]w-[86px] ${
-//                         doctor.serviceType === "Both"
-//                           ? "bg-[#BEDBFF] text-[#2E6FF3]"
-//                           : doctor.serviceType === "Clinic Visit"
-//                           ? "bg-[#BEDBFF] text-[#2E6FF3]"
-//                           : "bg-[#BEDBFF] text-[#2E6FF3]"
-//                       }`}
-//                     >
-//                       {doctor.serviceType}
-//                     </span>
-//                   </td>
-//                   <td className="px-6 py-4 text-gray-700">{doctor.phone}</td>
-//                   <td className="px-6 py-4 text-gray-700">
-//                     {doctor.appointments}
-//                   </td>
-//                   <td className="px-6 py-4 text-center">
-//                     <div className="flex justify-center gap-2">
-//                       <button className="flex items-center gap-1 bg-[#2E6FF3] text-white px-3 py-1.5 rounded-md text-xs hover:bg-blue-600 transition">
-//                         <FaEye className="text-xs" /> View
-//                       </button>
-//                       <button className="flex items-center gap-1 bg-[#0B9CAC] text-white px-3 py-1.5 rounded-md text-xs hover:bg-teal-600 transition">
-//                         <FaEdit className="text-xs" /> Edit
-//                       </button>
-//                     </div>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-
-//         {/* ✅ Pagination section (responsive, no logic changed) */}
-//         <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
-//           <p className="text-center sm:text-left">
-//             Showing <span className="font-medium">1</span> to{" "}
-//             <span className="font-medium">9</span> of{" "}
-//             <span className="font-medium text-blue-600 cursor-pointer hover:underline">
-//               9 entries
-//             </span>
-//           </p>
-
-//           <div className="flex flex-wrap items-center justify-center gap-2">
-//             <button className="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">
-//               Prev
-//             </button>
-//             <div className="flex items-center gap-1">
-//               <button className="w-8 h-8 rounded-md border border-gray-300 bg-blue-500 text-white font-medium">
-//                 1
-//               </button>
-//               <button className="w-8 h-8 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700">
-//                 2
-//               </button>
-//               <button className="w-8 h-8 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700">
-//                 3
-//               </button>
-//               <span className="px-2 text-gray-500">...</span>
-//               <button className="w-8 h-8 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700">
-//                 9
-//               </button>
-//             </div>
-//             <button className="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-100">
-//               Next
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DoctorTable;
