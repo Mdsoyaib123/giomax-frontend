@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, FileText, Briefcase, Calendar, Clock, Edit } from 'lucide-react';
+import { X, FileText,  Edit } from 'lucide-react';
 
 // --- Mock Data Interfaces ---
 interface Appointment {
@@ -18,6 +18,7 @@ interface Doctor {
     licenseNumber: string;
     workingHour: string;
     availability: string[];
+
 }
 
 // --- Mock Data ---
@@ -70,7 +71,7 @@ const DoctorDetailsView: React.FC<{
     onClose: () => void;
     onEdit: () => void;
 }> = ({ doctor, appointments, onClose, onEdit }) => {
-    
+
     // Helper to render the main information fields
     const InfoField: React.FC<{ label: string; value: string; icon?: React.ReactNode }> = ({ label, value, icon }) => (
         <div className="w-full">
@@ -92,7 +93,7 @@ const DoctorDetailsView: React.FC<{
         // The modal overlay container
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter ">
             <div className="bg-white w-[1100px] h-[1446px] rounded-[8px]   max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[95vh] overflow-hidden flex flex-col">
-                
+
                 {/* Header */}
                 <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
                     <div>
@@ -138,7 +139,7 @@ const DoctorDetailsView: React.FC<{
                             <InfoField label="Working Hour" value={doctor.workingHour} />
                         </div>
                     </div>
-                    
+
                     {/* Verification Documents */}
                     <div className='pt-2'>
                         <h3 className="text-base font-bold text-gray-900 mb-3">Verification Documents</h3>
@@ -165,7 +166,7 @@ const DoctorDetailsView: React.FC<{
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Recent Appointments */}
                     <div className='pt-2'>
                         <h3 className="text-base font-bold text-gray-900 mb-3">Recent Appointments</h3>
@@ -214,24 +215,37 @@ const DoctorDetailsView: React.FC<{
                 </div>
 
                 {/* Footer/Action Buttons */}
-                <div className="p-4 sm:p-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3 flex-shrink-0 w-full bg-white ">
-                    {/* Close button in footer - uses onClose prop to close the modal */}
-                     <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-gray-700 bg-[#EFF4FF] hover:bg-gray-200  transition-colors border border-transparent"
-            >
-              Close
-            </button>
+                <div className="p-4 sm:p-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3 bg-white w-full">
+
+                    {/* Close Button */}
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-6 py-2.5 text-sm font-semibold 
+               w-full sm:w-[493px] h-[56px]
+               rounded-[6px] text-gray-700 
+               bg-[#EFF4FF] hover:bg-gray-200 transition-colors"
+                    >
+                        Close
+                    </button>
+
+                    {/* Edit Button */}
                     <button
                         type="button"
                         onClick={onEdit}
-                        className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-[#FFFFFF]  hover:bg-gray-200  transition-colors border border-transparent   bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md shadow-blue-500/30 flex items-center justify-center gap-2"
+                        className="px-6 py-2.5 text-sm font-semibold 
+               w-full sm:w-[493px] h-[56px]
+               rounded-[6px] text-white 
+               bg-blue-600 hover:bg-blue-700
+               shadow-md shadow-blue-500/30 
+               flex items-center justify-center gap-2 transition-colors"
                     >
-                        <Edit className='w-4 h-4 text-[#FFFFFF]' />
+                        <Edit className="w-4 h-4 text-white" />
                         Edit Doctor Profile
                     </button>
+
                 </div>
+
             </div>
         </div>
     );
@@ -250,7 +264,7 @@ const App = () => {
 
     return (
         <div className="bg-gray-100 p-8 h-screen w-full flex items-center justify-center font-inter">
-            
+
             {/* Display a simple message when the modal is closed */}
             {/* {!isModalOpen && (
                 <div className="text-xl font-semibold text-gray-700 p-8 bg-white rounded-xl shadow-lg">
