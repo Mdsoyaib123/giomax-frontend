@@ -23,7 +23,7 @@ import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPag
 import ClinicPatientListPage from "@/pages/Clinic/ClinicPatientListPage";
 import ClinicSettingsPage from "@/pages/Clinic/ClinicSettingsPage";
 import PaymentEarning from "@/components/ClinicDashboard/Dashboard/PaymentEarning";
-import PertientMessage from "@/components/ClinicDashboard/ClinicSettings/ClinicMessage/PertientMessage";
+import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/PertientMessage";
 import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
 
 const routes = createBrowserRouter([
