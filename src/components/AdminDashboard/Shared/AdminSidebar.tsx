@@ -51,8 +51,8 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: BiSolidUserBadge,
-    label: "Doctor Management",
-    href: "/admin-dashboard/doctor-management",
+    label: "Nurse Management",
+    href: "/admin-dashboard/nurse-management",
   },
   {
     icon: TbCalendarUser,

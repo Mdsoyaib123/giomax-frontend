@@ -11,8 +11,11 @@ interface Appointment {
   status: 'Completed';
 }
 
-const Completed = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface CompletedProps {
+  onViewDetails: () => void; // Define the onViewDetails prop here
+}
+
+const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Static completed appointment data
@@ -43,6 +46,7 @@ const Completed = () => {
     }
   ];
 
+  // Filter appointments based on the search query
   const filteredAppointments = appointments.filter(apt =>
     apt.patientName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -71,10 +75,21 @@ const Completed = () => {
       <div>
         {/* Content Area */}
         <div>
+          {/* Search Bar */}
+          <div className="p-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by patient name"
+              className="w-full p-2 border rounded-lg shadow-sm"
+            />
+          </div>
+
           {/* Appointments List */}
           <div className="bg-white rounded-lg shadow-sm">
             <div className="p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-800">All Appointments</h2>
+              <h2 className="text-lg font-semibold text-gray-800">Completed Appointments</h2>
             </div>
             <div className="divide-y divide-gray-200">
               {filteredAppointments.map((appointment) => (
@@ -98,9 +113,7 @@ const Completed = () => {
                     {/* Right Side: Status and Time */}
                     <div className="flex flex-col items-end space-y-3">
                       {/* Status Badge */}
-                      <span
-                        className="px-3 py-1 rounded text-sm font-medium border border-blue-600 text-blue-600 bg-white cursor-pointer"
-                      >
+                      <span className="px-3 py-1 rounded text-sm font-medium border border-blue-600 text-blue-600 bg-white cursor-pointer">
                         {appointment.status}
                       </span>
 
@@ -111,6 +124,14 @@ const Completed = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Button to trigger onViewDetails */}
+                  <button
+                    onClick={onViewDetails}
+                    className="mt-4 text-blue-600 hover:text-blue-700"
+                  >
+                    View Details
+                  </button>
                 </div>
               ))}
             </div>

@@ -46,8 +46,8 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: FaUserPlus,
-    label: "Booking Management",
-    href: "/clinic-dashboard/ew",
+    label: "Book Management",
+    href: "/clinic-dashboard/booking-management",
   },
   {
     icon: FaUserPlus,
@@ -64,21 +64,6 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Setting",
     href: "/clinic-dashboard/message",
   },
-  // {
-  //   icon: BiSolidUserBadge,
-  //   label: "Doctor Management",
-  //   href: "/clinic-dashboard/doctor-management",
-  // },
-  // {
-  //   icon: TbCalendarUser,
-  //   label: "Clinic Management",
-  //   href: "/clinic-dashboard/clinic-management",
-  // },
-  // {
-  //   icon: IoSettingsOutline,
-  //   label: "Settings",
-  //   href: "/clinic-dashboard/settings",
-  // },
 ];
 
 const ClinicSidebar: React.FC<SidebarProps> = ({
