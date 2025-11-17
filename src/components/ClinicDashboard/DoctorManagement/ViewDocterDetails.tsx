@@ -221,7 +221,8 @@ const DoctorDetailsView: React.FC<{
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-6 py-2.5 text-sm font-semibold 
+                        className="px-3 py-2
+                         text-sm font-semibold 
                w-full sm:w-[493px] h-[56px]
                rounded-[6px] text-gray-700 
                bg-[#EFF4FF] hover:bg-gray-200 transition-colors"
@@ -233,7 +234,7 @@ const DoctorDetailsView: React.FC<{
                     <button
                         type="button"
                         onClick={onEdit}
-                        className="px-6 py-2.5 text-sm font-semibold 
+                        className="px-3 py-2 text-sm font-semibold 
                w-full sm:w-[493px] h-[56px]
                rounded-[6px] text-white 
                bg-blue-600 hover:bg-blue-700
