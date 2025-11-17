@@ -169,7 +169,7 @@ const TransactionHistory: React.FC = () => {
     
     <div>
       <div className="  font-sans">
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+        <div className="mt-5">
           {/* Payment Earning Card */}
           <div className="mb-4 sm:mb-5">
             <PaymentEarningCard></PaymentEarningCard>

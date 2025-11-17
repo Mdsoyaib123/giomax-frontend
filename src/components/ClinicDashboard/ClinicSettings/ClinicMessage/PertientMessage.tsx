@@ -64,11 +64,11 @@ const PertientMessage: React.FC = () => {
  
     <div>
     
-   <div className="">
+   <div className="w-full mx-auto mt-5">
     <h1 className='text-2xl font-bold mb-2 '>Message</h1>
     <p className='mb-5'>Chat with Patients and manage conversations</p>
     
-      <div className=" w-[1592px]  h-[908px] flex bg-white shadow-2xl rounded-xl overflow-hidden">
+      <div className="flex bg-white shadow-2xl rounded-xl overflow-hidden">
 
         {/* Sidebar */}
         <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex flex-col absolute md:relative z-10 h-full`}>
