@@ -1,22 +1,11 @@
-// import Settings from "@/components/AdminDashboard/Settings/Settings";
-
-// const SettingsPage = () => {
-//   return (
-//     <div className="space-y-6">
-//       <Settings />
-//     </div>
-//   );
-// };
-
-// export default SettingsPage;
-
+import Settings from "@/components/AdminDashboard/Settings/Settings";
 
 const SettingsPage = () => {
   return (
-    <div>
-      
+    <div className="space-y-6">
+      <Settings />
     </div>
-  )
-}
+  );
+};
 
-export default SettingsPage
+export default SettingsPage;

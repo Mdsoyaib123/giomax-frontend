@@ -1,7 +1,7 @@
-import { FaArrowUp } from "react-icons/fa";
 import Patients from "@/assets/Logo/patientss.svg";
 import Doctors from "@/assets/Logo/doctors.svg";
 import Clinics from "@/assets/Logo/clinics.svg";
+import { FaArrowUp } from "react-icons/fa";
 
 const PaymentCard = () => {
   const statusData = [
