@@ -89,7 +89,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center  ml-2">
           {/* Notification Button */}
           <div
             className="relative p-2 border border-gray-300 rounded-xl w-fit cursor-pointer"
