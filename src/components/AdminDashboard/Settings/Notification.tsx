@@ -133,10 +133,10 @@ const Notification: React.FC = () => {
         </div>
       </div>
 
-      ---
+   
 
       {/* Action Buttons */}
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4  border-gray-200">
         <button
           onClick={handleCancel}
           className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-blue-600 border border-blue-100 hover:bg-blue-50 transition font-medium"
