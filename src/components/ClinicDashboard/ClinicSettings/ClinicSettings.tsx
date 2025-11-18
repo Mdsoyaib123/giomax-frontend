@@ -1,523 +1,95 @@
-
 import { useState } from "react";
 import License from "@/components/ClinicDashboard/ClinicSettings/license-documents";
 import Payout from "@/components/ClinicDashboard/ClinicSettings/payout-methods";
+import AvailabilitySettings from "@/components/ClinicDashboard/ClinicSettings/AvailabilitySettings";
+import NotificationPreferences from "@/components/ClinicDashboard/ClinicSettings/NotificationPreferences";
+
+import ClinicProfileSettings from "@/components/ClinicDashboard/ClinicSettings/ClinicProfileSettings";
+
 
 interface ClinicSettingsProps {
-  activeTab: "ClinicProfile" | "License" | "Availability" | "Payout" | "Notification" | "Help";
+ activeTab: "ClinicProfile" | "License" | "Availability" | "Payout" | "Notification" | "Help";
 }
 
 const ClinicSettings = ({ activeTab }: ClinicSettingsProps) => {
-  const [clinicName, setClinicName] = useState("Wardier Medical Clinic");
-  const [email, setEmail] = useState("wardier.clinic@gmail.com");
-  const [phone, setPhone] = useState("(+995) 126 - 245 -78936");
-  const [address, setAddress] = useState("12 Rustaveli Street, Vake District, Tbilisi, Georgia");
-  const [servicesOffered, setServicesOffered] = useState("General Medicine, Cardiology, Pediatrics, Dermatology, Orthopedics, ENT, Gynecology");
-  const [description, setDescription] = useState("Premier healthcare facility providing comprehensive medical services with a team of experienced professionals.");
+// STATE variables 
+const [clinicName, setClinicName] = useState("Wardier Medical Clinic");
+const [email, setEmail] = useState("wardier.clinic@gmail.com");
+const [phone, setPhone] = useState("(+995) 126 - 245 -78936"); 
+const [address, setAddress] = useState("12 Rustaveli Street, Vake District, Tbilisi, Georgia");
+const [servicesOffered, setServicesOffered] = useState("General Medicine, Cardiology, Pediatrics, Dermatology, Orthopedics, ENT, Gynecology");
+const [description, setDescription] = useState("Premier healthcare facility providing comprehensive medical services with a team of experienced professionals.");
 
-  const renderClinicProfile = () => (
-    <div className="bg-white rounded-xl  p-4 sm:p-6 lg:p-8 mt-5">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">Clinic Information</h2>
-      
-      {/* Clinic Picture */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Clinic Picture
-        </label>
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-teal-500 flex items-center justify-center overflow-hidden">
-            <div className="text-white text-center">
-              <div className="text-red-500 text-2xl">❤️</div>
-              <div className="text-xs font-semibold">Wellness</div>
-            </div>
-          </div>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition flex items-center gap-2 cursor-pointer">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            Upload New Image
-          </button>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Clinic Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Clinic Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={clinicName}
-            onChange={(e) => setClinicName(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          />
-        </div>
+const renderClinicProfile = () => (
+    <ClinicProfileSettings 
+        clinicName={clinicName}
+        setClinicName={setClinicName}
+        email={email}
+        setEmail={setEmail}
+        phone={phone}
+        setPhone={setPhone}
+        address={address}
+        setAddress={setAddress}
+        servicesOffered={servicesOffered}
+        setServicesOffered={setServicesOffered}
+        description={description}
+        setDescription={setDescription}
+    />
+);
 
-        {/* Email Address */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email Address <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          />
-        </div>
 
-        {/* Phone Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone Number <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          />
-        </div>
+const renderHelp = () => (
+ <div className="bg-white rounded-xl mt-5 p-4 sm:p-6 lg:p-8">
+ <h2 className="text-xl font-semibold text-gray-800 mb-4">Help & Support</h2>
+ <p className="text-gray-600 mb-6">Get assistance and find answers to common questions</p>
 
-{/* Address */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Address <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          />
-        </div>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+ <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+ <div className="text-3xl mb-3">📚</div>
+ <h3 className="font-semibold text-gray-800 mb-2">Documentation</h3>
+ <p className="text-sm text-gray-600">Browse our comprehensive guides</p>
+ </div>
+ 
+ <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+ <div className="text-3xl mb-3">💬</div>
+ <h3 className="font-semibold text-gray-800 mb-2">Live Chat</h3>
+ <p className="text-sm text-gray-600">Chat with our support team</p>
+ </div>
+ <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+ <div className="text-3xl mb-3">📧</div>
+ <h3 className="font-semibold text-gray-800 mb-2">Email Support</h3>
+ <p className="text-sm text-gray-600">support@clinic.com</p>
+ </div>
+ 
+ <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+ <div className="text-3xl mb-3">❓</div>
+ <h3 className="font-semibold text-gray-800 mb-2">FAQ</h3>
+ <p className="text-sm text-gray-600">Find quick answers</p>
+ </div>
+ </div>
+ </div>
+ );
 
-        {/* Service Offered */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Service Offered <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={servicesOffered}
-            onChange={(e) => setServicesOffered(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          />
-        </div>
+const renderAvailability = () => {
+ return <AvailabilitySettings />;
+};
 
-        {/* Clinic Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Clinic Description <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
-          />
-        </div>
-      </div>
+switch (activeTab) { case "ClinicProfile":
+ return renderClinicProfile();
+ case "License":
+ return <License />;
+ case "Availability":
+ return renderAvailability(); case "Payout":
+ return <Payout />;
+ case "Notification":
+ return <NotificationPreferences />; 
+ case "Help":
+ return renderHelp();
+ default:
+ return renderClinicProfile();
+}
 
-      {/* Action Buttons */}
-  <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-gray-200 justify-start sm:justify-end">
-  <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer">
-    Save Changes
-  </button>
-  <button className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium cursor-pointer">
-    Cancel
-  </button>
-</div>
-
-    </div>
-  );
-
-  const renderAvailability = () => (
-    <div className="bg-white rounded-xl  p-4 sm:p-6 lg:p-8 mt-5">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Availability Settings</h2>
-      <p className="text-gray-600 mb-6">Set your working hours and availability schedule</p>
-      
-      <div className="space-y-4">
-        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-          <div key={day} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 border border-gray-200 rounded-lg">
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <input type="checkbox" className="w-5 h-5 cursor-pointer" defaultChecked={day !== "Sunday"} />
-              <span className="font-medium text-gray-700 w-24">{day}</span>
-            </div>
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <input type="time" className="px-3 py-2 border border-gray-300 rounded flex-1 sm:flex-initial cursor-pointer" defaultValue="09:00" />
-              <span className="text-gray-500">to</span>
-              <input type="time" className="px-3 py-2 border border-gray-300 rounded flex-1 sm:flex-initial cursor-pointer" defaultValue="17:00" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderNotification = () => (
-    <div className="bg-white rounded-xl border-2 border-blue-400 p-4 sm:p-6 lg:p-8">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Notification Settings</h2>
-      <p className="text-gray-600 mb-6">Choose what notifications you want to receive</p>
-      
-      <div className="space-y-4"></div>
-
-{[
-          { title: "Email Notifications", desc: "Receive appointment updates via email" },
-          { title: "SMS Notifications", desc: "Get text messages for urgent updates" },
-          { title: "Push Notifications", desc: "Browser notifications for new bookings" },
-          { title: "Booking Reminders", desc: "Daily summary of upcoming appointments" },
-        ].map((item) => (
-          <div key={item.title} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-            <div>
-              <p className="font-medium text-gray-800">{item.title}</p>
-              <p className="text-sm text-gray-500">{item.desc}</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-          </div>
-        ))}
-      </div>
-
-  );
-
-  const renderHelp = () => (
-    <div className="bg-white rounded-xl border-2 border-blue-400 p-4 sm:p-6 lg:p-8">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Help & Support</h2>
-      <p className="text-gray-600 mb-6">Get assistance and find answers to common questions</p>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-          <div className="text-3xl mb-3">📚</div>
-          <h3 className="font-semibold text-gray-800 mb-2">Documentation</h3>
-          <p className="text-sm text-gray-600">Browse our comprehensive guides</p>
-        </div>
-        
-        <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-          <div className="text-3xl mb-3">💬</div>
-          <h3 className="font-semibold text-gray-800 mb-2">Live Chat</h3>
-          <p className="text-sm text-gray-600">Chat with our support team</p>
-        </div>
-        
-        <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-          <div className="text-3xl mb-3">📧</div>
-          <h3 className="font-semibold text-gray-800 mb-2">Email Support</h3>
-          <p className="text-sm text-gray-600">support@clinic.com</p>
-        </div>
-        
-        <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-          <div className="text-3xl mb-3">❓</div>
-          <h3 className="font-semibold text-gray-800 mb-2">FAQ</h3>
-          <p className="text-sm text-gray-600">Find quick answers</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  switch (activeTab) {
-    case "ClinicProfile":
-      return renderClinicProfile();
-    case "License":
-      return <License />;
-    case "Availability":
-      return renderAvailability();
-    case "Payout":
-      return <Payout />;
-    case "Notification":
-      return renderNotification();
-    case "Help":
-      return renderHelp();
-    default:
-      return renderClinicProfile();
-  }
 };
 
 export default ClinicSettings;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useState } from "react";
-// import icon1 from "@assets/1.png";
-// import icon2 from "@assets/2.png";
-// import icon3 from "@assets/3.png";
-// import icon4 from "@assets/4.png";
-// import icon5 from "@assets/5.png";
-// import icon6 from "@assets/6.png";
-
-// // ClinicSettings Component (inline)
-// const ClinicSettings = ({ activeTab }: { activeTab: string }) => {
-//   const [clinicName, setClinicName] = useState("Wardier Medical Clinic");
-//   const [email, setEmail] = useState("wardier.clinic@gmail.com");
-//   const [phone, setPhone] = useState("(+995) 126 - 245 -78936");
-//   const [address, setAddress] = useState(" 12 Rustaveli Street, Vake District, Tbilisi, Georgia");
-
-//   const renderClinicProfile = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-6">Clinic Information</h2>
-      
-//       <div className="space-y-5">
-//         {/* Clinic Name & Email Address Row */}
-//         <div className="grid grid-cols-2 gap-5">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-2">
-//               Clinic Name <span className="text-red-500">*</span>
-//             </label>
-//             <input
-//               type="text"
-//               value={clinicName}
-//               onChange={(e) => setClinicName(e.target.value)}
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-2">
-//               Email Address <span className="text-red-500">*</span>
-//             </label>
-//             <input
-//               type="email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-//             />
-//           </div>
-//         </div>
-
-//         {/* Phone Number & Address Row */}
-//         <div className="grid grid-cols-2 gap-5">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-2">
-//               Phone Number <span className="text-red-500">*</span>
-//             </label>
-//             <input
-//               type="tel"
-//               value={phone}
-//               onChange={(e) => setPhone(e.target.value)}
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-2">
-//               Address <span className="text-red-500">*</span>
-//             </label>
-//             <input
-//               type="text"
-//               value={address}
-//               onChange={(e) => setAddress(e.target.value)}
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-//             />
-//           </div>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-
-//   const renderLicense = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-4">License & Documents</h2>
-//       <p className="text-gray-600 mb-6">Upload and manage your clinic's licenses and legal documents</p>
-      
-//       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-//         <div className="text-5xl mb-3">📄</div>
-//         <p className="text-gray-600 mb-2">Drag and drop your documents here</p>
-//         <p className="text-sm text-gray-500 mb-4">or</p>
-//         <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium">
-//           Browse Files
-//         </button>
-//       </div>
-//     </div>
-//   );
-
-//   const renderAvailability = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-4">Availability Settings</h2>
-//       <p className="text-gray-600 mb-6">Set your working hours and availability schedule</p>
-      
-//       <div className="space-y-4">
-//         {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-//           <div key={day} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
-//             <input type="checkbox" className="w-5 h-5" defaultChecked={day !== "Sunday"} />
-//             <span className="font-medium text-gray-700 w-24">{day}</span>
-//             <input type="time" className="px-3 py-2 border border-gray-300 rounded" defaultValue="09:00" />
-//             <span className="text-gray-500">to</span>
-//             <input type="time" className="px-3 py-2 border border-gray-300 rounded" defaultValue="17:00" />
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-
-//   const renderPayout = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-4">Payout Methods</h2>
-//       <p className="text-gray-600 mb-6">Manage your payment methods and billing information</p>
-      
-//       <div className="space-y-4">
-//         <div className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
-//           <div className="flex items-center gap-3">
-//             <div className="w-12 h-12 bg-blue-100 rounded flex items-center justify-center">
-//               <span className="text-2xl">💳</span>
-//             </div>
-//             <div>
-//               <p className="font-medium text-gray-800">Bank Account</p>
-//               <p className="text-sm text-gray-500">•••• 4567</p>
-//             </div>
-//           </div>
-//           <button className="text-blue-500 hover:text-blue-600 font-medium">Edit</button>
-//         </div>
-        
-//         <button className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-400 hover:text-blue-500 transition font-medium">
-//           + Add Payment Method
-//         </button>
-//       </div>
-//     </div>
-//   );
-
-//   const renderNotification = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-4">Notification Settings</h2>
-//       <p className="text-gray-600 mb-6">Choose what notifications you want to receive</p>
-      
-//       <div className="space-y-4">
-//         {[
-//           { title: "Email Notifications", desc: "Receive appointment updates via email" },
-//           { title: "SMS Notifications", desc: "Get text messages for urgent updates" },
-//           { title: "Push Notifications", desc: "Browser notifications for new bookings" },
-//           { title: "Booking Reminders", desc: "Daily summary of upcoming appointments" },
-//         ].map((item) => (
-//           <div key={item.title} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-//             <div>
-//               <p className="font-medium text-gray-800">{item.title}</p>
-//               <p className="text-sm text-gray-500">{item.desc}</p>
-//             </div>
-//             <label className="relative inline-flex items-center cursor-pointer">
-//               <input type="checkbox" className="sr-only peer" defaultChecked />
-//               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-//             </label>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-
-//   const renderHelp = () => (
-//     <div className="bg-white rounded-xl border border-gray-200 p-6">
-//       <h2 className="text-xl font-semibold text-gray-800 mb-4">Help & Support</h2>
-//       <p className="text-gray-600 mb-6">Get assistance and find answers to common questions</p>
-      
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//         <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-//           <div className="text-3xl mb-3">📚</div>
-//           <h3 className="font-semibold text-gray-800 mb-2">Documentation</h3>
-//           <p className="text-sm text-gray-600">Browse our comprehensive guides</p>
-//         </div>
-        
-//         <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-//           <div className="text-3xl mb-3">💬</div>
-//           <h3 className="font-semibold text-gray-800 mb-2">Live Chat</h3>
-//           <p className="text-sm text-gray-600">Chat with our support team</p>
-//         </div>
-        
-//         <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-//           <div className="text-3xl mb-3">📧</div>
-//           <h3 className="font-semibold text-gray-800 mb-2">Email Support</h3>
-//           <p className="text-sm text-gray-600">support@clinic.com</p>
-//         </div>
-        
-//         <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
-//           <div className="text-3xl mb-3">❓</div>
-//           <h3 className="font-semibold text-gray-800 mb-2">FAQ</h3>
-//           <p className="text-sm text-gray-600">Find quick answers</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-
-//   switch (activeTab) {
-//     case "ClinicProfile":
-//       return renderClinicProfile();
-//     case "License":
-//       return renderLicense();
-//     case "Availability":
-//       return renderAvailability();
-//     case "Payout":
-//       return renderPayout();
-//     case "Notification":
-//       return renderNotification();
-//     case "Help":
-//       return renderHelp();
-//     default:
-//       return renderClinicProfile();
-//   }
-// };
-
-// // Main SettingsManagement Component
-// export default function SettingsManagement() {
-//   const [activeTab, setActiveTab] = useState<
-//     "ClinicProfile" | "License" | "Availability" | "Payout" | "Notification" | "Help"
-//   >("ClinicProfile");
-
-//   // Settings Tabs
-//   const tabs = [
-//     { id: "ClinicProfile", label: "Clinic Profile", icon: icon1 },
-//     { id: "License", label: "License & Documents", icon: icon2 },
-//     { id: "Availability", label: "Availability Settings", icon: icon3 },
-//     { id: "Payout", label: "Payout Methods", icon: icon4 },
-//     { id: "Notification", label: "Notification Settings", icon: icon5 },
-//     { id: "Help", label: "Help & Support", icon: icon6 },
-//   ];
-
-//   const renderContent = () => {
-//     return <ClinicSettings activeTab={activeTab} />;
-//   };
-
-//   return (
-//     <div className="w-full space-y-6">
-//       {/* Tabs Header */}
-//       <div className="w-full bg-[#F5F6F9] border border-[#DBE0E5] rounded-xl overflow-hidden flex flex-wrap gap-2 p-2">
-//         {tabs.map((tab) => (
-//           <button
-//             key={tab.id}
-//             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-//             className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 flex items-center gap-2
-//               ${
-//                 activeTab === tab.id
-//                   ? "bg-blue-500 text-white shadow-md font-semibold"
-//                   : "text-gray-600 hover:bg-blue-50"
-//               }`}
-//           >
-//             <img src={tab.icon} alt={tab.label} className="w-5 h-5 object-contain" />
-//             {tab.label}
-//           </button>
-//         ))}
-//       </div>
-
-//       {/* Tab Content */}
-//       <div className="w-full">{renderContent()}</div>
-//     </div>
-//   );
-// }
