@@ -340,7 +340,7 @@ const BookingManagementTable: React.FC = () => {
 
       {/* Patient Profile Dialog */}
       {openProfile && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
+        <div className="fixed px-3 sm:px-4 inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
           <div className="bg-white rounded-lg w-full max-w-5xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
             {/* Close Icon */}
             <button

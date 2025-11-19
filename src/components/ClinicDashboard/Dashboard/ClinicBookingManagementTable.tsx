@@ -258,12 +258,13 @@ const ClinicBookingManagementTable: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`px-3 py-1 text-xs font-medium rounded-full ${booking.status === "Confirmed"
-                              ? "bg-green-100 text-green-700"
-                              : booking.status === "Pending"
+                            className={`px-3 py-1 text-xs font-medium rounded-full ${
+                              booking.status === "Confirmed"
+                                ? "bg-green-100 text-green-700"
+                                : booking.status === "Pending"
                                 ? "bg-yellow-100 text-yellow-700"
                                 : "bg-red-100 text-red-700"
-                              }`}
+                            }`}
                           >
                             {booking.status}
                           </span>
@@ -273,12 +274,13 @@ const ClinicBookingManagementTable: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`px-3 py-1 text-xs font-medium rounded-full ${booking.payment === "Confirmed"
-                              ? "bg-blue-100 text-blue-700"
-                              : booking.payment === "Pending"
+                            className={`px-3 py-1 text-xs font-medium rounded-full ${
+                              booking.payment === "Confirmed"
+                                ? "bg-blue-100 text-blue-700"
+                                : booking.payment === "Pending"
                                 ? "bg-orange-100 text-orange-700"
                                 : "bg-red-100 text-red-700"
-                              }`}
+                            }`}
                           >
                             {booking.payment}
                           </span>
@@ -310,10 +312,11 @@ const ClinicBookingManagementTable: React.FC = () => {
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${currentPage === 1
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-100"
-                }`}
+              className={`px-3 py-1.5 border rounded-lg text-sm ${
+                currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-100"
+              }`}
             >
               Prev
             </button>
@@ -323,10 +326,11 @@ const ClinicBookingManagementTable: React.FC = () => {
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${currentPage === totalPages
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gray-100"
-                }`}
+              className={`px-3 py-1.5 border rounded-lg text-sm ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-100"
+              }`}
             >
               Next
             </button>
@@ -336,7 +340,7 @@ const ClinicBookingManagementTable: React.FC = () => {
 
       {/* Patient Profile Dialog */}
       {openProfile && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
+        <div className="fixed px-3 sm:px-4 inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
           <div className="bg-white rounded-lg w-full max-w-5xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
             {/* Close Icon */}
             <button
@@ -348,10 +352,10 @@ const ClinicBookingManagementTable: React.FC = () => {
 
             {/* Title */}
             <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Booking Details - BK001
+              Appointment Details
             </h2>
             <p className="text-gray-600 text-sm mb-6">
-              View complete booking information and consultation notes
+              Complete information about this Appointment
             </p>
 
             {/* Input Grid */}
@@ -370,7 +374,7 @@ const ClinicBookingManagementTable: React.FC = () => {
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  clinicName Name
+                  Clinic Name
                 </label>
                 <input
                   type="text"
@@ -463,18 +467,16 @@ const ClinicBookingManagementTable: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-center gap-4  mx-auto mt-4 px-4">
-              <button className="flex-1 w-[492px] h-[40px] rounded-md bg-[#FFEAEB] text-red-500 font-medium hover:bg-red-500 hover:text-white transition-colors">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mx-auto mt-4">
+              <button className="w-full md:w-[492px] cursor-pointer h-[40px] rounded-md bg-[#FFEAEB] text-red-500 font-medium hover:bg-red-500 hover:text-white transition-colors">
                 Reject
               </button>
-              <button className="flex-1 w-[492px] h-[40px] rounded-md bg-[#1B9268] text-white font-medium hover:bg-green-600 transition-colors">
+
+              <button className="w-full md:w-[492px] h-[40px] cursor-pointer rounded-md bg-[#1B9268] text-white font-medium hover:bg-green-600 transition-colors">
                 Accept
               </button>
             </div>
-
-
           </div>
-
         </div>
       )}
     </div>

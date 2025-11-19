@@ -29,7 +29,8 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCancelledModal, setShowCancelledModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   // Appointment data - using state to update status
   const [appointments, setAppointments] = useState<Appointment[]>([
@@ -194,7 +195,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
         {appointments.map((appointment) => (
           <div
             key={appointment.id}
-            onClick={() => handleButtonClick(appointment)}
+            onClick={() => {
+              handleButtonClick(appointment);
+              onViewDetails(); // 👈 use it here
+            }}
             className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
           >
             {/* Header with patient info and status */}
@@ -562,7 +566,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               {/* Success Icon */}
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-12 h-12 text-white" strokeWidth={2.5} />
+                  <CheckCircle
+                    className="w-12 h-12 text-white"
+                    strokeWidth={2.5}
+                  />
                 </div>
               </div>
 

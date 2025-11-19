@@ -22,7 +22,8 @@ interface Appointment {
 
 const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   // Only Pending appointments with a new doctor (c.png)
   const [appointments, setAppointments] = useState<Appointment[]>([
@@ -188,6 +189,7 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  onViewDetails();
                   handleCardClick(appointment);
                 }}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-yellow-500 text-white hover:bg-yellow-600 cursor-pointer"

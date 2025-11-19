@@ -1,8 +1,17 @@
 import { useState } from "react";
-import { X, ZoomIn, ZoomOut, Download, FileText, CheckCircle, AlertTriangle } from "lucide-react";
+import {
+  X,
+  ZoomIn,
+  ZoomOut,
+  Download,
+  FileText,
+  CheckCircle,
+  AlertTriangle,
+} from "lucide-react";
 
 // Certificate image - replace with your actual image path
-const certificateImage = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop";
+const certificateImage =
+  "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop";
 
 // ========== Component 1: Upload Certificate Modal ==========
 interface CertificateFormData {
@@ -22,13 +31,20 @@ interface UploadCertificateModalProps {
   onSuccess: () => void;
 }
 
-const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose, onSuccess }) => {
-  const [formData, setFormData] = useState<CertificateFormData>(initialFormData);
+const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({
+  onClose,
+  onSuccess,
+}) => {
+  const [formData, setFormData] =
+    useState<CertificateFormData>(initialFormData);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleInputChange = (field: keyof CertificateFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof CertificateFormData,
+    value: string
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
@@ -38,21 +54,25 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
 
     if (file.size > 5 * 1024 * 1024) {
       setError("File size exceeds 5MB");
-      setFormData(prev => ({ ...prev, file: null }));
+      setFormData((prev) => ({ ...prev, file: null }));
       return;
     }
     if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
       setError("Invalid file type. Only PDF, JPG, or PNG allowed.");
-      setFormData(prev => ({ ...prev, file: null }));
+      setFormData((prev) => ({ ...prev, file: null }));
       return;
     }
 
-    setFormData(prev => ({ ...prev, file }));
+    setFormData((prev) => ({ ...prev, file }));
     setError(null);
   };
 
   const handleSubmit = () => {
-    if (!formData.certificateName || !formData.certificateType || !formData.file) {
+    if (
+      !formData.certificateName ||
+      !formData.certificateType ||
+      !formData.file
+    ) {
       setError("Please fill all fields and upload a certificate.");
       return;
     }
@@ -66,18 +86,23 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
     }, 2000);
   };
 
-  const fileInputClass = `flex items-center p-3 rounded-md transition-all ${formData.file ? "border-2 border-green-500 bg-green-50" : "border border-gray-300 hover:border-blue-500"
-    } relative cursor-pointer overflow-hidden`;
+  const fileInputClass = `flex items-center p-3 rounded-md transition-all ${
+    formData.file
+      ? "border-2 border-green-500 bg-green-50"
+      : "border border-gray-300 hover:border-blue-500"
+  } relative cursor-pointer overflow-hidden`;
 
   return (
     <div className="fixed inset-0 bg-[#2D3C5266] bg-opacity-40 flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl transform transition-all">
         {/* Header */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-800">Upload Certificate</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Upload Certificate
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
             aria-label="Close"
           >
             <X size={24} />
@@ -86,7 +111,9 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
 
         {/* Body */}
         <div className="p-6">
-          <p className="mb-6 text-sm text-gray-500">Upload relevant licenses and certifications</p>
+          <p className="mb-6 text-sm text-gray-500">
+            Upload relevant licenses and certifications
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -96,7 +123,9 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
               <input
                 type="text"
                 value={formData.certificateName}
-                onChange={(e) => handleInputChange("certificateName", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("certificateName", e.target.value)
+                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 placeholder="State Clinic License"
                 required
@@ -110,7 +139,9 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
               <input
                 type="text"
                 value={formData.certificateType}
-                onChange={(e) => handleInputChange("certificateType", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("certificateType", e.target.value)
+                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 placeholder="Medical License"
                 required
@@ -127,8 +158,18 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
                 {formData.file ? formData.file.name : "Upload your certificate"}
               </span>
               {formData.file && (
-                <svg className="w-6 h-6 text-green-500 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-6 h-6 text-green-500 ml-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               )}
               <input
@@ -138,7 +179,9 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
                 className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">PDF, JPG, PNG only. Max file size 5MB.</p>
+            <p className="mt-1 text-xs text-gray-500">
+              PDF, JPG, PNG only. Max file size 5MB.
+            </p>
           </div>
 
           {error && (
@@ -160,10 +203,11 @@ const UploadCertificateModal: React.FC<UploadCertificateModalProps> = ({ onClose
               type="button"
               onClick={handleSubmit}
               disabled={isUploading}
-              className={`px-6 py-2 text-sm font-medium text-white rounded-lg transition-colors shadow-md ${isUploading
+              className={`px-6 py-2 text-sm cursor-pointer font-medium text-white rounded-lg transition-colors shadow-md ${
+                isUploading
                   ? "bg-blue-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                }`}
+              }`}
             >
               {isUploading ? "Uploading..." : "Upload"}
             </button>
@@ -179,7 +223,9 @@ interface LicenseSuccessfullyProps {
   onBack: () => void;
 }
 
-const LicenseSuccessfully: React.FC<LicenseSuccessfullyProps> = ({ onBack }) => {
+const LicenseSuccessfully: React.FC<LicenseSuccessfullyProps> = ({
+  onBack,
+}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2D3C5266] bg-opacity-40 p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 max-w-sm w-full text-center">
@@ -188,7 +234,8 @@ const LicenseSuccessfully: React.FC<LicenseSuccessfullyProps> = ({ onBack }) => 
         </div>
         <h1 className="text-xl font-semibold mb-2">Uploaded Successfully</h1>
         <p className="text-gray-600 mb-6">
-          Your License has been Submitted for validation. You will be notified once it gets approved.
+          Your License has been Submitted for validation. You will be notified
+          once it gets approved.
         </p>
         <button
           onClick={onBack}
@@ -211,7 +258,7 @@ interface RemoveDocumentModalProps {
 const RemoveDocumentModal: React.FC<RemoveDocumentModalProps> = ({
   onClose,
   onConfirm,
-  documentName = "Medical License"
+  documentName = "Medical License",
 }) => {
   return (
     <div className="fixed inset-0 bg-[#2D3C5266] bg-opacity-40 flex items-center justify-center z-50 p-4">
@@ -228,7 +275,8 @@ const RemoveDocumentModal: React.FC<RemoveDocumentModalProps> = ({
 
         <p className="text-sm text-gray-600 text-center mb-6">
           Are you sure you want to Delete{" "}
-          <span className="font-semibold text-gray-800">"{documentName}"</span>? Once deleted it cannot be retrieved.
+          <span className="font-semibold text-gray-800">"{documentName}"</span>?
+          Once deleted it cannot be retrieved.
         </p>
 
         <div className="flex gap-3">
@@ -266,16 +314,16 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
   fileFormat = "PDF Document",
   uploadDate = "October 15, 2025",
   verificationStatus = "Verified",
-  imageUrl = certificateImage
+  imageUrl = certificateImage,
 }) => {
   const [zoom, setZoom] = useState(100);
 
   const handleZoomIn = () => {
-    if (zoom < 200) setZoom(prev => prev + 10);
+    if (zoom < 200) setZoom((prev) => prev + 10);
   };
 
   const handleZoomOut = () => {
-    if (zoom > 50) setZoom(prev => prev - 10);
+    if (zoom > 50) setZoom((prev) => prev - 10);
   };
 
   return (
@@ -283,7 +331,9 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
       <div className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">{documentType}</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            {documentType}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -296,27 +346,40 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
         {/* Document Details */}
         <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 border-b border-gray-200">
           <div>
-            <label className="text-xs text-gray-500 font-medium">Document Type</label>
+            <label className="text-xs text-gray-500 font-medium">
+              Document Type
+            </label>
             <div className="mt-1 text-sm text-gray-800 bg-white px-3 py-2 rounded border border-gray-200">
               {documentType}
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-500 font-medium">File Format</label>
+            <label className="text-xs text-gray-500 font-medium">
+              File Format
+            </label>
             <div className="mt-1 text-sm text-gray-800 bg-white px-3 py-2 rounded border border-gray-200">
               {fileFormat}
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-500 font-medium">Upload Date</label>
+            <label className="text-xs text-gray-500 font-medium">
+              Upload Date
+            </label>
             <div className="mt-1 text-sm text-gray-800 bg-white px-3 py-2 rounded border border-gray-200">
               {uploadDate}
             </div>
           </div>
           <div>
-            <label className="text-xs text-gray-500 font-medium">Verification Status</label>
-            <div className={`mt-1 text-sm font-medium bg-white px-3 py-2 rounded border border-gray-200 ${verificationStatus === "Verified" ? "text-green-600" : "text-yellow-600"
-              }`}>
+            <label className="text-xs text-gray-500 font-medium">
+              Verification Status
+            </label>
+            <div
+              className={`mt-1 text-sm font-medium bg-white px-3 py-2 rounded border border-gray-200 ${
+                verificationStatus === "Verified"
+                  ? "text-green-600"
+                  : "text-yellow-600"
+              }`}
+            >
               {verificationStatus}
             </div>
           </div>
@@ -362,7 +425,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
             className="mx-auto bg-white shadow-lg transition-all duration-200"
             style={{
               width: `${zoom}%`,
-              maxWidth: '800px'
+              maxWidth: "800px",
             }}
           >
             <img
@@ -380,7 +443,6 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
 // ========== Main Component: License ==========
 const License = () => {
   const [licenseNumber, setLicenseNumber] = useState("MD-123456");
-
 
   // Modal states
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -422,15 +484,22 @@ const License = () => {
   };
 
   return (
-    <div className=" bg-gray-50 p-4">
-      <div className="w-[1599px]">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 lg:p-8 mt-5">
-          <h2 className="text-xl font-semibold text-gray-800 mb-1">License & Documents</h2>
+    <div className=" ">
+      <div className="">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 lg:p-8 ">
+          <h2 className="text-xl font-semibold text-gray-800 mb-1">
+            License & Documents
+          </h2>
 
           {/* Verification Status */}
-          <div className="mt-6 mb-8">
+          <div className="mt-6 mb-8 p-3 bg-[#F3F4F5]  rounded-xl">
+            <div>
+              <button className="px-3 mb-2 py-1 text-sm rounded bg-[#2E6FF3] text-white hover:bg-blue-600 transition">
+                Verified Clinic
+              </button>
+            </div>
             <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-sm font-medium">
-              <span className="text-xs">Verified Clinic</span>
+              <span className="text-xs">Verification Status</span>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -439,8 +508,10 @@ const License = () => {
                 />
               </svg>
             </div>
+
             <p className="text-sm text-gray-600 mt-3">
-              Your clinic has been verified and approved by Med Connect. All documents are up to date.
+              Your clinic has been verified and approved by Med Connect. All
+              documents are up to date.
             </p>
           </div>
 
@@ -468,10 +539,15 @@ const License = () => {
                 {documents.map((doc) => (
                   <div
                     key={doc.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-400 transition"
+                    className="flex w-[400px] items-center justify-between p-4  bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-400 transition"
                   >
-                    <div className="flex items-center gap-3">
-                      <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center gap-1">
+                      <svg
+                        className="w-5 h-5 text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -479,12 +555,15 @@ const License = () => {
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      <span className="font-medium text-gray-800">{doc.name}</span>
+                      <span className="font-medium text-gray-800 whitespace-nowrap">
+                        {doc.name}
+                      </span>
                     </div>
+
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleViewDocument(doc.name)}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium cursor-pointer"
+                        className="text-blue-600 whitespace-nowrap hover:text-blue-700 text-sm font-medium cursor-pointer"
                       >
                         View Document
                       </button>
@@ -501,11 +580,16 @@ const License = () => {
 
               <button
                 onClick={() => setShowUploadModal(true)}
-                className=" mt-4 border-2 border-dashed border-gray-300 rounded-3xl 
+                className=" mt-4 w-[400px] border-2 border-dashed border-gray-300 rounded-3xl 
              text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition 
-             font-medium cursor-pointer flex flex-col items-center justify-center gap-2 text-center w-full"
+             font-medium cursor-pointer flex flex-col items-center justify-center gap-2 text-center "
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -519,7 +603,6 @@ const License = () => {
               <p className="text-xs text-gray-500 mt-2 text-center">
                 Supported formats: PDF, JPG, PNG (Max 5MB)
               </p>
-
             </div>
           </div>
 

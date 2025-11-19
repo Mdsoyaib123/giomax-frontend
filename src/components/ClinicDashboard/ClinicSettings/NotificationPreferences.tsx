@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 // --- Type Definitions ---
 interface NotificationState {
@@ -36,8 +36,8 @@ const NotificationToggle: React.FC<NotificationToggleProps> = ({
           onChange={onChange}
           className="sr-only peer"
         />
-        <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 
-          after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+        <div
+          className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 after:absolute after:top-0.5 after:left-0.5 
           after:bg-white after:border after:border-gray-300 after:rounded-full 
           after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"
         />
@@ -59,7 +59,7 @@ const NotificationPreferences: React.FC = () => {
 
   const handleNotificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setNotifications(prev => ({
+    setNotifications((prev) => ({
       ...prev,
       [name]: checked,
     }));
@@ -73,22 +73,14 @@ const NotificationPreferences: React.FC = () => {
     console.log("Cancelled");
   };
 
-
-
-
-
-
-
   return (
-    <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 border border-gray-200 rounded-lg shadow-sm w-full max-w-[1591px] h-[515px] mx-auto mt-5">
-
+    <div className="bg-white w-full  mx-auto mt-5">
       <h3 className="text-xl font-semibold text-gray-700 mb-6">
         Notification Preferences
       </h3>
 
       {/* Responsive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
         {/* --- Appointments --- */}
         <div className="border border-gray-100 p-5 rounded-lg">
           <h4 className="font-medium text-gray-800 mb-1">Appointments</h4>
@@ -160,12 +152,12 @@ const NotificationPreferences: React.FC = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-3 mt-10 border-t pt-6 border-[#E5E7EB]">
+      <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-10 border-t pt-6 border-[#E5E7EB]">
         <button
           type="button"
           onClick={handleCancel}
-          className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 
-          hover:bg-gray-50 transition"
+          className="w-full sm:w-auto px-5 py-2 border border-gray-300 rounded-lg text-gray-700 
+    hover:bg-gray-50 transition"
         >
           Cancel
         </button>
@@ -173,8 +165,8 @@ const NotificationPreferences: React.FC = () => {
         <button
           type="button"
           onClick={handleSave}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg 
-          hover:bg-blue-700 transition font-medium"
+          className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg 
+    hover:bg-blue-700 transition font-medium"
         >
           Save Changes
         </button>

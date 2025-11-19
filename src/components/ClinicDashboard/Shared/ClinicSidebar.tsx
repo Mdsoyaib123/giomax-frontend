@@ -44,7 +44,7 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: img4,
-    label: "Booking Management",
+    label: "Book Management",
     href: "/clinic-dashboard/booking-management",
   },
   { icon: img5, label: "Payment & Earning", href: "/clinic-dashboard/payment" },

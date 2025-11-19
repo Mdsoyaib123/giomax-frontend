@@ -15,7 +15,7 @@ const Toggle: React.FC<{
 }> = ({ enabled, onChange }) => (
   <button
     onClick={() => onChange(!enabled)}
-    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${
+    className={`relative inline-flex h-5 cursor-pointer w-10 items-center rounded-full transition-colors ${
       enabled ? "bg-blue-600" : "bg-gray-300"
     }`}
   >
@@ -47,19 +47,13 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-xl border border-gray-100 p-6 sm:p-8">
-      
+    <div className="w-full mx-auto bg-white rounded-lg shadow-xl border border-gray-100 p-6 sm:p-8">
       {/* Header */}
-      <h2 className="text-xl font-bold text-gray-900 mb-8">
-        Notification Preferences 🔔
+      <h2 className="text-xl font-semibold font-sans text-gray-900 mb-2">
+        Notification Preferences
       </h2>
 
-      ---
-
-      {/* Notification Grid - Responsive Layout */}
-      {/* Grid change: Stacks on mobile (col-1), switches to 3 columns on medium screens (md:col-3) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8">
-        
         {/* Appointments */}
         <div className="bg-gray-50 rounded-lg p-5">
           <h3 className="font-semibold text-gray-900 mb-2">Appointments</h3>
@@ -71,14 +65,18 @@ const Notification: React.FC = () => {
               <span className="text-sm text-gray-700">Email</span>
               <Toggle
                 enabled={prefs.appointmentsEmail}
-                onChange={(val) => setPrefs({ ...prefs, appointmentsEmail: val })}
+                onChange={(val) =>
+                  setPrefs({ ...prefs, appointmentsEmail: val })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-700">Push Notification</span>
               <Toggle
                 enabled={prefs.appointmentsPush}
-                onChange={(val) => setPrefs({ ...prefs, appointmentsPush: val })}
+                onChange={(val) =>
+                  setPrefs({ ...prefs, appointmentsPush: val })
+                }
               />
             </div>
           </div>
@@ -132,9 +130,6 @@ const Notification: React.FC = () => {
           </div>
         </div>
       </div>
-
-   
-
       {/* Action Buttons */}
       <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4  border-gray-200">
         <button

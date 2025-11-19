@@ -71,7 +71,7 @@ const TeamManagement: React.FC = () => {
               </span>
               <button
                 onClick={() => handleDeleteMember(member.id)}
-                className="p-3 cursor-pointer text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                className="p-3 cursor-pointer text-red-600 bg-red-100 hover:bg-red-200 rounded-lg transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
