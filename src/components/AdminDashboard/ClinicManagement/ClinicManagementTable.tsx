@@ -292,7 +292,7 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
       {/* Patient Profile Dialog */}
       {openProfile && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
-          <div className="bg-white rounded-lg w-full max-w-5xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
+          <div className="bg-white rounded-lg w-full max-w-5xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200 max-h-[94vh] overflow-y-auto">
             {/* Close Icon */}
             <button
               onClick={() => setOpenProfile(null)}
@@ -484,16 +484,17 @@ const ClinicManagementTable: React.FC<Props> = ({ id }) => {
               </div>
             </div>
 
-            <div className="flex  gap-4 mt-6">
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
               <button
                 onClick={() => setOpenProfile(null)}
-                className=" w-full cursor-pointer px-5 py-2 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
+                className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
               >
                 Close
               </button>
+
               <button
                 onClick={handleClick}
-                className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
+                className="w-full cursor-pointer px-5 py-2.5 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
               >
                 View Payment History
               </button>

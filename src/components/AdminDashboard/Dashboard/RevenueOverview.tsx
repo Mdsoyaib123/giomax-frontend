@@ -38,7 +38,7 @@ const margin = {
 
 export default function RevenueOverview() {
   return (
-    <div className="w-full h-[500px] bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+    <div className="w-full h-[550px] bg-white rounded-2xl shadow-md border border-gray-200 p-6 mb-2 sm:mb-9 xl:sm:mb-0">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 w-full">
         <div className="w-full md:flex-1">
           <h1 className="text-[24px] leading-[130%] font-medium text-[#343A40] mb-2">
@@ -90,7 +90,7 @@ export default function RevenueOverview() {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height="90%">
+      <ResponsiveContainer width="100%" height="80%">
         <BarChart data={data} margin={margin}>
           <CartesianGrid stroke="#E5E7EB" strokeDasharray="5 5" />
           <XAxis

@@ -21,7 +21,8 @@ interface Appointment {
 
 const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   // Only Approved appointments
   const approvedAppointments: Appointment[] = [
@@ -162,7 +163,10 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
               </span>
 
               <button
-                onClick={() => handleCardClick(appointment)}
+                onClick={() => {
+                  handleCardClick(appointment);
+                  onViewDetails(); // ← Use it here
+                }}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-green-500 text-white hover:bg-green-600 cursor-pointer"
               >
                 Approved

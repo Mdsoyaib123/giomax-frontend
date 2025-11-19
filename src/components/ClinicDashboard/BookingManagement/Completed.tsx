@@ -24,7 +24,8 @@ interface Appointment {
 
 const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   // Extended appointments array with 3 new doctors
   const [appointments] = useState<Appointment[]>([
@@ -190,6 +191,7 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  onViewDetails();
                   handleCardClick(appointment);
                 }}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"

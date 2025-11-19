@@ -36,7 +36,7 @@ interface DialogueProps {
 const Dialogue: React.FC<DialogueProps> = ({
   patient,
   onClose,
-  onViewPaymentHistory,
+  // onViewPaymentHistory,
 }) => {
   if (!patient) return null;
 
@@ -93,17 +93,17 @@ const Dialogue: React.FC<DialogueProps> = ({
     },
   ];
 
-  const handleViewPaymentHistory = () => {
-    if (onViewPaymentHistory) {
-      onViewPaymentHistory(patient.id);
-    }
-  };
+  // const handleViewPaymentHistory = () => {
+  //   if (onViewPaymentHistory) {
+  //     onViewPaymentHistory(patient.id);
+  //   }
+  // };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-lg w-full max-w-4xl relative shadow-2xl border border-[#DBE0E5]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ">
+      <div className="bg-white rounded-lg w-full max-w-4xl relative shadow-2xl border border-[#DBE0E5] max-h-[94vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#DBE0E5]">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#DBE0E5] ">
           <div>
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
               Patient Details
@@ -114,7 +114,7 @@ const Dialogue: React.FC<DialogueProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -195,45 +195,52 @@ const Dialogue: React.FC<DialogueProps> = ({
             <h3 className="text-lg font-semibold text-gray-900 mb-3">
               Appointment History
             </h3>
-            <div className="border border-[#DBE0E5] rounded-lg">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-[#DBE0E5]">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
-                      Date & Time
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
-                      Doctor Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
-                      Service
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {appointments.map((apt, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                        {apt.dateTime}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                        {apt.doctorName}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                        {apt.service}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                          {apt.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className=" border border-[#E4E4E4] rounded-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+                <div className="xl:col-span-4 w-full">
+                  {/*  */}
+                  <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50 border-b border-[#DBE0E5]">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
+                            Date & Time
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
+                            Doctor Name
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
+                            Service
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {appointments.map((apt, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                              {apt.dateTime}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                              {apt.doctorName}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                              {apt.service}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                                {apt.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

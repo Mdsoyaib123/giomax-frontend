@@ -8,7 +8,9 @@ interface WithdrawFundsProps {
 
 const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
   const [amount, setAmount] = React.useState("1200.00");
-  const [payoutMethod, setPayoutMethod] = React.useState("Bank transfer - ****4212");
+  const [payoutMethod, setPayoutMethod] = React.useState(
+    "Bank transfer - ****4212"
+  );
   const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const handleRequestWithdrawal = () => {
@@ -33,19 +35,26 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
             {/* Header */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Withdraw Funds</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  Withdraw Funds
+                </h1>
                 <p className="text-gray-600 text-sm mt-1">
                   Transfer your earnings to your bank account
                 </p>
               </div>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+              <button
+                onClick={onClose}
+                className="text-gray-400 cursor-pointer hover:text-gray-600"
+              >
                 <X size={24} />
               </button>
             </div>
 
             {/* Available for Withdrawal */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-              <p className="text-gray-700 text-sm font-medium mb-2">Available for Withdrawal</p>
+              <p className="text-gray-700 text-sm font-medium mb-2">
+                Available for Withdrawal
+              </p>
               <p className="text-3xl font-semibold text-green-600">$1,600.00</p>
             </div>
 
@@ -56,7 +65,9 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
                   Withdraw Amount <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-3 text-gray-500 font-medium">$</span>
+                  <span className="absolute left-3 top-3 text-gray-500 font-medium">
+                    $
+                  </span>
                   <input
                     type="text"
                     value={amount}
@@ -81,24 +92,29 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <Info size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                <Info
+                  size={20}
+                  className="text-blue-600 flex-shrink-0 mt-0.5"
+                />
                 <p className="text-sm text-gray-700">
-                  Bank withdrawals typically take 1-3 <span className="font-medium">business days</span> to process
+                  Bank withdrawals typically take 1-3{" "}
+                  <span className="font-medium">business days</span> to process
                 </p>
               </div>
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 mt-8">
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-blue-600 font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 cursor-pointer px-4 py-3 border border-gray-300 rounded-lg text-blue-600 font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleRequestWithdrawal}
-                className="flex-1 px-4 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-colors"
+                className="flex-1 cursor-pointer px-4 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-colors"
               >
                 Request Withdrawal
               </button>
@@ -113,7 +129,10 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-[1140px] text-center h-[375px]">
             {/* Close Button */}
             <div className="flex justify-end mb-4">
-              <button onClick={handleBack} className="text-gray-400 hover:text-gray-600">
+              <button
+                onClick={handleBack}
+                className="text-gray-400 hover:text-gray-600"
+              >
                 <X size={20} />
               </button>
             </div>
@@ -126,12 +145,15 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Title */}
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">Withdrawal Initiated!</h1>
+            <h1 className="text-xl font-semibold text-gray-900 mb-2">
+              Withdrawal Initiated!
+            </h1>
 
             {/* Message */}
             <p className="text-gray-600 text-sm leading-relaxed mb-8">
               Your withdrawal of{" "}
-              <span className="font-semibold text-gray-900">${amount}</span> has been initiated. You should see it in your bank account within{" "}
+              <span className="font-semibold text-gray-900">${amount}</span> has
+              been initiated. You should see it in your bank account within{" "}
               <span className="font-semibold">1-3 business days</span>.
             </p>
 

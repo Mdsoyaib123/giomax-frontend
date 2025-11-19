@@ -72,7 +72,7 @@ const Commission: React.FC = () => {
         </div>
       </div>
 
-      <div className="border-t pt-4 mb-6 border-[#D1D5DC]">
+      <div className="pt-4 mb-6 border-[#D1D5DC]">
         <h3 className="font-semibold text-gray-900 mb-4">
           Notification Settings
         </h3>

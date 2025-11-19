@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-// Removed: import PaymentEarningCard from "./PaymentEarningCard"; 
-import PaymentEarningCard from '@/components/ClinicDashboard/Dashboard/PaymentEarningCard';
+// Removed: import PaymentEarningCard from "./PaymentEarningCard";
+import PaymentEarningCard from "@/components/ClinicDashboard/Dashboard/PaymentEarningCard";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Transaction type-ti define kora holo
 interface Transaction {
@@ -9,11 +18,13 @@ interface Transaction {
   service: string;
   amount: number;
   date: string;
-  status: 'Pending' | 'Completed' | 'Cancelled';
+  status: "Pending" | "Completed" | "Cancelled";
 }
 
 // Status Badge Component
-const StatusBadge: React.FC<{ status: Transaction['status'] }> = ({ status }) => {
+const StatusBadge: React.FC<{ status: Transaction["status"] }> = ({
+  status,
+}) => {
   let colorClasses = "";
 
   switch (status) {
@@ -31,7 +42,9 @@ const StatusBadge: React.FC<{ status: Transaction['status'] }> = ({ status }) =>
   }
 
   return (
-    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${colorClasses}`}>
+    <span
+      className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${colorClasses}`}
+    >
       {status}
     </span>
   );
@@ -52,7 +65,7 @@ const TransactionHistory: React.FC = () => {
       service: "Cardiology Consultation",
       amount: 2500.0,
       date: "25/10/2025",
-      status: "Pending"
+      status: "Pending",
     },
     {
       transactionId: "TRX002",
@@ -60,7 +73,7 @@ const TransactionHistory: React.FC = () => {
       service: "Pediatric Checkup",
       amount: 2500.0,
       date: "25/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     {
       transactionId: "TRX003",
@@ -68,7 +81,7 @@ const TransactionHistory: React.FC = () => {
       service: "Dermatology Consultation",
       amount: 2500.0,
       date: "25/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     {
       transactionId: "TRX004",
@@ -76,7 +89,7 @@ const TransactionHistory: React.FC = () => {
       service: "Neurology Consultation",
       amount: 2500.0,
       date: "25/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     {
       transactionId: "TRX005",
@@ -84,7 +97,7 @@ const TransactionHistory: React.FC = () => {
       service: "General Checkup",
       amount: 2500.0,
       date: "25/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     // Baki 4-ti entry
     {
@@ -93,7 +106,7 @@ const TransactionHistory: React.FC = () => {
       service: "Orthopedic Checkup",
       amount: 1800.0,
       date: "24/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     {
       transactionId: "TRX007",
@@ -101,7 +114,7 @@ const TransactionHistory: React.FC = () => {
       service: "Ophthalmology Exam",
       amount: 1200.0,
       date: "24/10/2025",
-      status: "Completed"
+      status: "Completed",
     },
     {
       transactionId: "TRX008",
@@ -109,7 +122,7 @@ const TransactionHistory: React.FC = () => {
       service: "Physical Therapy",
       amount: 800.0,
       date: "23/10/2025",
-      status: "Pending"
+      status: "Pending",
     },
     {
       transactionId: "TRX009",
@@ -117,13 +130,12 @@ const TransactionHistory: React.FC = () => {
       service: "General Consultation",
       amount: 1500.0,
       date: "23/10/2025",
-      status: "Completed"
-    }
+      status: "Completed",
+    },
   ];
 
   // PAGINATION LOGIC
   const transactionList = mockTransactions;
-
 
   const totalPages = Math.ceil(transactionList.length / itemsPerPage);
 
@@ -149,24 +161,13 @@ const TransactionHistory: React.FC = () => {
 
   // Showing X to Y of Z entries er jonno hishab
   const firstEntry = (currentPage - 1) * itemsPerPage + 1;
-  const lastEntry = Math.min(currentPage * itemsPerPage, transactionList.length);
+  const lastEntry = Math.min(
+    currentPage * itemsPerPage,
+    transactionList.length
+  );
   const totalEntries = transactionList.length;
 
-
-
-
-
-
-
-
-
-
-
   return (
-
-
-
-    
     <div>
       <div className="  font-sans">
         <div className="mt-5">
@@ -177,91 +178,134 @@ const TransactionHistory: React.FC = () => {
 
           {/* Main Table Card */}
           <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 sm:p-6 border-1px">
-
             {/* Header Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-              <h2 className="text-lg sm:text-xl font-semibold text-[#343A40]">Transaction History</h2>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+              <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
+                Transaction History
+              </h2>
 
-              {/* Status Dropdown */}
-              <div className="relative w-full sm:w-auto">
-                <select
-                  className="appearance-none block w-full bg-white border border-gray-300 rounded-md py-2 pl-3 pr-10 text-xs sm:text-sm leading-5 focus:outline-none focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                  defaultValue="All Status"
-                >
-                  <option>All Status</option>
-                  <option>Pending</option>
-                  <option>Completed</option>
-                  <option>Cancelled</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <div className="w-full sm:w-[250px] md:w-[220px]">
+                  <Select defaultValue="all">
+                    <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
+                      <SelectGroup>
+                        <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
+                          All Status Data
+                        </SelectLabel>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Suspended">Suspended</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
 
             {/* Table Container - Responsive Horizontal Scroll */}
-            <div className="overflow-x-auto rounded-lg border border-gray-200 w-full">
-              <table className="w-full text-xs sm:text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">Transaction ID</th>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden sm:table-cell">Receiver</th>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden md:table-cell">Service</th>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">Amount</th>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden lg:table-cell">Date</th>
-                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">Status</th>
-                  </tr>
-                </thead>
+            <div className="p-5 border border-[#E4E4E4] rounded-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+                <div className="xl:col-span-4 w-full">
+                  {/* Table */}
 
-                <tbody className="divide-y divide-gray-200">
-                  {currentTransactions.map((u) => (
-                    <tr key={u.transactionId} className="hover:bg-gray-50 transition">
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-medium text-gray-900 whitespace-nowrap text-xs sm:text-sm">
-                        <div className="truncate max-w-[120px] sm:max-w-none">{u.transactionId}</div>
-                      </td>
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden sm:table-cell text-xs sm:text-sm">{u.receiver}</td>
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden md:table-cell text-xs sm:text-sm">{u.service}</td>
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-semibold text-blue-600 whitespace-nowrap text-xs sm:text-sm">${u.amount.toFixed(2)}</td>
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 whitespace-nowrap hidden lg:table-cell text-xs sm:text-sm">{u.date}</td>
-                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                        <StatusBadge status={u.status} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  <div className="overflow-x-auto rounded-lg border border-gray-200 w-full">
+                    <table className="w-full text-xs sm:text-sm">
+                      <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                            Transaction ID
+                          </th>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden sm:table-cell">
+                            Receiver
+                          </th>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden md:table-cell">
+                            Service
+                          </th>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                            Amount
+                          </th>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap hidden lg:table-cell">
+                            Date
+                          </th>
+                          <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody className="divide-y divide-gray-200">
+                        {currentTransactions.map((u) => (
+                          <tr
+                            key={u.transactionId}
+                            className="hover:bg-gray-50 transition"
+                          >
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-medium text-gray-900 whitespace-nowrap text-xs sm:text-sm">
+                              <div className="truncate max-w-[120px] sm:max-w-none">
+                                {u.transactionId}
+                              </div>
+                            </td>
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden sm:table-cell text-xs sm:text-sm">
+                              {u.receiver}
+                            </td>
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden md:table-cell text-xs sm:text-sm">
+                              {u.service}
+                            </td>
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-semibold text-blue-600 whitespace-nowrap text-xs sm:text-sm">
+                              ${u.amount.toFixed(2)}
+                            </td>
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 whitespace-nowrap hidden lg:table-cell text-xs sm:text-sm">
+                              {u.date}
+                            </td>
+                            <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                              <StatusBadge status={u.status} />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Pagination */}
-            <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
-              <p className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
-                Showing <span className="font-medium">{firstEntry}</span> to <span className="font-medium">{lastEntry}</span> of <span className="font-medium">{totalEntries}</span> entries
+            <div className="mt-4 sm:mt-6 flex items-center justify-between gap-4">
+              {/* Entries Info */}
+              <p className="text-xs sm:text-sm text-gray-600">
+                Showing <span className="font-medium">{firstEntry}</span> to{" "}
+                <span className="font-medium">{lastEntry}</span> of{" "}
+                <span className="font-medium">{totalEntries}</span> entries
               </p>
 
-              <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
+              {/* Pagination */}
+              <div className="flex items-center gap-1">
                 {/* Prev Button */}
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-2 sm:px-3 py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm transition whitespace-nowrap ${currentPage === 1
+                  className={`px-3 py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm transition ${
+                    currentPage === 1
                       ? "opacity-50 cursor-not-allowed text-gray-400"
                       : "hover:bg-gray-100 bg-white text-blue-600"
-                    }`}
+                  }`}
                 >
                   Prev
                 </button>
 
-                {/* Numbered Page Buttons */}
+                {/* Number Pages */}
                 {getPageNumbers().map((page) => (
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`min-w-[32px] px-2 sm:px-3 py-1.5 border rounded-lg text-xs sm:text-sm transition ${currentPage === page
+                    className={`min-w-[32px] px-3 py-1.5 border rounded-lg text-xs sm:text-sm transition ${
+                      currentPage === page
                         ? "bg-blue-600 text-white border-blue-600"
                         : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                      }`}
+                    }`}
                   >
                     {page}
                   </button>
@@ -271,10 +315,11 @@ const TransactionHistory: React.FC = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`px-2 sm:px-3 py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm transition whitespace-nowrap ${currentPage === totalPages
+                  className={`px-3 py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm transition ${
+                    currentPage === totalPages
                       ? "opacity-50 cursor-not-allowed text-gray-400"
                       : "hover:bg-gray-100 bg-white text-blue-600"
-                    }`}
+                  }`}
                 >
                   Next
                 </button>

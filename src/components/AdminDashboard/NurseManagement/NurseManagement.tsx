@@ -498,7 +498,7 @@ const NurseManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-6">
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
               <button
                 onClick={() => handleApprovedConfirm(openProfile)}
                 className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white border border-[#2E6FF3] hover:bg-[#0b51de] transition"
@@ -661,14 +661,14 @@ const NurseManagement: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setConfirmApproved(null)}
-                className="w-full px-4 py-3 rounded-md bg-[#EFF4FF] border border-gray-300 text-[#2E6FF3] text-sm hover:bg-gray-100 transition"
+                className="w-full px-4 py-3 cursor-pointer rounded-md bg-[#EFF4FF] border border-gray-300 text-[#2E6FF3] text-sm hover:bg-gray-100 transition"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleConfirmApproved}
-                className="w-full px-5 py-3 rounded-md bg-[#1D4ED8] hover:bg-[#155ad1] text-white text-sm transition"
+                className="w-full px-5 py-3 cursor-pointer rounded-md bg-[#1D4ED8] hover:bg-[#155ad1] text-white text-sm transition"
               >
                 Confirm
               </button>
@@ -704,14 +704,14 @@ const NurseManagement: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setConfirmSuspend(null)}
-                className="w-full px-4 py-3 rounded-md bg-[#EFF4FF] border border-gray-300 text-[#2E6FF3] text-sm hover:bg-gray-100 transition"
+                className="w-full px-4 py-3 cursor-pointer rounded-md bg-[#EFF4FF] border border-gray-300 text-[#2E6FF3] text-sm hover:bg-gray-100 transition"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleConfirmSuspend}
-                className="w-full px-5 py-3 rounded-md bg-[#1D4ED8] hover:bg-[#155ad1] text-white text-sm transition"
+                className="w-full px-5 py-3 cursor-pointer rounded-md bg-[#1D4ED8] hover:bg-[#155ad1] text-white text-sm transition"
               >
                 Confirm
               </button>
