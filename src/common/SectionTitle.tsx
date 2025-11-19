@@ -8,9 +8,13 @@ export default function SectionTitle({
   description,
 }: ISectionTitleProp) {
   return (
-    <div className="text-center">
-      <h2 className="text-3xl font-bold mb-8 text-[#373A41]">{title}</h2>
-      <p className="text-lg text-[#85888E]">{description}</p>
+    <div>
+      <div className="text-start">
+        <h2 className="text-3xl font-semibold font-sans mb-4 text-[#0F1325]">
+          {title}
+        </h2>
+        <p className="text-lg text-[#5D646B]">{description}</p>
+      </div>
     </div>
   );
 }
