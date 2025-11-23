@@ -1,10 +1,10 @@
 import { FaArrowUp } from "react-icons/fa";
 import Patients from "@/assets/Logo/patientss.svg";
 import Doctors from "@/assets/Logo/doctors.svg";
-import Clinics from "@/assets/Logo/clinics.svg";
+// import Clinics from "@/assets/Logo/clinics.svg";
 import Bookings from "@/assets/Logo/bookings.svg";
 import Earnings from "@/assets/Logo/earnings.svg";
-
+import dash from "@/assets/Dashboard (1).png"
 const DashboardCard = () => {
   const statusData = [
     {
@@ -26,7 +26,7 @@ const DashboardCard = () => {
       amount: "42",
       change: "3.1",
       unit: "vs last month",
-      icon: Clinics,
+      icon: dash,
     },
     {
       title: "Total Bookings",

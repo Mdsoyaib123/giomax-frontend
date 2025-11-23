@@ -243,8 +243,8 @@ const DoctorManagement: React.FC = () => {
                     <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600">
                       {doctor.specialty}
                     </td>
-                    <td className="px-2 md:px-3 py-3 hidden md:table-cell">
-                      <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3] whitespace-nowrap">
+                    <td className="px-2 md:px-3 py-3 hidden md:table-cell ">
+                      <span className="inline-flex px-2.5 py-2 rounded-[8px] pt-[8px] pr-[12px] pb-[8px] pl-[12px]  text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3] whitespace-nowrap">
                         {doctor.serviceType}
                       </span>
                     </td>
