@@ -105,13 +105,13 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Pending":
-        return "bg-yellow-100 text-yellow-700";
+        return "bg-[#F9AA00] text-black";
       case "Approved":
-        return "bg-green-100 text-green-700";
+        return "bg-[#1B9268] text-white";
       case "Completed":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#1D4ED8] text-[#1D4ED8]";
       case "Cancelled":
-        return "bg-red-100 text-red-700";
+        return "bg-[#E9575A] text-white";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -201,6 +201,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
             }}
             className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
           >
+            
             {/* Header with patient info and status */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -223,74 +224,47 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               >
                 {appointment.status}
               </span>
+              
             </div>
-
-            {/* Appointment details */}
-            <div className="space-y-2.5 mb-4">
-              {/* Doctor */}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span>{appointment.doctorName}</span>
-              </div>
-
-              {/* Date */}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>{appointment.date}</span>
-              </div>
-
-              {/* Time */}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{appointment.time}</span>
-              </div>
-            </div>
-
-            {/* Footer with visit type and button */}
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <span
-                className={`text-xs font-medium px-2 py-1 rounded ${getVisitTypeColor(
+                className={`text-xs font-medium px-2 py-1 rounded mt-2 bb-3 ${getVisitTypeColor(
                   appointment.visitType
                 )}`}
               >
                 {appointment.visitType}
               </span>
+
+            {/* Appointment details */}
+           <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
+  {/* Doctor */}
+  <div className="flex items-center gap-2">
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+    <span>{appointment.doctorName}</span>
+  </div>
+
+  {/* Date */}
+  <div className="flex items-center gap-2">
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+    <span>{appointment.date}</span>
+  </div>
+
+  {/* Time */}
+  <div className="flex items-center gap-2">
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{appointment.time}</span>
+  </div>
+</div>
+
+
+            {/* Footer with visit type and button */}
+            {/* <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            
 
               <button
                 onClick={(e) => {
@@ -299,12 +273,12 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
                   appointment.status === "Pending"
-                    ? "bg-yellow-500 text-white hover:bg-yellow-600"
+                    ? "bg-[#F9AA00] text-[#10151A] hover:bg-yellow-600"
                     : appointment.status === "Completed"
-                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    ? "bg-[#1D4ED8] text-[#FFFFFF] hover:bg-blue-600"
                     : appointment.status === "Cancelled"
-                    ? "bg-red-500 text-white hover:bg-red-600"
-                    : "bg-green-500 text-white hover:bg-green-600"
+                    ? "bg-[#E9575A] text-white hover:bg-red-600"
+                    : "bg-[#1B9268] text-white hover:bg-green-600"
                 }`}
               >
                 {appointment.status === "Pending" && "Pending"}
@@ -312,7 +286,8 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 {appointment.status === "Completed" && "Completed"}
                 {appointment.status === "Cancelled" && "Cancelled"}
               </button>
-            </div>
+              
+            </div> */}
           </div>
         ))}
       </div>
@@ -327,7 +302,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 <h2 className="text-xl font-semibold text-gray-900">
                   Appointment Details
                 </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-yellow-700">
                   Pending
                 </span>
               </div>
