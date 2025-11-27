@@ -88,7 +88,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({ onClos
 
           {/* Message */}
           <p className="text-sm text-gray-600 mb-6">
-            Your card has been securely saved via Stripe and is ready to use.
+           Your card has been securely saved via Stripe and is ready to use.
           </p>
 
           {/* Button */}

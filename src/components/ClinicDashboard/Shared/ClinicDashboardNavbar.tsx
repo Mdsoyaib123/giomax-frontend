@@ -5,6 +5,8 @@ import {
   IoMdArrowDropdownCircle,
   IoMdNotificationsOutline,
 } from "react-icons/io";
+import { FiFilter } from "react-icons/fi";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,9 +36,8 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
   return (
     <div className="bg-white border-b border-gray-200">
       <header
-        className={`flex items-center justify-between h-17 px-4 md:px-8 mb-2 ${
-          isSidebarOpen ? "max-w-[1400px] mx-auto" : ""
-        }`}
+        className={`flex items-center justify-between h-17 px-4 md:px-8 mb-2 ${isSidebarOpen ? "max-w-[1400px] mx-auto" : ""
+          }`}
       >
         {/* Left Section */}
         <div className="flex items-center space-x-4">
@@ -81,10 +82,11 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
                 <input
                   type="text"
                   placeholder="Search anything here..."
-                  className="w-full bg-gray-100 pl-3 pr-10 py-3 text-sm md:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-gray-100 pl-3 pr-10 py-3 text-sm md:text-base rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <IoIosSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FiFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
+
             </div>
           </div>
         </div>
@@ -158,7 +160,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
           {/* Panel */}
           <div className="relative w-96 bg-white h-full shadow-xl overflow-y-auto">
             <NotificationPanel onClose={() => setIsNotifOpen(false)} />
-         
+
           </div>
         </div>
       )}
