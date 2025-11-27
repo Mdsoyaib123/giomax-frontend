@@ -22,8 +22,8 @@ const DashboardCard = () => {
       icon: Doctors,
     },
     {
-      title: "Total Clinics",
-      amount: "42",
+      title: "Average Ratings",
+      amount: "4.9",
       change: "3.1",
       unit: "vs last month",
       icon: dash,
@@ -36,7 +36,7 @@ const DashboardCard = () => {
       icon: Bookings,
     },
     {
-      title: "Total Earnings",
+      title: "Monthly Revenue",
       amount: "$85,450",
       change: "24.3",
       unit: "vs last month",

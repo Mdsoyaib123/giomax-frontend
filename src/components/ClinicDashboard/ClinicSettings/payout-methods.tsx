@@ -14,15 +14,15 @@ const Payout = () => {
     {
       id: 1,
       type: "Visa",
-      number: "Visa •••• 4242",
-      cardHolder: "Expires 12/26 • Stripe",
+      number: "Bank of Georgia",
+      cardHolder: "****1234",
       isDefault: true,
     },
     {
       id: 2,
       type: "Mastercard",
-      number: "Mastercard •••• 8888",
-      cardHolder: "Expires 09/25 • Stripe",
+      number: "Liberty Bank",
+      cardHolder: "****1234",
       isDefault: false,
     },
   ]);
@@ -94,9 +94,9 @@ const Payout = () => {
               <h2 className="text-xl font-semibold text-gray-800">
                 Payout Method
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
+              {/* <p className="text-sm text-gray-600 mt-1">
                 Manage your payment methods and billing information
-              </p>
+              </p> */}
             </div>
 
             {/* Button (Responsive) */}
@@ -117,7 +117,7 @@ const Payout = () => {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Add New Payment Method
+             Add New Bank Account
             </button>
           </div>
 

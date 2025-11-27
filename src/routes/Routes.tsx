@@ -25,6 +25,7 @@ import ClinicSettingsPage from "@/pages/Clinic/ClinicSettingsPage";
 import PaymentEarning from "@/components/ClinicDashboard/Dashboard/PaymentEarning";
 import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/PertientMessage";
 import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
+import SupportMessage from "@/components/AdminDashboard/SupportMessage";
 
 const routes = createBrowserRouter([
   {
@@ -89,7 +90,7 @@ const routes = createBrowserRouter([
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "patient-management", element: <PatientManagementPage /> },
       { path: "patient-management/:id", element: <PaymentHistory /> },
-
+      { path: "Support-message", element: <SupportMessage /> },
       { path: "booking-management", element: <BookingManagementPage /> },
       { path: "payments", element: <PaymentsPage /> },
       { path: "nurse-management", element: <NurseManagementPage /> },

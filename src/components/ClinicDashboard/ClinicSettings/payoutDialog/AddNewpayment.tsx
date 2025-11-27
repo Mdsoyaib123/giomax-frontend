@@ -174,8 +174,8 @@ export const AddNewpayment: React.FC<AddPaymentMethodModalProps> = ({ onClose, o
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-gray-200">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Add New Payment Method</h2>
-            <p className="text-sm text-gray-500 mt-1">Provide relevant information and add new payment method</p>
+            <h2 className="text-xl font-bold text-gray-800">Add New Bank Account</h2>
+            <p className="text-sm text-gray-500 mt-1">Provide relevant information and add new account</p>
           </div>
           <button
             onClick={onClose}
@@ -193,13 +193,13 @@ export const AddNewpayment: React.FC<AddPaymentMethodModalProps> = ({ onClose, o
             {/* Card Holder Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Card Holder Name <span className="text-red-500">*</span>
+                Account Holder Name * <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.cardHolderName}
                 onChange={(e) => handleInputChange("cardHolderName", e.target.value)}
-                placeholder="Enter card holder name"
+                placeholder="Enter bank holder name"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -207,13 +207,13 @@ export const AddNewpayment: React.FC<AddPaymentMethodModalProps> = ({ onClose, o
             {/* Card Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Card Number <span className="text-red-500">*</span>
+                IBAN * <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.cardNumber}
                 onChange={(e) => handleInputChange("cardNumber", e.target.value)}
-                placeholder="Enter your card number"
+                placeholder="Enter your bank number"
                 maxLength={16}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -225,13 +225,13 @@ export const AddNewpayment: React.FC<AddPaymentMethodModalProps> = ({ onClose, o
             {/* Expiry Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                EXP <span className="text-red-500">*</span>
+                Personal ID Number * <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.expiryDate}
                 onChange={(e) => handleInputChange("expiryDate", e.target.value)}
-                placeholder="MM/YY" // Added better placeholder
+                placeholder="Enter your bank number" // Added better placeholder
                 maxLength={5}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -240,13 +240,13 @@ export const AddNewpayment: React.FC<AddPaymentMethodModalProps> = ({ onClose, o
             {/* CVV */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                CVV <span className="text-red-500">*</span>
+                Bank Name * <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.cvv}
                 onChange={(e) => handleInputChange("cvv", e.target.value)}
-                placeholder="Enter CVV Code"
+                placeholder="Enter bank name"
                 maxLength={3}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
