@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Send, Check, Paperclip, Download, Menu, X } from 'lucide-react';
 
 interface Message {

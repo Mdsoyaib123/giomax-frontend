@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Send, Check, ChevronDown, Menu, X } from 'lucide-react';
 import dr1 from '@/assets/dr1.png';
 import b from '@/assets/b.png';

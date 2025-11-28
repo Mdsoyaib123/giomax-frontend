@@ -424,7 +424,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 <h2 className="text-xl font-semibold text-gray-900">
                   Appointment Details
                 </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-700 text-white">
                   Completed
                 </span>
               </div>

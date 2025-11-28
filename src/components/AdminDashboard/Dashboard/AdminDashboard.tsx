@@ -1,3 +1,4 @@
+import SectionTitle from "@/common/SectionTitle";
 import AppointmentStatistics from "./AppointmentStatistics";
 import DashboardCard from "./DashboardCard";
 import QuickActions from "./QuickActions";
@@ -6,6 +7,9 @@ import RevenueOverview from "./RevenueOverview";
 const AdminDashboard = () => {
   return (
     <div className="space-y-6">
+      <div>
+        <SectionTitle title="Dashboard Overview" description="Welcome back Giorgi! Here's overview of what's happening today." />
+      </div>
       <div>
         <DashboardCard />
       </div>

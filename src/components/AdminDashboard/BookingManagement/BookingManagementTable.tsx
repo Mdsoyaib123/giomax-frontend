@@ -20,7 +20,7 @@ interface Booking {
   type: string;
   status: "Pending" | "Confirmed" | "Cancelled";
   dateTime: string;
-  payment: "Pending" | "Confirmed" | "Refused";
+  payment: "Paid" | "Refund Pending" | "Refunded";
 }
 
 const BookingManagementTable: React.FC = () => {
@@ -35,9 +35,9 @@ const BookingManagementTable: React.FC = () => {
       clinicName: "Dr. Michael Brown",
       note: "have a good day",
       type: "Online",
-      status: "Confirmed",
+      status: "Pending",
       dateTime: "2025-11-06, 10:30 AM",
-      payment: "Confirmed",
+      payment: "Paid",
     },
     {
       id: "BK-002",
@@ -45,9 +45,9 @@ const BookingManagementTable: React.FC = () => {
       clinicName: "Dr. Sarah Lee",
       note: "have a good day",
       type: "Offline",
-      status: "Pending",
+      status: "Confirmed",
       dateTime: "2025-11-08, 02:00 PM",
-      payment: "Pending",
+      payment: "Paid",
     },
     {
       id: "BK-003",
@@ -57,7 +57,7 @@ const BookingManagementTable: React.FC = () => {
       type: "In-Clinic",
       status: "Cancelled",
       dateTime: "2025-11-05, 09:00 AM",
-      payment: "Refused",
+      payment: "Refund Pending",
     },
     {
       id: "BK-004",
@@ -67,7 +67,7 @@ const BookingManagementTable: React.FC = () => {
       type: "Online",
       status: "Confirmed",
       dateTime: "2025-11-10, 03:00 PM",
-      payment: "Confirmed",
+      payment: "Refunded",
     },
     {
       id: "BK-005",
@@ -77,7 +77,7 @@ const BookingManagementTable: React.FC = () => {
       type: "Offline",
       status: "Pending",
       dateTime: "2025-11-11, 04:00 PM",
-      payment: "Pending",
+      payment: "Paid",
     },
     {
       id: "BK-006",
@@ -87,7 +87,7 @@ const BookingManagementTable: React.FC = () => {
       type: "In-Clinic",
       status: "Cancelled",
       dateTime: "2025-11-04, 11:30 AM",
-      payment: "Refused",
+      payment: "Paid",
     },
   ];
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
@@ -273,18 +273,21 @@ const BookingManagementTable: React.FC = () => {
                           {booking.dateTime}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span
+                           <span
                             className={`px-3 py-1 text-xs font-medium rounded-full ${
-                              booking.payment === "Confirmed"
-                                ? "bg-blue-100 text-blue-700"
-                                : booking.payment === "Pending"
-                                ? "bg-orange-100 text-orange-700"
-                                : "bg-red-100 text-red-700"
-                            }`}
-                          >
-                            {booking.payment}
+                             booking.payment === "Paid"
+                            ? "bg-[#E9F9EF] text-[#1B9268]" // Green
+                            : booking.payment === "Refund Pending"
+                            ? "bg-[#FFEAEB] text-[#E9575A]" // Light red bg + red text
+                             : booking.payment === "Refunded"
+                            ? "bg-[#F2E7FE] text-[#7243FF]" // Pink bg + purple text
+                            : ""
+                          }`}
+                       >
+                       {booking.payment}
                           </span>
-                        </td>
+                      </td>
+
                         <td className="px-6 py-4 text-center whitespace-nowrap">
                           <button
                             onClick={() => handleView(booking)}
