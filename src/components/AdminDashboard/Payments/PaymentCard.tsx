@@ -1,29 +1,32 @@
+import Patients from "@/assets/aaa.png";
+import Doctors from "@/assets/bbb.png";
+import Clinics from "@/assets/ccc.png";
 import { FaArrowUp } from "react-icons/fa";
-import Patients from "@/assets/Logo/patientss.svg";
-import Doctors from "@/assets/Logo/doctors.svg";
-import Clinics from "@/assets/Logo/clinics.svg";
 
 const PaymentCard = () => {
   const statusData = [
     {
-      title: "Total Patients",
-      amount: "120",
+      title: "Total Earnings",
+      amount: "$87,450",
       change: "12.5",
       unit: "vs last month",
+      showPercentage: true,
       icon: Patients,
     },
     {
-      title: "Total Doctors",
-      amount: "156",
-      change: "8.2",
-      unit: "vs last month",
+      title: "Total Paid Out",
+      amount: "$8,500",
+      change: "",
+      unit: "5 completed transactions",
+      showPercentage: false,
       icon: Doctors,
     },
     {
-      title: "Total Clinics",
+      title: "Pending Payoutss",
       amount: "42",
-      change: "3.1",
-      unit: "vs last month",
+      change: "",
+      unit: "2 pending requests",
+      showPercentage: false,
       icon: Clinics,
     },
   ];
@@ -31,8 +34,11 @@ const PaymentCard = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 w-full">
       {statusData.map((single) => {
-        const isNegative = single.change.startsWith("-");
+        const isNegative =
+          single.change && single.change.startsWith("-");
         const changeColor = isNegative ? "#E35A5F" : "#12CC1E";
+
+        const isFirstCard = single.title === "Total Earnings";
 
         return (
           <div
@@ -63,8 +69,17 @@ const PaymentCard = () => {
                 {single.amount}
               </h2>
 
-              <div className="flex items-center gap-1 text-sm">
-                {single.change && (
+              {/* UNIT + % SECTION */}
+              <div
+                className="flex items-center gap-1"
+                style={{
+                  width: "auto",
+                  height: "16px",
+                  marginTop: "2px",
+                }}
+              >
+                {/* % only for first card */}
+                {isFirstCard && single.showPercentage && (
                   <>
                     <FaArrowUp
                       className="transition-transform"
@@ -73,10 +88,33 @@ const PaymentCard = () => {
                         transform: isNegative ? "rotate(180deg)" : "none",
                       }}
                     />
-                    <span style={{ color: changeColor }}>{single.change}%</span>
+                    <span
+                      style={{
+                        color: changeColor,
+                        fontFamily: "Arial",
+                        fontWeight: 400,
+                        fontSize: "12px",
+                        lineHeight: "16px",
+                      }}
+                    >
+                      {single.change}%
+                    </span>
                   </>
                 )}
-                <span className="text-gray-500 ml-1">{single.unit}</span>
+
+                {/* Unit text (text color ONLY, NO background) */}
+                <span
+                  style={{
+                    color: "#6A7282",
+                    fontFamily: "Arial",
+                    fontSize: "12px",
+                    fontWeight: 400,
+                    lineHeight: "16px",
+                    marginTop: "-2px", // slightly higher
+                  }}
+                >
+                  {single.unit}
+                </span>
               </div>
             </div>
           </div>

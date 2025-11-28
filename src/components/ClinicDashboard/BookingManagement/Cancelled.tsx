@@ -21,7 +21,8 @@ interface Appointment {
 
 const Cancelled: React.FC<CancelledProps> = ({ onViewDetails }) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
 
   // Cancelled appointments data
   const appointments: Appointment[] = [
@@ -144,6 +145,7 @@ const Cancelled: React.FC<CancelledProps> = ({ onViewDetails }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  onViewDetails(); // 👈 Use it
                   handleButtonClick(appointment);
                 }}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer bg-red-500 text-white hover:bg-red-600"

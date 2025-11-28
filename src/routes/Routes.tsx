@@ -14,7 +14,6 @@ import PaymentHistory from "@/components/AdminDashboard/PatientManagement/Paymen
 import Settings from "@/components/AdminDashboard/Settings/Settings";
 import BookingManagementPage from "@/pages/Admin/BookingManagementPage";
 import PaymentsPage from "@/pages/Admin/PaymentsPage";
-import DoctorManagementPage from "@/pages/Admin/DoctorManagementPage";
 import ClinicManagementPage from "@/pages/Admin/ClinicManagementPage";
 import PaymentHistoryClinic from "@/components/AdminDashboard/ClinicManagement/PaymentHistoryClinic";
 import ClinicLayout from "@/Layout/ClinicLayout";
@@ -23,6 +22,11 @@ import ClinicBookingManagementPage from "@/pages/Clinic/ClinicBookingManagementP
 import ClinicDoctorManagementPage from "@/pages/Clinic/ClinicDoctorManagementPage";
 import ClinicPatientListPage from "@/pages/Clinic/ClinicPatientListPage";
 import ClinicSettingsPage from "@/pages/Clinic/ClinicSettingsPage";
+import PaymentEarning from "@/components/ClinicDashboard/Dashboard/PaymentEarning";
+import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/PertientMessage";
+import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
+import SupportMessage from "@/components/AdminDashboard/SupportMessage";
+
 
 const routes = createBrowserRouter([
   {
@@ -69,6 +73,8 @@ const routes = createBrowserRouter([
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
       { path: "settings", element: <ClinicSettingsPage /> },
+      { path: "payment", element: <PaymentEarning></PaymentEarning> },
+      { path: "message", element: <PertientMessage></PertientMessage> },
     ],
   },
 
@@ -85,10 +91,10 @@ const routes = createBrowserRouter([
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "patient-management", element: <PatientManagementPage /> },
       { path: "patient-management/:id", element: <PaymentHistory /> },
-
+      { path: "Support-message", element: <SupportMessage /> },
       { path: "booking-management", element: <BookingManagementPage /> },
       { path: "payments", element: <PaymentsPage /> },
-      { path: "doctor-management", element: <DoctorManagementPage /> },
+      { path: "nurse-management", element: <NurseManagementPage /> },
       { path: "clinic-management", element: <ClinicManagementPage /> },
       { path: "clinic-management/:id", element: <PaymentHistoryClinic /> },
       { path: "settings", element: <SettingsPage /> },

@@ -8,7 +8,12 @@ import Pending from "./Pending";
 
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
-    "All" | "Approved" | "Completed" | "Pending" | "Cancelled" | "AppointmentDetails"
+    | "All"
+    | "Approved"
+    | "Completed"
+    | "Pending"
+    | "Cancelled"
+    | "AppointmentDetails"
   >("All");
 
   // Updated Tabs
@@ -25,13 +30,21 @@ const BookingManagement = () => {
       case "All":
         return <All onViewDetails={() => setActiveTab("AppointmentDetails")} />;
       case "Approved":
-        return <Approved onViewDetails={() => setActiveTab("AppointmentDetails")} />;
+        return (
+          <Approved onViewDetails={() => setActiveTab("AppointmentDetails")} />
+        );
       case "Completed":
-        return <Completed onViewDetails={() => setActiveTab("AppointmentDetails")} />;
+        return (
+          <Completed onViewDetails={() => setActiveTab("AppointmentDetails")} />
+        );
       case "Pending":
-        return <Pending onViewDetails={() => setActiveTab("AppointmentDetails")} />;
+        return (
+          <Pending onViewDetails={() => setActiveTab("AppointmentDetails")} />
+        );
       case "Cancelled":
-        return <Cancelled onViewDetails={() => setActiveTab("AppointmentDetails")} />;
+        return (
+          <Cancelled onViewDetails={() => setActiveTab("AppointmentDetails")} />
+        );
       case "AppointmentDetails":
         return <AppointmentDetails />;
       default:
@@ -42,7 +55,7 @@ const BookingManagement = () => {
   return (
     <div className="mx-auto mt-10 w-full space-y-6">
       {/* Header */}
-      
+
       {/* Tabs Header - Smaller buttons */}
       {activeTab !== "AppointmentDetails" && (
         <div className="w-full bg-[#F5F6F9] border border-[#DBE0E5] rounded-xl overflow-hidden flex flex-wrap gap-2 p-2">
@@ -50,7 +63,7 @@ const BookingManagement = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`px-6 py-2 text-sm font-medium rounded-lg transition-all duration-300
+              className={`px-6 cursor-pointer py-2 text-sm font-medium rounded-lg transition-all duration-300
                 ${
                   activeTab === tab.id
                     ? "bg-blue-500 text-white shadow-md font-semibold"

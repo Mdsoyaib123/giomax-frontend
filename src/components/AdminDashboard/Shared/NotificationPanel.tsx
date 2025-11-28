@@ -47,7 +47,7 @@ export default function NotificationPanel({ onClose }: NotificationPanelProps) {
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+    <div className="w-full max-w-md bg-white  shadow-xl border border-gray-200 overflow-hidden">
       <div className="border-b border-[#E9EAEB]">
         <div className="flex items-center justify-between p-4">
           <h2 className="text-lg font-semibold text-blue-600">Notifications</h2>
