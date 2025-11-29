@@ -251,8 +251,10 @@ const PaymentTable: React.FC = () => {
 
       {/* VIEW DETAILS MODAL */}
       {openProfile && (
-        <div className="fixed inset-0 z-40 bg-black/40 flex items-center justify-center">
-          <div className="bg-white rounded-xl w-full max-w-4xl p-8 relative border shadow-xl">
+        <div className="fixed inset-0 z-40 bg-gray-400/40 flex items-center justify-center">
+
+          <div className="bg-gray-100 rounded-xl w-full max-w-4xl p-8 relative border border-gray-300 shadow-xl">
+
             <button
               onClick={() => setOpenProfile(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -283,7 +285,7 @@ const PaymentTable: React.FC = () => {
                   <input
                     value={item.value}
                     readOnly
-                    className="w-full px-4 py-3 border rounded-lg bg-gray-50"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white"
                   />
                 </div>
               ))}
