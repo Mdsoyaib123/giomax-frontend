@@ -50,7 +50,7 @@ const Commission: React.FC = () => {
                 doctorCommission: Number(e.target.value),
               })
             }
-            className="w-full px-4 py-2.5  bg-[#F8F9FA] border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 bg-[#F8F9FA] border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
@@ -67,7 +67,7 @@ const Commission: React.FC = () => {
                 clinicCommission: Number(e.target.value),
               })
             }
-            className="w-full px-4 py-2.5  bg-[#F8F9FA] border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 bg-[#F8F9FA] border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@ const Commission: React.FC = () => {
         <h3 className="font-semibold text-gray-900 mb-4">
           Notification Settings
         </h3>
-        <div className="flex justify-between items-center p-4    w-full  mx-auto">
+        <div className="flex justify-between items-center p-4 w-full mx-auto">
           {/* Notify solo doctors */}
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -88,7 +88,7 @@ const Commission: React.FC = () => {
                   notifyDoctorsRateChanges: e.target.checked,
                 })
               }
-              className="w-5 h-5 accent-[#2E6FF3] cursor-pointer border-[#788087] "
+              className="w-5 h-5 accent-[#2E6FF3] cursor-pointer border-[#788087]"
             />
             <span className="text-gray-700 text-sm font-medium">
               Notify solo doctors
@@ -115,9 +115,11 @@ const Commission: React.FC = () => {
         </div>
       </div>
 
+      {/* Updated Button: Hover text becomes white */}
       <button
         onClick={handleSaveCommission}
-        className="w-full py-3 border-2 cursor-pointer border-blue-600 text-blue-600 rounded-lg bg-[#EFF4FF] hover:bg-[#155DFC] hover:text-black font-medium transition-colors"
+        className="w-full py-3 border-2 cursor-pointer border-blue-600 text-blue-600 rounded-lg bg-[#EFF4FF]
+        hover:bg-[#155DFC] hover:text-white font-medium transition-colors"
       >
         Save Commission Rates
       </button>

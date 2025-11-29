@@ -317,11 +317,11 @@ const NurseManagement: React.FC = () => {
             </button>
 
             <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Doctor Profile
+              Nurse Profile
               {/* openProfile} */}
             </h2>
             <p className="text-gray-600 text-sm mb-3">
-              View doctor details, credentials, and verification documents
+              View Nurse details, credentials, and verification documents
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -2,7 +2,7 @@ import { FaArrowUp } from "react-icons/fa";
 import Patients from "@/assets/Logo/patientss.svg";
 import Doctors from "@/assets/Logo/doctors.svg";
 import Bookings from "@/assets/Logo/bookings.svg";
-import Earnings from "@/assets/Logo/earnings.svg";
+
 import dash from "@/assets/Dashboard (1).png";
 
 const DashboardCard = () => {
@@ -46,25 +46,25 @@ const DashboardCard = () => {
         return (
           <div
             key={single.title}
-            className="bg-white shadow-sm hover:shadow-md transition-all rounded-2xl border border-[#E5E7EB] p-5 flex flex-col justify-between"
+            className="bg-white shadow-sm hover:shadow-md transition-all rounded-2xl border border-[#E5E7EB] p-6 flex flex-col"
           >
             {/* Icon */}
-            <div className="bg-[#F9FAFB] w-12 h-12 rounded-xl flex items-center justify-center mb-2">
+            <div className="bg-[#F9FAFB] w-12 h-12 rounded-xl flex items-center justify-center mb-4">
               <img src={single.icon} alt={single.title} className="w-6 h-6" />
             </div>
 
             {/* Title */}
-            <h3 className="text-[#6B7280] text-sm font-normal mb-3">
+            <h3 className="text-[#6B7280] text-sm font-normal mb-2">
               {single.title}
             </h3>
 
             {/* Amount */}
-            <h2 className="text-[#111827] text-3xl font-semibold mb-2">
+            <h2 className="text-[#111827] text-3xl font-semibold mb-3">
               {single.amount}
             </h2>
 
             {/* Change Stats - Single Line */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 mt-2 pb-2">
               {single.change && (
                 <>
                   <FaArrowUp
@@ -85,7 +85,7 @@ const DashboardCard = () => {
                 </>
               )}
 
-              <span className="text-xs text-[#6B7280] ml-0.5">
+              <span className="text-xs text-[#6B7280] ml-0.5 ">
                 {single.unit}
               </span>
             </div>
@@ -97,7 +97,6 @@ const DashboardCard = () => {
 };
 
 export default DashboardCard;
-
 
 // import { FaArrowUp } from "react-icons/fa";
 // import Patients from "@/assets/Logo/patientss.svg";

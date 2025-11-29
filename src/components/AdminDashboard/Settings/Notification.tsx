@@ -1,150 +1,83 @@
 import React, { useState } from "react";
 
-interface NotificationPreferences {
-  appointmentsEmail: boolean;
-  appointmentsPush: boolean;
-  paymentsEmail: boolean;
-  paymentsPush: boolean;
-  messagesEmail: boolean;
-  messagesPush: boolean;
-}
-
 const Toggle: React.FC<{
   enabled: boolean;
   onChange: (enabled: boolean) => void;
 }> = ({ enabled, onChange }) => (
   <button
     onClick={() => onChange(!enabled)}
-    className={`relative inline-flex h-5 cursor-pointer w-10 items-center rounded-full transition-colors ${
-      enabled ? "bg-blue-600" : "bg-gray-300"
+    className={`relative inline-flex h-6 cursor-pointer w-11 items-center rounded-full transition-colors ${
+      enabled ? "bg-blue-500" : "bg-gray-300"
     }`}
   >
     <span
-      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-        enabled ? "translate-x-5" : "translate-x-1"
+      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+        enabled ? "translate-x-6" : "translate-x-0.5"
       }`}
     />
   </button>
 );
 
 const Notification: React.FC = () => {
-  const [prefs, setPrefs] = useState<NotificationPreferences>({
-    appointmentsEmail: false,
-    appointmentsPush: true,
-    paymentsEmail: true,
-    paymentsPush: true,
-    messagesEmail: false,
-    messagesPush: true,
-  });
+  const [bookingConfirmation, setBookingConfirmation] = useState(true);
+  const [bookingReminder, setBookingReminder] = useState(true);
 
-  const handleSave = () => {
-    console.log("Saved preferences:", prefs);
-    alert("Notification settings saved!");
-  };
-
-  const handleCancel = () => {
-    alert("Changes canceled!");
+  const handleUpdate = () => {
+    alert("Notification settings updated successfully!");
   };
 
   return (
-    <div className="w-full mx-auto bg-white rounded-lg shadow-xl border border-gray-100 p-6 sm:p-8">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-h-[320px] flex flex-col">
+      
       {/* Header */}
       <h2 className="text-xl font-semibold font-sans text-gray-900 mb-2">
-        Notification Preferences
+        Notification Settings
       </h2>
+      <p className="text-sm text-gray-600 mb-6">
+        Configure message and SMS notification settings
+      </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8">
-        {/* Appointments */}
-        <div className="bg-gray-50 rounded-lg p-5">
-          <h3 className="font-semibold text-gray-900 mb-2">Appointments</h3>
-          <p className="text-sm text-gray-600 mb-6">
-            New appointments and cancellations
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Email</span>
-              <Toggle
-                enabled={prefs.appointmentsEmail}
-                onChange={(val) =>
-                  setPrefs({ ...prefs, appointmentsEmail: val })
-                }
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Push Notification</span>
-              <Toggle
-                enabled={prefs.appointmentsPush}
-                onChange={(val) =>
-                  setPrefs({ ...prefs, appointmentsPush: val })
-                }
-              />
-            </div>
+      {/* Content */}
+      <div className="space-y-4 mb-6 flex-1">
+        {/* Booking Confirmation */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-gray-900 mb-1">
+              Booking Confirmation Notification
+            </h3>
+            <p className="text-xs text-gray-500">Send Push Notifications</p>
           </div>
+          <Toggle
+            enabled={bookingConfirmation}
+            onChange={setBookingConfirmation}
+          />
         </div>
 
-        {/* Payments */}
-        <div className="bg-gray-50 rounded-lg p-5">
-          <h3 className="font-semibold text-gray-900 mb-2">Payments</h3>
-          <p className="text-sm text-gray-600 mb-6">
-            Payment received and withdrawal updates
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Email</span>
-              <Toggle
-                enabled={prefs.paymentsEmail}
-                onChange={(val) => setPrefs({ ...prefs, paymentsEmail: val })}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Push Notification</span>
-              <Toggle
-                enabled={prefs.paymentsPush}
-                onChange={(val) => setPrefs({ ...prefs, paymentsPush: val })}
-              />
-            </div>
+        {/* Booking Reminder */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-gray-900 mb-1">
+              Booking Reminder Notification
+            </h3>
+            <p className="text-xs text-gray-500">
+              Notify admin of new doctor applications
+            </p>
           </div>
-        </div>
-
-        {/* Messages */}
-        <div className="bg-gray-50 rounded-lg p-5">
-          <h3 className="font-semibold text-gray-900 mb-2">Messages</h3>
-          <p className="text-sm text-gray-600 mb-6">
-            New messages from patients
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Email</span>
-              <Toggle
-                enabled={prefs.messagesEmail}
-                onChange={(val) => setPrefs({ ...prefs, messagesEmail: val })}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Push Notification</span>
-              <Toggle
-                enabled={prefs.messagesPush}
-                onChange={(val) => setPrefs({ ...prefs, messagesPush: val })}
-              />
-            </div>
-          </div>
+          <Toggle
+            enabled={bookingReminder}
+            onChange={setBookingReminder}
+          />
         </div>
       </div>
-      {/* Action Buttons */}
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4  border-gray-200">
-        <button
-          onClick={handleCancel}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-blue-600 border border-blue-100 hover:bg-blue-50 transition font-medium"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition shadow-md font-medium"
-        >
-          Save Changes
-        </button>
-      </div>
+
+      {/* Updated Button (hover → white text) */}
+      <button
+        onClick={handleUpdate}
+        className="w-full py-3 border-2 cursor-pointer border-blue-600 text-blue-600 rounded-lg bg-[#EFF4FF]
+        hover:bg-[#155DFC] hover:text-white font-medium transition-colors"
+      >
+        Update Notification Settings
+      </button>
     </div>
   );
 };

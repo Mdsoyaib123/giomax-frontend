@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
 import SectionTitle from "@/common/SectionTitle";
+import text from "@/assets/text.png";
 
 interface Patient {
   id: number;
@@ -219,12 +220,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex items-center gap-2">
                           <button className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium">
-                            <span className="w-4 h-4 flex items-center justify-center">
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 12.5C2 12.5 3 11.5 5.5 11.5C8 11.5 10 13.5 12.5 13.5C15 13.5 16 12.5 16 12.5V2.5C16 2.5 15 3.5 12.5 3.5C10 3.5 8 1.5 5.5 1.5C3 1.5 2 2.5 2 2.5V12.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M2 15.5V12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            </span>
+                            <img src={text} alt="Message" className="w-4 h-4" />
                             Message Patient
                           </button>
                           <button

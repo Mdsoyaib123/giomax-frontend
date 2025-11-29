@@ -83,15 +83,17 @@ const Configuration: React.FC = () => {
                 minimumAmount: Number(e.target.value),
               })
             }
-            className="w-full px-4 py-2 bg-[#F8F9FA]  rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 bg-[#F8F9FA] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="$300.00"
           />
         </div>
       </div>
 
+      {/* Updated Button with white hover text */}
       <button
         onClick={handleUpdatePayout}
-        className="w-full py-3 border-2 cursor-pointer border-blue-600 text-blue-600 rounded-lg bg-[#EFF4FF] hover:bg-[#155DFC] hover:text-black font-medium transition-colors"
+        className="w-full py-3 border-2 cursor-pointer border-blue-600 text-blue-600 rounded-lg bg-[#EFF4FF]
+        hover:bg-[#155DFC] hover:text-white font-medium transition-colors"
       >
         Update Payout Settings
       </button>
