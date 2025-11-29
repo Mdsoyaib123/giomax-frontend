@@ -27,7 +27,7 @@ interface Booking {
 const PaymentTable: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(currentPage)
+  console.log(currentPage);
   const itemsPerPage = 9;
 
   const bookings: Booking[] = [
@@ -118,61 +118,66 @@ const PaymentTable: React.FC = () => {
         </div>
 
         {/* TABLE */}
-        <div className="p-0">
-          <div className="w-full overflow-x-auto rounded-lg border border-gray-300">
-            <table className="min-w-[900px] w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-300">
-                <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Transaction ID
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Receiver
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Role
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Amount
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Date
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold text-gray-700">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
 
-              <tbody className="bg-white divide-y divide-gray-300">
-                {bookings.map((booking) => (
-                  <tr key={booking.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-gray-700">{booking.id}</td>
+        <div className="p-5 border border-[#E4E4E4] rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+            <div className="xl:col-span-4 w-full">
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-[800px] w-full text-sm">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Transaction ID
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Receiver
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Role
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Amount
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Date
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-center font-semibold text-gray-700">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
 
-                    <td className="px-6 py-4 text-gray-700">
-                      {booking.receiver}
-                    </td>
+                  <tbody className="bg-white divide-y divide-gray-300">
+                    {bookings.map((booking) => (
+                      <tr key={booking.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+                          {booking.id}
+                        </td>
 
-                    <td className="px-6 py-4">
-                      <span className="text-blue-600 font-medium">
-                        {booking.role}
-                      </span>
-                    </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+                          {booking.receiver}
+                        </td>
 
-                    <td className="px-6 py-4 font-semibold text-gray-900">
-                      {booking.amount}
-                    </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-blue-600 font-medium">
+                            {booking.role}
+                          </span>
+                        </td>
 
-                    <td className="px-6 py-4 text-gray-600">
-                      {booking.dateTime}
-                    </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                          {booking.amount}
+                        </td>
 
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1.5 text-xs font-semibold rounded-xl
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                          {booking.dateTime}
+                        </td>
+
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1.5 text-xs font-semibold rounded-xl
                           ${
                             booking.status === "Completed"
                               ? "bg-[#E7F8EE] text-[#1E9E46]"
@@ -180,33 +185,39 @@ const PaymentTable: React.FC = () => {
                               ? "bg-[#FEF7E8] text-[#C07F00]"
                               : "bg-[#E8F1FF] text-[#1A73E8]"
                           }`}
-                      >
-                        {booking.status}
-                      </span>
-                    </td>
+                          >
+                            {booking.status}
+                          </span>
+                        </td>
 
-                    <td className="px-6 py-4 text-center">
-                      {booking.status === "Pending" ? (
-                        <button
-                          onClick={() => handleView(booking)}
-                          className="px-4 py-2 bg-[#1E9E46] text-white text-sm font-medium hover:bg-[#18843B] rounded-none inline-flex items-center gap-2"
-                        >
-                          <img src={aap} alt="Approve" className="w-4 h-4" />
-                          Approve Payout
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleView(booking)}
-                          className="px-4 py-2 rounded-lg bg-[#1A73E8] text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2"
-                        >
-                          <FaEye className="text-sm" /> View Details
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        <td className="px-6 py-4 text-center">
+                          {booking.status === "Pending" ? (
+                            <button
+                              onClick={() => handleView(booking)}
+                              className="px-4 py-2 rounded-lg bg-[#1E9E46] whitespace-nowrap text-white text-sm font-medium hover:bg-[#18843B]  inline-flex items-center gap-2"
+                            >
+                              <img
+                                src={aap}
+                                alt="Approve"
+                                className="w-4 h-4"
+                              />
+                              Approve Payout
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleView(booking)}
+                              className="px-4 py-2 rounded-lg bg-[#1A73E8] whitespace-nowrap text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2"
+                            >
+                              <FaEye className="text-sm" /> View Details
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -252,9 +263,7 @@ const PaymentTable: React.FC = () => {
       {/* VIEW DETAILS MODAL */}
       {openProfile && (
         <div className="fixed inset-0 z-40 bg-gray-400/40 flex items-center justify-center">
-
           <div className="bg-gray-100 rounded-xl w-full max-w-4xl p-8 relative border border-gray-300 shadow-xl">
-
             <button
               onClick={() => setOpenProfile(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"

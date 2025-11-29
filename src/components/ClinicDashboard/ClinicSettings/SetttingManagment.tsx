@@ -172,7 +172,6 @@ const SettingsManagement = () => {
 
 export default SettingsManagement;
 
-
 // import { useState } from "react";
 // import ClinicSettings from "./ClinicSettings";
 
