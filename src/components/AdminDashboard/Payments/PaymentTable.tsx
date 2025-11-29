@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
+import aap from "@/assets/aap.png";
 
 import {
   Select,
@@ -25,6 +27,7 @@ interface Booking {
 const PaymentTable: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  console.log(currentPage)
   const itemsPerPage = 9;
 
   const bookings: Booking[] = [
@@ -186,8 +189,9 @@ const PaymentTable: React.FC = () => {
                       {booking.status === "Pending" ? (
                         <button
                           onClick={() => handleView(booking)}
-                          className="px-4 py-2 bg-[#1E9E46] text-white text-sm font-medium hover:bg-[#18843B] rounded-none"
+                          className="px-4 py-2 bg-[#1E9E46] text-white text-sm font-medium hover:bg-[#18843B] rounded-none inline-flex items-center gap-2"
                         >
+                          <img src={aap} alt="Approve" className="w-4 h-4" />
                           Approve Payout
                         </button>
                       ) : (

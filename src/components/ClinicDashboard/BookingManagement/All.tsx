@@ -109,7 +109,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
       case "Approved":
         return "bg-[#1B9268] text-white";
       case "Completed":
-        return "bg-[#1D4ED8] text-[#1D4ED8]";
+        return "bg-[#1D4ED8] text-white";
       case "Cancelled":
         return "bg-[#E9575A] text-white";
       default:
