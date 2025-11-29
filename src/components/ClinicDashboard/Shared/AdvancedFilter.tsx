@@ -26,7 +26,7 @@ const AdvancedFilter = ({ onClose }: AdvancedFilterProps) => {
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 cursor-pointer text-gray-500 hover:text-gray-800"
         >
           <AiOutlineClose size={20} />
         </button>
@@ -95,19 +95,19 @@ const AdvancedFilter = ({ onClose }: AdvancedFilterProps) => {
         <div className="flex justify-between mt-6">
           <button
             onClick={handleClear}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 cursor-pointer text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Clear All
           </button>
 
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 cursor-pointer text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Cancel
           </button>
 
-          <button className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+          <button className="px-4 py-2 cursor-pointer text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">
             Apply Filter
           </button>
         </div>
@@ -232,7 +232,6 @@ export default AdvancedFilter;
 // };
 
 // export default AdvancedFilter;
-
 
 // import { useState } from "react";
 // import { AiOutlineClose } from "react-icons/ai";

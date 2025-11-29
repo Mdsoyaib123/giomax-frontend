@@ -182,101 +182,107 @@ const BookingManagementTable: React.FC = () => {
 
         {/* Table */}
         <div className="p-5 border border-[#E4E4E4] rounded-lg">
-          <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
-            <table className="min-w-[800px] w-full text-sm">
-              <thead className="bg-gray-100 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Booking ID
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Patient Name
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Clinic Name
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Type
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Date & Time
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-700">
-                    Payment
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium text-gray-700">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {bookings.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 font-semibold text-gray-900">
-                      {booking.id}
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {booking.patientName}
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {booking.clinicName}
-                    </td>
-                    <td className="px-6 py-4 text-sky-500">{booking.type}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${
-                          booking.status === "Confirmed"
-                            ? "bg-green-100 text-green-700"
-                            : booking.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+          <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+            <div className="xl:col-span-4 w-full">
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-[800px] w-full text-sm">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Booking ID
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Patient Name
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Clinic Name
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Type
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Date & Time
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-left font-medium text-gray-700">
+                        Payment
+                      </th>
+                      <th className="px-6 py-4 whitespace-nowrap  text-center font-medium text-gray-700">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {bookings.map((booking) => (
+                      <tr
+                        key={booking.id}
+                        className="hover:bg-gray-50 transition-colors"
                       >
-                        {booking.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {booking.dateTime}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${
-                          booking.payment === "Paid"
-                            ? "bg-[#E9F9EF] text-[#1B9268]"
-                            : booking.payment === "Refund Pending"
-                            ? "bg-[#FFEAEB] text-[#E9575A]"
-                            : "bg-[#F2E7FE] text-[#7243FF]"
-                        }`}
-                      >
-                        {booking.payment}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button
-                        onClick={() => handleView(booking)}
-                        className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
-                      >
-                        <FaEye className="text-sm" /> View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        <td className="px-6 py-4 whitespace-nowrap  font-semibold text-gray-900">
+                          {booking.id}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-700">
+                          {booking.patientName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-700">
+                          {booking.clinicName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-sky-500">
+                          {booking.type}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          <span
+                            className={`px-3 py-1 text-xs font-medium rounded-full ${
+                              booking.status === "Confirmed"
+                                ? "bg-green-100 text-green-700"
+                                : booking.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {booking.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap  text-gray-700">
+                          {booking.dateTime}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          <span
+                            className={`px-3 py-1 text-xs font-medium rounded-full ${
+                              booking.payment === "Paid"
+                                ? "bg-[#E9F9EF] text-[#1B9268]"
+                                : booking.payment === "Refund Pending"
+                                ? "bg-[#FFEAEB] text-[#E9575A]"
+                                : "bg-[#F2E7FE] text-[#7243FF]"
+                            }`}
+                          >
+                            {booking.payment}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <button
+                            onClick={() => handleView(booking)}
+                            className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
+                          >
+                            <FaEye className="text-sm" /> View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Pagination */}
         <div className="mt-6 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Showing <span className="font-medium">{currentUsers.length}</span> of{" "}
-            <span className="font-medium">{bookings.length}</span> entries
+            Showing <span className="font-medium">{currentUsers.length}</span>{" "}
+            of <span className="font-medium">{bookings.length}</span> entries
           </p>
           <div className="flex items-center gap-2">
             <button
@@ -309,153 +315,155 @@ const BookingManagementTable: React.FC = () => {
       </div>
 
       {/* Booking Details Modal - First Image */}
-      {openProfile && !showRefundDialog && openProfile.payment !== "Refund Pending" && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm px-3 sm:px-4">
-          <div className="bg-white rounded-lg w-full max-w-3xl shadow-2xl p-6 sm:p-8 relative border border-gray-300">
-            <button
-              onClick={() => setOpenProfile(null)}
-              className="absolute cursor-pointer top-4 right-4 text-gray-400 hover:text-gray-600"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1">
-              Booking Details - {openProfile.id}
-            </h2>
-            <p className="text-gray-500 text-sm mb-6">
-              View complete booking information and consultation notes
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Patient Name
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.patientName}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Doctor Name
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.doctorName}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Clinic Name
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.clinicName}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Booking Type
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.type}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Date & Time
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.dateTime}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Amount
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.amount}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Consultation Note
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.note}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Status
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.status}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-gray-700 font-medium mb-2 text-sm">
-                  Payment Status
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.payment}
-                  readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+      {openProfile &&
+        !showRefundDialog &&
+        openProfile.payment !== "Refund Pending" && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm px-3 sm:px-4">
+            <div className="bg-white rounded-lg w-full max-w-3xl shadow-2xl p-6 sm:p-8 relative border border-gray-300">
               <button
                 onClick={() => setOpenProfile(null)}
-                className="flex-1 py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
+                className="absolute cursor-pointer top-4 right-4 text-gray-400 hover:text-gray-600"
               >
-                Cancel
+                <X className="w-5 h-5" />
               </button>
-             {openProfile && !showRefundDialog  && (
+
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1">
+                Booking Details - {openProfile.id}
+              </h2>
+              <p className="text-gray-500 text-sm mb-6">
+                View complete booking information and consultation notes
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.patientName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Doctor Name
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.doctorName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Clinic Name
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.clinicName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Booking Type
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.type}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Date & Time
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.dateTime}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Amount
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.amount}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Consultation Note
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.note}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Status
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.status}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-gray-700 font-medium mb-2 text-sm">
+                    Payment Status
+                  </label>
+                  <input
+                    type="text"
+                    value={openProfile.payment}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
-                  onClick={handleRefundClick}
-                  className="flex-1 py-3 px-4 bg-[#2E6FF3] text-white rounded-lg hover:bg-[#1B54D3] font-medium text-sm transition-colors"
+                  onClick={() => setOpenProfile(null)}
+                  className="flex-1 py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
                 >
-                  Refund Payment
+                  Cancel
                 </button>
-              )}
+                {openProfile && !showRefundDialog && (
+                  <button
+                    onClick={handleRefundClick}
+                    className="flex-1 py-3 px-4 bg-[#2E6FF3] text-white rounded-lg hover:bg-[#1B54D3] font-medium text-sm transition-colors"
+                  >
+                    Refund Payment
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Refund Confirmation Modal - Second Image */}
       {showRefundDialog && openProfile && (
@@ -637,9 +645,9 @@ const BookingManagementTable: React.FC = () => {
               </h2>
 
               <p className="text-gray-600 text-sm mb-6">
-                The refund process has been successfully started. The funds will be
-                transferred to the patient's account shortly, and they have been sent a
-                notification regarding this transaction.
+                The refund process has been successfully started. The funds will
+                be transferred to the patient's account shortly, and they have
+                been sent a notification regarding this transaction.
               </p>
 
               <button
