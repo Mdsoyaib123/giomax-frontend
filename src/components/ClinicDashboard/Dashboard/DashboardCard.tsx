@@ -2,13 +2,13 @@ import { FaArrowUp } from "react-icons/fa";
 import Patients from "@/assets/Logo/patientss.svg";
 import Doctors from "@/assets/Logo/doctors.svg";
 import Bookings from "@/assets/Logo/bookings.svg";
-
-import dash from "@/assets/Dashboard (1).png";
+import Rating from "@/assets/Logo/Ratings.svg";
+import Revenue from "@/assets/Logo/Revenue.svg";
 
 const DashboardCard = () => {
   const statusData = [
     {
-      title: "Total Patients",
+      title: "Total Patientsdgdfgdf",
       amount: "120",
       change: "12.5",
       unit: "vs last month",
@@ -22,11 +22,11 @@ const DashboardCard = () => {
       icon: Doctors,
     },
     {
-      title: "Total Clinics",
-      amount: "42",
+      title: "Average Ratings",
+      amount: "4.9",
       change: "3.1",
       unit: "vs last month",
-      icon: dash,
+      icon: Rating,
     },
     {
       title: "Total Bookings",
@@ -34,6 +34,13 @@ const DashboardCard = () => {
       change: "18.7",
       unit: "vs last month",
       icon: Bookings,
+    },
+    {
+      title: "Monthly Revenue",
+      amount: "$87,450",
+      change: "24.3",
+      unit: "vs last month",
+      icon: Revenue,
     },
   ];
 
@@ -201,6 +208,5 @@ export default DashboardCard;
 //     </div>
 //   );
 // };
-
 
 // export default DashboardCard;
