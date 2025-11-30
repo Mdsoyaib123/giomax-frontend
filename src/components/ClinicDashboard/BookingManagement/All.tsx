@@ -123,17 +123,16 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
       : "text-blue-600 bg-blue-50";
   };
 
-  const handleButtonClick = (appointment: Appointment) => {
+  const handleCardClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    
     if (appointment.status === "Pending") {
-      setSelectedAppointment(appointment);
       setShowModal(true);
     } else if (appointment.status === "Approved") {
       setShowSuccessModal(true);
     } else if (appointment.status === "Completed") {
-      setSelectedAppointment(appointment);
       setShowCompletedModal(true);
     } else if (appointment.status === "Cancelled") {
-      setSelectedAppointment(appointment);
       setShowCancelledModal(true);
     }
   };
@@ -155,7 +154,6 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
 
   const handleApprove = () => {
     if (selectedAppointment) {
-      // Update appointment status to Approved
       setAppointments((prev) =>
         prev.map((apt) =>
           apt.id === selectedAppointment.id
@@ -171,7 +169,6 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
 
   const handleCancel = () => {
     if (selectedAppointment) {
-      // Update appointment status to Cancelled
       setAppointments((prev) =>
         prev.map((apt) =>
           apt.id === selectedAppointment.id
@@ -180,7 +177,6 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
         )
       );
       setShowModal(false);
-      // Show cancelled modal after cancelling
       setShowCancelledModal(true);
     } else {
       setShowModal(false);
@@ -195,10 +191,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
         {appointments.map((appointment) => (
           <div
             key={appointment.id}
-            onClick={() => {
-              handleButtonClick(appointment);
-              onViewDetails(); // 👈 use it here
-            }}
+            onClick={() => handleCardClick(appointment)}
             className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
           >
             {/* Header with patient info and status */}
@@ -224,18 +217,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 {appointment.status}
               </span>
             </div>
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded mt-2 bb-3 ${getVisitTypeColor(
-                appointment.visitType
-              )}`}
-            >
-              {appointment.visitType}
-            </span>
 
             {/* Appointment details */}
-            <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
-              {/* Doctor */}
-              <div className="flex items-center gap-2">
+            <div className="space-y-2.5 mb-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -252,8 +237,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 <span>{appointment.doctorName}</span>
               </div>
 
-              {/* Date */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -270,8 +254,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                 <span>{appointment.date}</span>
               </div>
 
-              {/* Time */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -289,47 +272,35 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               </div>
             </div>
 
-            {/* Footer with visit type and button */}
-            {/* <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleButtonClick(appointment);
-                }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
-                  appointment.status === "Pending"
-                    ? "bg-[#F9AA00] text-[#10151A] hover:bg-yellow-600"
-                    : appointment.status === "Completed"
-                    ? "bg-[#1D4ED8] text-[#FFFFFF] hover:bg-blue-600"
-                    : appointment.status === "Cancelled"
-                    ? "bg-[#E9575A] text-white hover:bg-red-600"
-                    : "bg-[#1B9268] text-white hover:bg-green-600"
-                }`}
+            {/* Footer with visit type */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <span
+                className={`text-xs font-medium px-2 py-1 rounded ${getVisitTypeColor(
+                  appointment.visitType
+                )}`}
               >
-                {appointment.status === "Pending" && "Pending"}
-                {appointment.status === "Approved" && "Approved"}
-                {appointment.status === "Completed" && "Completed"}
-                {appointment.status === "Cancelled" && "Cancelled"}
-              </button>
-              
-            </div> */}
+                {appointment.visitType}
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Modal - Shows when Pending button is clicked */}
+      {/* Pending Modal */}
       {showModal && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Appointment Details
-                </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-yellow-700">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    View and manage appointment information
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-black">
                   Pending
                 </span>
               </div>
@@ -341,15 +312,8 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                View and manage appointment information
-              </p>
-
-              {/* Form Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Patient Name */}
+            <div className="p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Patient Name
@@ -358,11 +322,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.patientName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Doctor Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Doctor Name
@@ -371,11 +334,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.doctorName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Service Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Service Name
@@ -384,11 +346,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.service}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Date & Time */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Date & Time
@@ -397,11 +358,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Service Type */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Service Type
@@ -410,47 +370,48 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.visitType}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
               </div>
-            </div>
 
-            {/* Footer Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
-              <button
-                onClick={handleClose}
-                className="flex-1 py-3 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors cursor-pointer"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleCancel}
-                className="flex-1 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium text-sm transition-colors"
-              >
-                Cancel Appointment
-              </button>
-              <button
-                onClick={handleApprove}
-                className="flex-1 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium text-sm transition-colors"
-              >
-                Approve Appointment
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <button
+                  onClick={handleClose}
+                  className="flex-1 py-3 rounded-lg bg-[#EFF4FF] text-[#2E6FF3] hover:bg-[#d2e3ff] font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex-1 py-3 bg-[#FFEAEB] text-[#E9575A] rounded-lg hover:bg-[#ffd5d7] font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Cancel Appointment
+                </button>
+                <button
+                  onClick={handleApprove}
+                  className="flex-1 py-3 bg-[#1B9268] text-white rounded-lg hover:bg-[#157a56] font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Approve Appointment
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Completed Modal - Shows when Completed button is clicked */}
+      {/* Completed Modal */}
       {showCompletedModal && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Appointment Details
-                </h2>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">Appointment Details</h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    View and manage appointment information
+                  </p>
+                </div>
                 <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-700 text-white">
                   Completed
                 </span>
@@ -463,15 +424,8 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                View appointment information
-              </p>
-
-              {/* Form Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Patient Name */}
+            <div className="p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Patient Name
@@ -480,11 +434,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.patientName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Doctor Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Doctor Name
@@ -493,11 +446,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.doctorName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Service Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Service Name
@@ -506,11 +458,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.service}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Date & Time */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Date & Time
@@ -519,11 +470,10 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
-                {/* Service Type */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Service Type
@@ -532,67 +482,127 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.visitType}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
               </div>
-            </div>
 
-            {/* Footer Button */}
-            <div className="flex gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
-              <button
-                onClick={handleCompletedClose}
-                className="absolute bottom-4 right-4 py-3 px-6 bg-[#EFF4FF] text-[#2E6FF3] rounded-lg hover:bg-[#d2e3ff] hover:text-[#1a5db0] font-medium text-sm transition-colors cursor-pointer"
-              >
-                Close
-              </button>
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handleCompletedClose}
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Success Modal - Shows when Approved */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-md relative shadow-2xl border border-[#DBE0E5]">
-            {/* Close Button */}
-            <button
-              onClick={() => setShowSuccessModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {/* Content */}
-            <div className="p-8 text-center">
-              {/* Success Icon */}
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
-                  <CheckCircle
-                    className="w-12 h-12 text-white"
-                    strokeWidth={2.5}
-                  />
+      {/* Approved Modal */}
+      {showSuccessModal && selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6">
+              <div className="flex items-center gap-3">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    View and manage appointment information
+                  </p>
                 </div>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white">
+                  Approved
+                </span>
               </div>
-
-              {/* Message */}
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                The Appointment has been successfully approved.
-              </h2>
-
-              {/* Button */}
               <button
                 onClick={() => setShowSuccessModal(false)}
-                className="w-full mt-6 py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
               >
-                Back to Appointment
+                <X className="w-6 h-6" />
               </button>
+            </div>
+
+            <div className="p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.patientName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Doctor Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.doctorName}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.service}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date & Time
+                  </label>
+                  <input
+                    type="text"
+                    value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Type
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedAppointment.visitType}
+                    readOnly
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => setShowSuccessModal(false)}
+                  className="py-3 px-6 rounded-lg font-medium text-sm transition-colors text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Cancelled Modal - Shows when Cancelled button is clicked */}
+      {/* Cancelled Modal - Updated to match Cancelled component style */}
       {showCancelledModal && selectedAppointment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
