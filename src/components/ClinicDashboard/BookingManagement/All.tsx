@@ -191,7 +191,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
   return (
     <div className="relative w-full">
       {/* Grid of appointment cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {appointments.map((appointment) => (
           <div
             key={appointment.id}
@@ -201,7 +201,6 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
             }}
             className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
           >
-            
             {/* Header with patient info and status */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -224,43 +223,71 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
               >
                 {appointment.status}
               </span>
-              
             </div>
-              <span
-                className={`text-xs font-medium px-2 py-1 rounded mt-2 bb-3 ${getVisitTypeColor(
-                  appointment.visitType
-                )}`}
-              >
-                {appointment.visitType}
-              </span>
+            <span
+              className={`text-xs font-medium px-2 py-1 rounded mt-2 bb-3 ${getVisitTypeColor(
+                appointment.visitType
+              )}`}
+            >
+              {appointment.visitType}
+            </span>
 
             {/* Appointment details */}
-           <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
-  {/* Doctor */}
-  <div className="flex items-center gap-2">
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    </svg>
-    <span>{appointment.doctorName}</span>
-  </div>
+            <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
+              {/* Doctor */}
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span>{appointment.doctorName}</span>
+              </div>
 
-  {/* Date */}
-  <div className="flex items-center gap-2">
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-    <span>{appointment.date}</span>
-  </div>
+              {/* Date */}
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>{appointment.date}</span>
+              </div>
 
-  {/* Time */}
-  <div className="flex items-center gap-2">
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <span>{appointment.time}</span>
-  </div>
-</div>
-
+              {/* Time */}
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>{appointment.time}</span>
+              </div>
+            </div>
 
             {/* Footer with visit type and button */}
             {/* <div className="flex items-center justify-between pt-3 border-t border-gray-100">
