@@ -20,7 +20,8 @@ interface Appointment {
   patientImage: string;
 }
 
-const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
+const Approved: React.FC<ApprovedProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);

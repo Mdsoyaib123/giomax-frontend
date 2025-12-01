@@ -22,7 +22,8 @@ interface Appointment {
   patientImage: string;
 }
 
-const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
+const Completed: React.FC<CompletedProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
@@ -201,7 +202,9 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Appointment Details</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
                   <p className="text-xs text-gray-500 mt-1">
                     View and manage appointment information
                   </p>

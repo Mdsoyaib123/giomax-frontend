@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { X, CheckCircle } from "lucide-react";
+import { X } from "lucide-react";
 import a from "@assets/a.png";
 import b from "@assets/b.png";
 import c from "@assets/c.png";
@@ -24,7 +24,8 @@ interface Appointment {
   patientImage: string;
 }
 
-const All: React.FC<AllProps> = ({ onViewDetails }) => {
+const All: React.FC<AllProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -125,7 +126,7 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
 
   const handleCardClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    
+
     if (appointment.status === "Pending") {
       setShowModal(true);
     } else if (appointment.status === "Approved") {
@@ -407,7 +408,9 @@ const All: React.FC<AllProps> = ({ onViewDetails }) => {
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Appointment Details</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
                   <p className="text-xs text-gray-500 mt-1">
                     View and manage appointment information
                   </p>

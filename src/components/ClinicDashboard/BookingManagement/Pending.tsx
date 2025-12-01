@@ -205,7 +205,8 @@ export const SuccessDialog: React.FC<SuccessDialogProps> = ({ onClose }) => {
 
 // --- Main Pending Component (Default Export) ---
 
-const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
+const Pending: React.FC<PendingProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
