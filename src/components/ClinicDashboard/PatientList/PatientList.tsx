@@ -33,6 +33,10 @@ const PatientList: React.FC<Props> = ({ id }) => {
   };
   console.log(id);
 
+  const handleMessageClick = () => {
+    navigate("/clinic-dashboard/message");
+  };
+
   // Provided Patient Data
   const patients: Patient[] = [
     {
@@ -224,7 +228,10 @@ const PatientList: React.FC<Props> = ({ id }) => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <div className="flex items-center gap-2">
-                                <button className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium">
+                                <button
+                                  onClick={handleMessageClick}
+                                  className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
+                                >
                                   <img
                                     src={text}
                                     alt="Message"

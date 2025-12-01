@@ -8,7 +8,7 @@ import Revenue from "@/assets/Logo/Revenue.svg";
 const DashboardCard = () => {
   const statusData = [
     {
-      title: "Total Patientsdgdfgdf",
+      title: "Total Patients",
       amount: "120",
       change: "12.5",
       unit: "vs last month",
@@ -45,7 +45,7 @@ const DashboardCard = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full">
       {statusData.map((single) => {
         const isNegative = single.change.startsWith("-");
         const changeColor = isNegative ? "#E35A5F" : "#12CC1E";

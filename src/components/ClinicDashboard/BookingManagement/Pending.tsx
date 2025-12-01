@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import a from "@assets/a.png";
-import c from "@assets/c.png"; // Added new doctor image
+import c from "@assets/c.png";
+
+// --- Interfaces for Type Safety ---
 
 interface PendingProps {
   onViewDetails: () => void;
@@ -20,12 +22,196 @@ interface Appointment {
   patientImage: string;
 }
 
-const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
+// --- Exported Dialog Component for Pending Appointments ---
+
+export interface PendingDialogProps {
+  appointment: Appointment | null;
+  onClose: () => void;
+  onApprove: () => void;
+  onCancel: () => void;
+}
+
+export const PendingDialog: React.FC<PendingDialogProps> = ({
+  appointment,
+  onClose,
+  onApprove,
+  onCancel,
+}) => {
+  if (!appointment) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center gap-3">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Appointment Details
+              </h2>
+              <p className="text-xs text-gray-500 mt-1">
+                View and manage appointment information
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-black">
+              Pending
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 pt-0">
+          {/* Form Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Patient Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Patient Name
+              </label>
+              <input
+                type="text"
+                value={appointment.patientName}
+                readOnly
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+
+            {/* Doctor Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Doctor Name
+              </label>
+              <input
+                type="text"
+                value={appointment.doctorName}
+                readOnly
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+
+            {/* Service Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Service Name
+              </label>
+              <input
+                type="text"
+                value={appointment.service}
+                readOnly
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+
+            {/* Date & Time */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date & Time
+              </label>
+              <input
+                type="text"
+                value={`${appointment.date} - ${appointment.time}`}
+                readOnly
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+
+            {/* Service Type */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Service Type
+              </label>
+              <input
+                type="text"
+                value={appointment.visitType}
+                readOnly
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Footer Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 rounded-lg bg-[#EFF4FF] text-[#2E6FF3] hover:bg-[#d2e3ff] font-medium text-sm transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+            <button
+              onClick={onCancel}
+              className="flex-1 py-3 bg-[#FFEAEB] text-[#E9575A] rounded-lg hover:bg-[#ffd5d7] font-medium text-sm transition-colors cursor-pointer"
+            >
+              Cancel Appointment
+            </button>
+            <button
+              onClick={onApprove}
+              className="flex-1 py-3 bg-[#1B9268] text-white rounded-lg hover:bg-[#157a56] font-medium text-sm transition-colors cursor-pointer"
+            >
+              Approve Appointment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Exported Success Dialog Component ---
+
+export interface SuccessDialogProps {
+  onClose: () => void;
+}
+
+export const SuccessDialog: React.FC<SuccessDialogProps> = ({ onClose }) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md relative shadow-2xl p-8 text-center">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        {/* Success Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
+            <Check size={32} className="text-white" strokeWidth={3} />
+          </div>
+        </div>
+
+        {/* Success Message */}
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          The Appointment has been successfully approved.
+        </h2>
+
+        {/* Back Button */}
+        <button
+          onClick={onClose}
+          className="w-full py-3 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm transition-colors cursor-pointer"
+        >
+          Back to Appointment
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Main Pending Component (Default Export) ---
+
+const Pending: React.FC<PendingProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
 
-  // Only Pending appointments with a new doctor (c.png)
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: 1,
@@ -47,7 +233,7 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
       time: "2:00 PM",
       status: "Pending",
       visitType: "Online Consultation",
-      patientImage: c, // New doctor image (c.png)
+      patientImage: c,
     },
   ]);
 
@@ -63,7 +249,16 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
 
   const handleApprove = () => {
     if (selectedAppointment) {
-      // Remove appointment from pending list
+      setAppointments((prev) =>
+        prev.filter((apt) => apt.id !== selectedAppointment.id)
+      );
+    }
+    setShowModal(false);
+    setShowSuccessModal(true);
+  };
+
+  const handleCancel = () => {
+    if (selectedAppointment) {
       setAppointments((prev) =>
         prev.filter((apt) => apt.id !== selectedAppointment.id)
       );
@@ -72,14 +267,8 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
     setSelectedAppointment(null);
   };
 
-  const handleCancel = () => {
-    if (selectedAppointment) {
-      // Remove appointment from pending list
-      setAppointments((prev) =>
-        prev.filter((apt) => apt.id !== selectedAppointment.id)
-      );
-    }
-    setShowModal(false);
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
     setSelectedAppointment(null);
   };
 
@@ -114,7 +303,7 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
                   <p className="text-xs text-gray-500">{appointment.service}</p>
                 </div>
               </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-black">
                 Pending
               </span>
             </div>
@@ -176,7 +365,7 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
               </div>
             </div>
 
-            {/* Footer with visit type and button */}
+            {/* Footer with visit type */}
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <span
                 className={`text-xs font-medium px-2 py-1 rounded ${getVisitTypeColor(
@@ -189,139 +378,29 @@ const Pending: React.FC<PendingProps> = ({ onViewDetails }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onViewDetails();
                   handleCardClick(appointment);
                 }}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-yellow-500 text-white hover:bg-yellow-600 cursor-pointer"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-yellow-100 text-yellow-600 hover:bg-yellow-200 cursor-pointer"
               >
-                Pending
+                View Details
               </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal - Shows when Pending card is clicked */}
-      {showModal && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Appointment Details
-                </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-                  Pending
-                </span>
-              </div>
-              <button
-                onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                View and manage appointment information
-              </p>
-
-              {/* Form Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Patient Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Patient Name
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedAppointment.patientName}
-                    readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
-                  />
-                </div>
-
-                {/* Doctor Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Doctor Name
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedAppointment.doctorName}
-                    readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
-                  />
-                </div>
-
-                {/* Service Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Service Name
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedAppointment.service}
-                    readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
-                  />
-                </div>
-
-                {/* Date & Time */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date & Time
-                  </label>
-                  <input
-                    type="text"
-                    value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
-                    readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
-                  />
-                </div>
-
-                {/* Service Type */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Service Type
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedAppointment.visitType}
-                    readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
-              <button
-                onClick={handleClose}
-                className="flex-1 py-3 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors cursor-pointer"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleCancel}
-                className="flex-1 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium text-sm transition-colors cursor-pointer"
-              >
-                Cancel Appointment
-              </button>
-              <button
-                onClick={handleApprove}
-                className="flex-1 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium text-sm transition-colors cursor-pointer"
-              >
-                Approve Appointment
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Use PendingDialog component */}
+      {showModal && (
+        <PendingDialog
+          appointment={selectedAppointment}
+          onClose={handleClose}
+          onApprove={handleApprove}
+          onCancel={handleCancel}
+        />
       )}
+
+      {/* Use SuccessDialog component */}
+      {showSuccessModal && <SuccessDialog onClose={handleSuccessClose} />}
     </div>
   );
 };

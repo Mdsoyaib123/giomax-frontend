@@ -22,7 +22,8 @@ interface Appointment {
   patientImage: string;
 }
 
-const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
+const Completed: React.FC<CompletedProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
@@ -180,16 +181,14 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
                 {appointment.visitType}
               </span>
 
-              {/* ✔ FIXED: Blue text instead of white */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onViewDetails();
                   handleCardClick(appointment);
                 }}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-blue-100 text-blue-600 hover:bg-blue-200 cursor-pointer"
               >
-                Completed
+                View Details
               </button>
             </div>
           </div>
@@ -197,14 +196,20 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
       </div>
 
       {showModal && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
-            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Appointment Details
-                </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500 text-white">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    View and manage appointment information
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-700 text-white">
                   Completed
                 </span>
               </div>
@@ -216,12 +221,9 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
               </button>
             </div>
 
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                View appointment information
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Form */}
+            <div className="p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Patient Name
@@ -230,7 +232,7 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.patientName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -242,7 +244,7 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.doctorName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -254,19 +256,19 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.service}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date & Time
+                    Service Name
                   </label>
                   <input
                     type="text"
-                    value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
+                    value={selectedAppointment.service}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -278,19 +280,20 @@ const Completed: React.FC<CompletedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.visitType}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="flex gap-3 p-6 border-t border-[#DBE0E5] bg-gray-50">
-              <button
-                onClick={handleClose}
-                className="absolute bottom-4 right-4 py-3 px-6 bg-[#EFF4FF] text-[#2E6FF3] rounded-lg hover:bg-[#d2e3ff] hover:text-[#1a5db0] font-medium text-sm transition-colors cursor-pointer"
-              >
-                Close
-              </button>
+              {/* Action Button */}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handleClose}
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

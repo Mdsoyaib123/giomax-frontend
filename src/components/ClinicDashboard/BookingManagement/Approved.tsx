@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import b from "@assets/b.png";
@@ -19,7 +20,8 @@ interface Appointment {
   patientImage: string;
 }
 
-const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
+const Approved: React.FC<ApprovedProps> = ({}) => {
+  /* onViewDetails */
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
@@ -73,7 +75,8 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
         {approvedAppointments.map((appointment) => (
           <div
             key={appointment.id}
-            className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200"
+            onClick={() => handleCardClick(appointment)}
+            className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
           >
             {/* Header with patient info and status */}
             <div className="flex items-start justify-between mb-4">
@@ -90,7 +93,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                   <p className="text-xs text-gray-500">{appointment.service}</p>
                 </div>
               </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-600 text-white">
                 Approved
               </span>
             </div>
@@ -152,7 +155,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
               </div>
             </div>
 
-            {/* Footer with visit type and button */}
+            {/* Footer with visit type */}
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <span
                 className={`text-xs font-medium px-2 py-1 rounded ${getVisitTypeColor(
@@ -163,13 +166,13 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
               </span>
 
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleCardClick(appointment);
-                  onViewDetails(); // ← Use it here
                 }}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-green-500 text-white hover:bg-green-600 cursor-pointer"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-green-100 text-green-600 hover:bg-green-200 cursor-pointer"
               >
-                Approved
+                View Details
               </button>
             </div>
           </div>
@@ -178,15 +181,20 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
 
       {/* Appointment Details Modal */}
       {showModal && selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl relative shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#DBE0E5]">
+            <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Appointment Details
-                </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Appointment Details
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    View and manage appointment information
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white">
                   Approved
                 </span>
               </div>
@@ -199,13 +207,9 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
             </div>
 
             {/* Content */}
-            <div className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                View and manage appointment information
-              </p>
-
+            <div className="p-6 pt-0">
               {/* Form Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Patient Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -215,7 +219,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.patientName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -228,7 +232,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.doctorName}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -241,7 +245,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.service}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -254,7 +258,7 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
 
@@ -267,16 +271,16 @@ const Approved: React.FC<ApprovedProps> = ({ onViewDetails }) => {
                     type="text"
                     value={selectedAppointment.visitType}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Close Button */}
-              <div className="pt-4 flex justify-end">
+              <div className="flex justify-end mt-6">
                 <button
                   onClick={handleClose}
-                  className="py-3 px-4 rounded-lg font-medium text-sm transition-colors text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer"
+                  className="py-3 px-6 rounded-lg font-medium text-sm transition-colors text-blue-600 bg-blue-50 hover:bg-blue-100 cursor-pointer"
                 >
                   Close
                 </button>

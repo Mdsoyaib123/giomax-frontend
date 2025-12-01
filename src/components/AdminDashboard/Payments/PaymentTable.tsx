@@ -194,7 +194,7 @@ const PaymentTable: React.FC = () => {
                           {booking.status === "Pending" ? (
                             <button
                               onClick={() => handleView(booking)}
-                              className="px-4 py-2 rounded-lg bg-[#1E9E46] whitespace-nowrap text-white text-sm font-medium hover:bg-[#18843B]  inline-flex items-center gap-2"
+                              className="px-4 py-2 rounded-lg bg-[#1E9E46] whitespace-nowrap text-white text-sm font-medium hover:bg-[#18843B] inline-flex items-center gap-2 cursor-pointer"
                             >
                               <img
                                 src={aap}
@@ -206,7 +206,7 @@ const PaymentTable: React.FC = () => {
                           ) : (
                             <button
                               onClick={() => handleView(booking)}
-                              className="px-4 py-2 rounded-lg bg-[#1A73E8] whitespace-nowrap text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2"
+                              className="px-4 py-2 rounded-lg bg-[#1A73E8] whitespace-nowrap text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2 cursor-pointer"
                             >
                               <FaEye className="text-sm" /> View Details
                             </button>
@@ -231,20 +231,20 @@ const PaymentTable: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrev}
-              className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700"
+              className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700 cursor-pointer"
             >
               Prev
             </button>
 
-            <button className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">
+            <button className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white cursor-pointer">
               1
             </button>
 
-            <button className="px-4 py-2 rounded-lg border text-gray-700">
+            <button className="px-4 py-2 rounded-lg border text-gray-700 cursor-pointer">
               2
             </button>
 
-            <button className="px-4 py-2 rounded-lg border text-gray-700">
+            <button className="px-4 py-2 rounded-lg border text-gray-700 cursor-pointer">
               3
             </button>
 
@@ -252,7 +252,7 @@ const PaymentTable: React.FC = () => {
 
             <button
               onClick={handleNext}
-              className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700"
+              className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700 cursor-pointer"
             >
               Next
             </button>
@@ -266,7 +266,7 @@ const PaymentTable: React.FC = () => {
           <div className="bg-gray-100 rounded-xl w-full max-w-4xl p-8 relative border border-gray-300 shadow-xl">
             <button
               onClick={() => setOpenProfile(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
