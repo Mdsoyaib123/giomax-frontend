@@ -8,15 +8,7 @@ import Dialogue from "./Dialogue";
 import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
-
-interface Patient {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalBookings: number;
-  lastAppointment: string;
-}
+import { Patient } from "@/types/patientsType";
 
 interface Props {
   id: string | number;
@@ -27,9 +19,8 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: patientss, isLoading, error } = useGetAllPatientsQuery();
+  const { data: apiResponse } = useGetAllPatientsQuery();
   // Navigate to payment history page
-  console.log(patientss);
   const handleClick = (patientId: number) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
   };
@@ -38,84 +29,84 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const handleMessageClick = () => {
     navigate("/clinic-dashboard/message");
   };
+  const patients = apiResponse?.data || [];
+  // // Provided Patient Data
+  // const patients: Patient[] = [
+  //   {
+  //     id: 1,
+  //     name: "Sarah Johnson",
+  //     email: "sarah.j@gmail.com",
+  //     phone: "+995 595 123 456",
+  //     totalBookings: 12,
+  //     lastAppointment: "Oct 12, 2025",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Michael Chen",
+  //     email: "michael.c@gmail.com",
+  //     phone: "+995 577 987 654",
+  //     totalBookings: 20,
+  //     lastAppointment: "Oct 10, 2025",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Emily Rodriguez",
+  //     email: "emily.r@gmail.com",
+  //     phone: "+995 599 001 223",
+  //     totalBookings: 4,
+  //     lastAppointment: "Oct 8, 2025",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "James Wilson",
+  //     email: "james.w@gmail.com",
+  //     phone: "+995 32 245 6789",
+  //     totalBookings: 10,
+  //     lastAppointment: "Oct 5, 2025",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Lisa Anderson",
+  //     email: "lisa.a@gmail.com",
+  //     phone: "+995 431 102 345",
+  //     totalBookings: 1,
+  //     lastAppointment: "Oct 3, 2025",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Ekvom Nabuin",
+  //     email: "ekvom_nabuin@gmail.com",
+  //     phone: "+995 422 789 012",
+  //     totalBookings: 2,
+  //     lastAppointment: "Sep 28, 2025",
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Jonathan Kimali",
+  //     email: "j.kimali@gmail.com",
+  //     phone: "+995 555 334 455",
+  //     totalBookings: 5,
+  //     lastAppointment: "Sep 25, 2025",
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Hon. Naomi Wapo",
+  //     email: "naomiw@gmail.com",
+  //     phone: "+995 341 508 708",
+  //     totalBookings: 15,
+  //     lastAppointment: "Sep 20, 2025",
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "Brian Kirkogali Koech",
+  //     email: "brian.kiplog@gmail.com",
+  //     phone: "+995 503 678 901",
+  //     totalBookings: 10,
+  //     lastAppointment: "Sep 15, 2025",
+  //   },
+  // ];
 
-  // Provided Patient Data
-  const patients: Patient[] = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.j@gmail.com",
-      phone: "+995 595 123 456",
-      totalBookings: 12,
-      lastAppointment: "Oct 12, 2025",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.c@gmail.com",
-      phone: "+995 577 987 654",
-      totalBookings: 20,
-      lastAppointment: "Oct 10, 2025",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      email: "emily.r@gmail.com",
-      phone: "+995 599 001 223",
-      totalBookings: 4,
-      lastAppointment: "Oct 8, 2025",
-    },
-    {
-      id: 4,
-      name: "James Wilson",
-      email: "james.w@gmail.com",
-      phone: "+995 32 245 6789",
-      totalBookings: 10,
-      lastAppointment: "Oct 5, 2025",
-    },
-    {
-      id: 5,
-      name: "Lisa Anderson",
-      email: "lisa.a@gmail.com",
-      phone: "+995 431 102 345",
-      totalBookings: 1,
-      lastAppointment: "Oct 3, 2025",
-    },
-    {
-      id: 6,
-      name: "Ekvom Nabuin",
-      email: "ekvom_nabuin@gmail.com",
-      phone: "+995 422 789 012",
-      totalBookings: 2,
-      lastAppointment: "Sep 28, 2025",
-    },
-    {
-      id: 7,
-      name: "Jonathan Kimali",
-      email: "j.kimali@gmail.com",
-      phone: "+995 555 334 455",
-      totalBookings: 5,
-      lastAppointment: "Sep 25, 2025",
-    },
-    {
-      id: 8,
-      name: "Hon. Naomi Wapo",
-      email: "naomiw@gmail.com",
-      phone: "+995 341 508 708",
-      totalBookings: 15,
-      lastAppointment: "Sep 20, 2025",
-    },
-    {
-      id: 9,
-      name: "Brian Kirkogali Koech",
-      email: "brian.kiplog@gmail.com",
-      phone: "+995 503 678 901",
-      totalBookings: 10,
-      lastAppointment: "Sep 15, 2025",
-    },
-  ];
-
-  const totalPages = 9;
+  const totalPages = Math.ceil(patients.length / 9);
   let currentpatients: Patient[] = [];
 
   if (currentPage === 1) {
@@ -205,28 +196,37 @@ const PatientList: React.FC<Props> = ({ id }) => {
                     </thead>
 
                     <tbody className="divide-y divide-[#E5E7EB] bg-white">
-                      {currentpatients.length > 0 ? (
-                        currentpatients.map((user) => (
+                      {patients.length > 0 ? (
+                        patients.map((user) => (
                           <tr
-                            key={user.id}
+                            key={user.userId}
                             className="hover:bg-gray-50 transition-colors duration-150"
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                              {user.name}
+                              {user?.name || "No Name"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.email}
+                              {user?.email}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.phone}
+                              {user?.phoneNumber}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
-                              {user.totalBookings < 10
-                                ? `0${user.totalBookings}`
-                                : user.totalBookings}
+                              {user.medicalHistory?.length > 0
+                                ? user.medicalHistory.length
+                                : "0"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.lastAppointment}
+                              {user.createdAt
+                                ? new Date(user.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : "No Date"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <div className="flex items-center gap-2">

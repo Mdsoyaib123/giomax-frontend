@@ -9,9 +9,9 @@ export const patientsApi = baseApi.injectEndpoints({
 
         }),
         getSinglePatients: builder.query({
-            query: (id: string) => `patient/${id}`,
+            query: ({ id }: { id: string }) => `patient/getSinglePatient/${id}`,
             providesTags: ["PATIENT"],
         })
     }),
 });
-export const { useGetAllPatientsQuery } = patientsApi
+export const { useGetAllPatientsQuery, useGetSinglePatientsQuery } = patientsApi

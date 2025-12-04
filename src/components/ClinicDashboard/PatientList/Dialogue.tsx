@@ -4,15 +4,7 @@ import { X } from "lucide-react";
 import dr1 from "@assets/dr1.png";
 import dr2 from "@assets/dr2.png";
 import dr3 from "@assets/dr3.png";
-
-interface Patient {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalBookings: number;
-  lastAppointment: string;
-}
+import { Patient } from "@/types/patientsType";
 
 interface Appointment {
   dateTime: string;
@@ -38,6 +30,7 @@ const Dialogue: React.FC<DialogueProps> = ({
   onClose,
   // onViewPaymentHistory,
 }) => {
+  console.log(patient);
   if (!patient) return null;
 
   // Appointment History Data
@@ -129,7 +122,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.name}
+                value={patient.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -151,7 +144,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value="Female"
+                value={patient.gender}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -162,7 +155,12 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value="34"
+                value={
+                  patient?.dateOfBirth
+                    ? new Date().getFullYear() -
+                      new Date(patient.dateOfBirth).getFullYear()
+                    : 0
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -173,7 +171,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.phone}
+                value={patient.phoneNumber}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -184,7 +182,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.totalBookings}
+                value={patient?.medicalHistory?.length || 0}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>

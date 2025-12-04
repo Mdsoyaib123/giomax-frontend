@@ -52,11 +52,13 @@ export interface Patient {
     bloodGroup: string;
     dateOfBirth: string;
     address: Address[];
-    medicalHistory: MedicalHistory;
+    medicalHistory: MedicalHistory[];
     paymentMethods: PaymentMethod[];
     createdAt: string;
     updatedAt: string;
     __v: number;
+    fullName: string;
+    email: string;
 }
 
 export interface PatientResponse {
