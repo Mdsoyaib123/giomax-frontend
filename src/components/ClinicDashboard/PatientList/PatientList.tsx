@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
 import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
+import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 
 interface Patient {
   id: number;
@@ -26,8 +27,9 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { data: patientss, isLoading, error } = useGetAllPatientsQuery();
   // Navigate to payment history page
+  console.log(patientss);
   const handleClick = (patientId: number) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
   };
