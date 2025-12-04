@@ -196,88 +196,95 @@ const DoctorManagement: React.FC = () => {
           </div>
 
           {/* Table Container - Horizontal Scroll on Mobile */}
-          <div className="border border-gray-200 rounded-lg overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-2 md:px-3 py-3 text-left text-xs text-gray-700 font-bold whitespace-nowrap">
-                    Doctor Name
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden sm:table-cell">
-                    Email Address
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">
-                    Specialty
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden md:table-cell">
-                    Service Type
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden lg:table-cell">
-                    Phone Number
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap hidden xl:table-cell">
-                    Total Appointments
-                  </th>
-                  <th className="px-2 md:px-3 py-3 text-left text-xs font-bold text-gray-700 whitespace-nowrap">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+          <div className="p-5 border border-[#E4E4E4] rounded-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+              <div className="xl:col-span-4 w-full">
+                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="min-w-[800px] w-full text-sm">
+                    <thead className="bg-gray-100 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Doctor Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Email Address
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Specialty
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Service Type
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Phone Number
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Total Appointments
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
 
-              <tbody>
-                {currentDoctors.map((doctor, index) => (
-                  <tr
-                    key={doctor.id}
-                    className={`hover:bg-gray-50/50 transition ${
-                      index !== currentDoctors.length - 1
-                        ? "border-b border-gray-200"
-                        : ""
-                    }`}
-                  >
-                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-900 font-medium">
-                      {doctor.name}
-                    </td>
-                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
-                      {doctor.email}
-                    </td>
-                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600">
-                      {doctor.specialty}
-                    </td>
-                    <td className="px-2 md:px-3 py-3 hidden md:table-cell">
-                      <span className="inline-flex px-2.5 py-2 rounded text-xs font-medium bg-[#BEDBFF] text-[#2E6FF3] whitespace-nowrap">
-                        {doctor.serviceType}
-                      </span>
-                    </td>
-                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden lg:table-cell">
-                      {doctor.phone}
-                    </td>
-                    <td className="px-2 md:px-3 py-3 text-xs md:text-sm text-gray-600 hidden xl:table-cell">
-                      {doctor.totalAppointments}
-                    </td>
-
-                    <td className="px-2 md:px-3 py-3">
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        {/* View Button */}
-                        <button
-                          onClick={() => setOpenProfile(doctor)}
-                          className="w-full cursor-pointer sm:w-auto flex items-center justify-center gap-1.5 bg-[#2E6FF3] text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-600 transition"
+                    <tbody>
+                      {currentDoctors.map((doctor) => (
+                        <tr
+                          key={doctor.id}
+                          className="border-b border-gray-100 hover:bg-gray-50 transition"
                         >
-                          <FaEye size={12} /> View
-                        </button>
+                          <td className="px-6 whitespace-nowrap py-3 font-semibold text-gray-900">
+                            {doctor.name}
+                          </td>
 
-                        {/* Edit Button */}
-                        <button
-                          onClick={() => setOpenEditDoctor(doctor)}
-                          className="w-full cursor-pointer sm:w-auto flex items-center justify-center gap-1.5 bg-[#0B9CAC] text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-teal-600 transition"
-                        >
-                          <FiEdit2 size={12} /> Edit
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                          <td className="px-6 whitespace-nowrap py-3 text-gray-700">
+                            {doctor.email}
+                          </td>
+
+                          <td className="px-6 whitespace-nowrap py-3 text-gray-700">
+                            {doctor.specialty}
+                          </td>
+
+                          <td className="px-6 whitespace-nowrap py-3 text-gray-700">
+                            <span className="inline-flex px-3 py-1.5 rounded-md bg-[#BEDBFF] text-[#2E6FF3] text-xs font-medium">
+                              {doctor.serviceType}
+                            </span>
+                          </td>
+
+                          <td className="px-6 whitespace-nowrap py-3 text-gray-700">
+                            {doctor.phone}
+                          </td>
+
+                          <td className="px-6 whitespace-nowrap py-3 text-center text-gray-700">
+                            {doctor.totalAppointments}
+                          </td>
+
+                          <td className="px-6 py-3 text-center">
+                            <div className="flex justify-center gap-2">
+                              {/* View */}
+                              <button
+                                onClick={() => setOpenProfile(doctor)}
+                                className="flex cursor-pointer items-center gap-1 text-sm bg-[#2E6FF3] hover:bg-[#034ee6] text-white font-medium px-3 py-1.5 rounded-md transition"
+                              >
+                                <FaEye className="text-white" /> View
+                              </button>
+
+                              {/* Edit */}
+                              <button
+                                onClick={() => setOpenEditDoctor(doctor)}
+                                className="flex cursor-pointer items-center gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition"
+                              >
+                                <FiEdit2 className="text-white" /> Edit
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Pagination */}

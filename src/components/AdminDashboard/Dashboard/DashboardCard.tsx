@@ -53,7 +53,7 @@ const DashboardCard = () => {
         return (
           <div
             key={single.title}
-            className="w-full h-48 p-6 bg-white rounded-2xl flex flex-col justify-between shadow-sm space-y-4 transition-all hover:shadow-md"
+            className="w-full h-48 p-6 pb-3.5 bg-white rounded-2xl flex flex-col justify-between shadow-sm space-y-4 transition-all hover:shadow-md"
           >
             {/* Top Section */}
             <div className="space-y-2">
@@ -92,7 +92,7 @@ const DashboardCard = () => {
                     <span style={{ color: changeColor }}>{single.change}%</span>
                   </>
                 )}
-                <span className="text-gray-500 ml-1">{single.unit}</span>
+                <span className="text-gray-500 ml-1 ">{single.unit}</span>
               </div>
             </div>
           </div>

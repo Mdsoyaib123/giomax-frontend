@@ -76,7 +76,7 @@ const AvailabilitySettings: React.FC = () => {
   };
 
   return (
-    <div className="bg-white  w-full  mx-auto mt-5">
+    <div className="bg-white w-full mx-auto mt-5">
       <h3 className="text-xl font-semibold text-gray-700 mb-6 text-center sm:text-left">
         Availability Settings
       </h3>
@@ -84,16 +84,11 @@ const AvailabilitySettings: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Left Column */}
         <div>
-          <h4 className="text-lg font-medium text-gray-700 mb-4">
-            Working Hours
-          </h4>
+          <h4 className="text-lg font-medium text-gray-700 mb-4">Working Hours</h4>
 
           <div className="flex flex-col sm:flex-row sm:space-x-4 mb-6 space-y-4 sm:space-y-0">
             <div className="flex-1">
-              <label
-                className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="startTime"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="startTime">
                 Start Time *
               </label>
               <div className="relative">
@@ -112,10 +107,7 @@ const AvailabilitySettings: React.FC = () => {
             </div>
 
             <div className="flex-1">
-              <label
-                className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="endTime"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="endTime">
                 End Time *
               </label>
               <div className="relative">
@@ -135,10 +127,7 @@ const AvailabilitySettings: React.FC = () => {
           </div>
 
           <div>
-            <label
-              className="block text-sm font-medium text-gray-700 mb-1"
-              htmlFor="workingDays"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="workingDays">
               Working Days *
             </label>
             <input
@@ -150,17 +139,13 @@ const AvailabilitySettings: React.FC = () => {
               placeholder="Monday, Tuesday, Wednesday, Thursday, Friday"
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-blue-500 focus:border-blue-500 text-sm"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Separate days with commas
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Separate days with commas</p>
           </div>
         </div>
 
         {/* Right Column */}
         <div>
-          <h4 className="text-lg font-medium text-gray-700 mb-4">
-            Appointment Type
-          </h4>
+          <h4 className="text-lg font-medium text-gray-700 mb-4">Appointment Type</h4>
 
           <ToggleItem
             title="In-Clinic Visits"
@@ -185,7 +170,7 @@ const AvailabilitySettings: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-10 pt-6">
         <button
           type="button"
-          className="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+          className="w-full sm:w-auto px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition cursor-pointer"
         >
           Cancel
         </button>
@@ -193,7 +178,7 @@ const AvailabilitySettings: React.FC = () => {
         <button
           type="button"
           onClick={handleSave}
-          className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer"
         >
           Save Changes
         </button>

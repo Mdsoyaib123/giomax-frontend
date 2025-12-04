@@ -20,7 +20,7 @@ interface Booking {
   type: string;
   status: "Pending" | "Confirmed" | "Cancelled";
   dateTime: string;
-  payment: "Pending" | "Confirmed" | "Refused";
+  payment: "Pending" | "Confirmed" | "Cancelled";
 }
 
 const ClinicBookingManagementTable: React.FC = () => {
@@ -57,7 +57,7 @@ const ClinicBookingManagementTable: React.FC = () => {
       type: "In-Clinic",
       status: "Cancelled",
       dateTime: "2025-11-05, 09:00 AM",
-      payment: "Refused",
+      payment: "Cancelled",
     },
     {
       id: "BK-004",
@@ -87,7 +87,7 @@ const ClinicBookingManagementTable: React.FC = () => {
       type: "In-Clinic",
       status: "Cancelled",
       dateTime: "2025-11-04, 11:30 AM",
-      payment: "Refused",
+      payment: "Cancelled",
     },
   ];
   const totalPages = Math.ceil(bookings.length / itemsPerPage);
@@ -109,7 +109,7 @@ const ClinicBookingManagementTable: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             {/* Left Section - Title */}
             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-              All Booking Information
+              Recent Bookings 
             </h2>
 
             {/* Right Section - Filters */}

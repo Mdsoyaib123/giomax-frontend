@@ -16,7 +16,7 @@ const SettingsManagement = () => {
       id: "ClinicProfile",
       label: "Clinic Profile",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -35,7 +35,7 @@ const SettingsManagement = () => {
       id: "License",
       label: "License & Documents",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -54,7 +54,7 @@ const SettingsManagement = () => {
       id: "Availability",
       label: "Availability Settings",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -73,7 +73,7 @@ const SettingsManagement = () => {
       id: "Payout",
       label: "Payout Methods",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -92,7 +92,7 @@ const SettingsManagement = () => {
       id: "Notification",
       label: "Notification Settings",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -111,7 +111,7 @@ const SettingsManagement = () => {
       id: "Help",
       label: "Help & Support",
       icon: (
-        /* SVG */ <svg
+        <svg
           className="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -129,7 +129,7 @@ const SettingsManagement = () => {
   ];
 
   return (
-    <div className="bg-gray-50 min-h-screen ">
+    <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="mb-6 text-center sm:text-left">
         <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
@@ -147,7 +147,7 @@ const SettingsManagement = () => {
             <button
               key={button.id}
               onClick={() => setActiveTab(button.id as typeof activeTab)}
-              className={`flex items-center justify-center gap-2 px-3 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all duration-200 rounded-lg
+              className={`flex items-center justify-center gap-2 px-3 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all duration-200 rounded-lg cursor-pointer
                 ${
                   activeTab === button.id
                     ? "bg-blue-600 text-white"
