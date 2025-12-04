@@ -106,6 +106,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
   //     lastAppointment: "Sep 15, 2025",
   //   },
   // ];
+  console.log(patients);
 
   const totalPages = Math.ceil(patients.length / 9);
   let currentpatients: Patient[] = [];
@@ -184,41 +185,41 @@ const PatientList: React.FC<Props> = ({ id }) => {
                         <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Phone Number
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                        {/* <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Total Bookings
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Last Appointment
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                        </th> */}
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Actions
                         </th>
                       </tr>
                     </thead>
 
-                    <tbody className="divide-y divide-[#E5E7EB] bg-white">
+                    <tbody className="divide-y divide-[#E5E7EB] bg-white  ">
                       {isLoading ? (
                         <>
-                          <TableRowSkeleton columns={5} rows={9} />
+                          <TableRowSkeleton columns={4} rows={9} />
                         </>
                       ) : patients.length > 0 ? (
                         patients.map((user) => (
                           <tr
-                            key={user.userId}
+                            key={user._id}
                             className="hover:bg-gray-50 transition-colors duration-150"
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                              {user?.name || "No Name"}
+                              {user?.userId?.fullName || "No Name"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user?.email}
+                              {user?.userId?.email}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
                               {user?.phoneNumber}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
+                            {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
                               {user.medicalHistory?.length > 0
-                                ? user.medicalHistory.length
+                                ? user.medicalHistory.lengt h
                                 : "0"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
@@ -232,8 +233,8 @@ const PatientList: React.FC<Props> = ({ id }) => {
                                     }
                                   )
                                 : "No Date"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            </td> */}
+                            <td className="px-6 flex items-center justify-center  py-4 whitespace-nowrap text-sm">
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={handleMessageClick}
