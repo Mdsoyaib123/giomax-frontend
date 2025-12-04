@@ -169,55 +169,56 @@ const PatientList: React.FC<Props> = ({ id }) => {
           </div>
 
           {/* Table */}
-          <div className="p-5 border border-[#E4E4E4] rounded-lg">
-            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
-              <div className="xl:col-span-4 w-full">
-                <div className="overflow-x-auto rounded-lg border border-gray-200">
-                  <table className="min-w-[800px] w-full text-sm">
-                    <thead className="bg-gray-100 border-b border-gray-200">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Patient Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Email Address
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Phone Number
-                        </th>
-                        {/* <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+          <div className="px-6">
+            <div className="p-5 border border-[#E4E4E4] rounded-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+                <div className="xl:col-span-4 w-full">
+                  <div className="overflow-x-auto rounded-lg border border-gray-200">
+                    <table className="min-w-[800px] w-full text-sm">
+                      <thead className="bg-gray-100 border-b border-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Patient Name
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Email Address
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Phone Number
+                          </th>
+                          {/* <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Total Bookings
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Last Appointment
                         </th> */}
-                        <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
+                          <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
 
-                    <tbody className="divide-y divide-[#E5E7EB] bg-white  ">
-                      {isLoading ? (
-                        <>
-                          <TableRowSkeleton columns={4} rows={9} />
-                        </>
-                      ) : patients.length > 0 ? (
-                        patients.map((user) => (
-                          <tr
-                            key={user._id}
-                            className="hover:bg-gray-50 transition-colors duration-150"
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                              {user?.userId?.fullName || "No Name"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user?.userId?.email}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user?.phoneNumber}
-                            </td>
-                            {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
+                      <tbody className="divide-y divide-[#E5E7EB] bg-white  ">
+                        {isLoading ? (
+                          <>
+                            <TableRowSkeleton columns={4} rows={9} />
+                          </>
+                        ) : patients.length > 0 ? (
+                          patients.map((user) => (
+                            <tr
+                              key={user._id}
+                              className="hover:bg-gray-50 transition-colors duration-150 "
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
+                                {user?.userId?.fullName || "No Name"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                                {user?.userId?.email}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                                {user?.phoneNumber}
+                              </td>
+                              {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
                               {user.medicalHistory?.length > 0
                                 ? user.medicalHistory.lengt h
                                 : "0"}
@@ -234,49 +235,50 @@ const PatientList: React.FC<Props> = ({ id }) => {
                                   )
                                 : "No Date"}
                             </td> */}
-                            <td className="px-6 flex items-center justify-center  py-4 whitespace-nowrap text-sm">
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={handleMessageClick}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
-                                >
-                                  <img
-                                    src={text}
-                                    alt="Message"
-                                    className="w-4 h-4"
-                                  />
-                                  Message Patient
-                                </button>
-                                <button
-                                  onClick={() => setOpenProfile(user)}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-[#2E6FF3] text-white rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer text-sm font-medium"
-                                >
-                                  <FaEye className="w-4 h-4" />
-                                  View
-                                </button>
-                              </div>
+                              <td className="px-6 flex items-center justify-center  py-4 whitespace-nowrap text-sm">
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={handleMessageClick}
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
+                                  >
+                                    <img
+                                      src={text}
+                                      alt="Message"
+                                      className="w-4 h-4"
+                                    />
+                                    Message Patient
+                                  </button>
+                                  <button
+                                    onClick={() => setOpenProfile(user)}
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-[#2E6FF3] text-white rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer text-sm font-medium"
+                                  >
+                                    <FaEye className="w-4 h-4" />
+                                    View
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan={6}
+                              className="px-6 py-8 text-center text-gray-500"
+                            >
+                              No patients found on this page
                             </td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={6}
-                            className="px-6 py-8 text-center text-gray-500"
-                          >
-                            No patients found on this page
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-6 py-4 flex items-center justify-between border-t border-[#E5E7EB]">
+          <div className="px-6 py-4 flex items-center justify-between  border-[#E5E7EB]">
             <p className="text-sm text-gray-600">
               {currentPage === 1 && `Showing 9 of 9 patients`}
               {currentPage === 2 && `Showing 5 of 5 patients`}
