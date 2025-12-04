@@ -59,14 +59,14 @@ export interface User {
 }
 
 export interface Patient {
-    _id: string;
-    userId: User; // userId is an object, not string
+    _id: string | null | undefined;
+    userId: User;
     phoneNumber: string;
     gender: string;
     bloodGroup: string;
     dateOfBirth: string;
     address: Address[];
-    medicalHistory: MedicalHistory;
+    medicalHistory: MedicalHistory[];
     withdrawalMethods?: WithdrawalMethod[]; // optional
     paymentMethods: PaymentMethod[];
     createdAt: string;

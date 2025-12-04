@@ -5,6 +5,8 @@ import dr1 from "@assets/dr1.png";
 import dr2 from "@assets/dr2.png";
 import dr3 from "@assets/dr3.png";
 import { Patient } from "@/types/patientsType";
+import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 interface Appointment {
   dateTime: string;
@@ -30,7 +32,11 @@ const Dialogue: React.FC<DialogueProps> = ({
   onClose,
   // onViewPaymentHistory,
 }) => {
+  const { data: appointmentData, isLoading } =
+    useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
+
   console.log(patient);
+  console.log(appointmentData);
   if (!patient) return null;
 
   // Appointment History Data
@@ -182,7 +188,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient?.medicalHistory?.length || 0}
+                value={patient?.medicalHistory?.length ?? 0} // show 0 if array is undefined
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
