@@ -9,6 +9,7 @@ import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 import { Patient } from "@/types/patientsType";
+import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 
 interface Props {
   id: string | number;
@@ -19,7 +20,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: apiResponse } = useGetAllPatientsQuery();
+  const { data: apiResponse, isLoading } = useGetAllPatientsQuery();
   // Navigate to payment history page
   const handleClick = (patientId: number) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
@@ -196,7 +197,11 @@ const PatientList: React.FC<Props> = ({ id }) => {
                     </thead>
 
                     <tbody className="divide-y divide-[#E5E7EB] bg-white">
-                      {patients.length > 0 ? (
+                      {isLoading ? (
+                        <>
+                          <TableRowSkeleton columns={5} rows={9} />
+                        </>
+                      ) : patients.length > 0 ? (
                         patients.map((user) => (
                           <tr
                             key={user.userId}

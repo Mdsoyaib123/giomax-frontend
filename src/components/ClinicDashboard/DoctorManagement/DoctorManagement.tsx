@@ -6,6 +6,7 @@ import { FiEdit2 } from "react-icons/fi";
 import AddDoctorForm from "@/components/ClinicDashboard/DoctorManagement/AddDoctorForm";
 import EditDoctorDetails from "@/components/ClinicDashboard/DoctorManagement/EditDoctorDetails";
 import ViewDoctorDetails from "./ViewDocterDetails";
+import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 // import ViewDoctorDetails from "./ViewDoctorDetails";
 
 // Update the Doctor interface to include all required properties
@@ -27,7 +28,8 @@ const DoctorManagement: React.FC = () => {
   const [openAddDoctor, setOpenAddDoctor] = useState(false);
   const [openEditDoctor, setOpenEditDoctor] = useState<Doctor | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { data: doctorsData, isLoading, error } = useGetAllDoctorsQuery();
+  console.log(doctorsData);
   const doctors: Doctor[] = [
     {
       id: 1,
