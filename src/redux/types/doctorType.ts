@@ -1,63 +1,74 @@
+// API Response
 export interface DoctorApiResponse {
     success: boolean;
     data: DoctorData[];
 }
 
+// Main Doctor Data
 export interface DoctorData {
-    workingHour: WorkingHour;
     _id: string;
     userId: User;
-    clinicId: Clinic;
     phoneNumber: string;
-    licenseNumber: string;
-    serviceType: string;
-    availabilityScheduleDays: string[];
-    appointmentType: string;
-    certificates: Certificate[];
+    dateOfBirth?: string;
+    gender?: string;
+    bloodGroup?: string;
+    medicalHistory?: MedicalHistory;
+    address?: Address[];
+    withdrawalMethods?: WithdrawalMethod[];
+    paymentMethods?: PaymentMethod[];
     createdAt: string;
     updatedAt: string;
     __v: number;
-    dateOfBirth?: string;
-    gender?: string;
+    workingHour?: WorkingHour;
+    clinicId?: Clinic;
+    licenseNumber?: string;
+    serviceType?: string;
+    availabilityScheduleDays?: string[];
+    appointmentType?: string;
+    certificates?: Certificate[];
     professionalInformation?: ProfessionalInformation;
 }
 
+// Working Hours
 export interface WorkingHour {
     startTime: string;
     endTime: string;
 }
 
+// User Info
 export interface User {
     _id: string;
     fullName: string;
     email: string;
-    password: string;
+    password?: string;
     comfirmPassword?: string;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
-    profileImage?: string;
+    role?: string;
+    profileImage?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
+// Clinic
 export interface Clinic {
-    availability: Availability;
-    paymentAndEarnings: PaymentAndEarnings;
     _id: string;
     userId: string;
+    availability?: Availability;
+    paymentAndEarnings?: PaymentAndEarnings;
     nationality?: string;
     nationalIdNumber?: string;
     clinicCertificates?: ClinicCertificate[];
     servicesOffered?: string[];
-    createdAt: string;
-    updatedAt: string;
-    __v?: number;
     clinicDescription?: string;
     phoneNumber?: string;
     medicalLicenseNumber?: string;
     reviews?: Review[];
     avarageRating?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
 }
 
+// Clinic availability
 export interface Availability {
     startTime?: string;
     endTime?: string;
@@ -65,9 +76,10 @@ export interface Availability {
     appointmentType?: string;
 }
 
+// Payments & Withdrawals
 export interface PaymentAndEarnings {
-    totalEarnings: TotalEarnings;
-    withdrawalMethods: WithdrawalMethod[];
+    totalEarnings?: TotalEarnings;
+    withdrawalMethods?: WithdrawalMethod[];
 }
 
 export interface TotalEarnings {
@@ -84,28 +96,40 @@ export interface WithdrawalMethod {
     expiryDate?: string;
 }
 
+export interface PaymentMethod {
+    _id: string;
+    cardHolderName?: string;
+    cardNumber?: string;
+    cvv?: string;
+    expiryDate?: string;
+}
+
+// Certificates
 export interface ClinicCertificate {
+    _id: string;
     uploadCertificates?: string | null;
     certificateType?: string;
     certificateName?: string;
-    _id: string;
 }
 
 export interface Certificate {
+    _id: string;
     uploadCertificates?: string | null;
     certificateType?: string;
     certificateName?: string;
-    _id: string;
 }
 
+// Reviews
 export interface Review {
+    _id: string;
     patientId: string;
     rating: number;
     comment: string;
-    _id: string;
 }
 
+// Professional Information
 export interface ProfessionalInformation {
+    _id: string;
     speciality: string;
     experienceYears: number;
     medicalLicenseNumber: string;
@@ -113,5 +137,45 @@ export interface ProfessionalInformation {
     about: string;
     onlineConsultationFee: number;
     clinicVisitFee: number;
+}
+
+// **Medical History**
+export interface MedicalHistory {
+    conditions: Condition[];
+    Medications: Medication[];
+    Allergies: Allergy[];
+}
+
+export interface Condition {
     _id: string;
+    name: string;
+    diagnosedDate: string;
+    status: string;
+    notes?: string;
+}
+
+export interface Medication {
+    _id: string;
+    name: string;
+    dosage: string;
+    frequency: string;
+    startDate: string;
+}
+
+export interface Allergy {
+    _id: string;
+    allergyOn: string;
+    severity: string;
+    reaction: string;
+}
+
+// Address
+export interface Address {
+    _id: string;
+    addressLabel: string;
+    streetNumber: string;
+    apartmentNumber?: string;
+    city: string;
+    state: string;
+    zipCode: string;
 }

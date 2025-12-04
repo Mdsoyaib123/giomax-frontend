@@ -122,7 +122,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.fullName}
+                value={patient.userId?.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -133,7 +133,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.email}
+                value={patient.userId?.email}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>

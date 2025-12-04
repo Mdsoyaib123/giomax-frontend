@@ -106,7 +106,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
   //     lastAppointment: "Sep 15, 2025",
   //   },
   // ];
-  console.log(patients);
+  console.log(apiResponse);
 
   const totalPages = Math.ceil(patients.length / 9);
   let currentpatients: Patient[] = [];

@@ -1,34 +1,34 @@
 export interface Address {
+    _id: string;
     addressLabel: string;
     streetNumber: string;
     apartmentNumber: string;
     city: string;
     state: string;
     zipCode: string;
-    _id: string;
 }
 
 export interface Medication {
+    _id: string;
     name: string;
     dosage: string;
     frequency: string;
     startDate: string;
-    _id: string;
 }
 
 export interface Condition {
+    _id: string;
     name: string;
     diagnosedDate: string;
     status: string;
     notes?: string;
-    _id: string;
 }
 
 export interface Allergy {
+    _id: string;
     allergyOn: string;
     severity: string;
     reaction: string;
-    _id: string;
 }
 
 export interface MedicalHistory {
@@ -44,21 +44,34 @@ export interface PaymentMethod {
     expiryDate: string;
 }
 
+export interface WithdrawalMethod {
+    cardHolderName: string;
+    cardNumber: string;
+    cvv: string;
+    expiryDate: string;
+}
+
+export interface User {
+    _id: string;
+    fullName: string;
+    email: string;
+    profileImage?: string | null;
+}
+
 export interface Patient {
     _id: string;
-    userId: string;
+    userId: User; // userId is an object, not string
     phoneNumber: string;
     gender: string;
     bloodGroup: string;
     dateOfBirth: string;
     address: Address[];
-    medicalHistory: MedicalHistory[];
+    medicalHistory: MedicalHistory;
+    withdrawalMethods?: WithdrawalMethod[]; // optional
     paymentMethods: PaymentMethod[];
     createdAt: string;
     updatedAt: string;
     __v: number;
-    fullName: string;
-    email: string;
 }
 
 export interface PatientResponse {
