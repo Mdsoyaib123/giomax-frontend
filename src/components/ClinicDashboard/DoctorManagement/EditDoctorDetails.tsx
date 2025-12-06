@@ -2,23 +2,11 @@ import React, { useState } from "react";
 import { X, ArrowLeft, UploadCloud, Clock } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
 
-// --- Interface ---
-interface Doctor {
-  id: number;
-  name: string;
-  email: string;
-  specialty: string;
-  serviceType: string;
-  phone: string;
-  totalAppointments: number;
-}
-
 interface EditDoctorDetailsProps {
   doctor: DoctorData;
   onClose: () => void;
 }
 
-// Extended interface for form data based on actual API structure
 interface DoctorFormData {
   name: string;
   email: string;
@@ -392,18 +380,18 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0 bg-white">
+          <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 shrink-0 bg-white">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
+              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
+              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>
@@ -561,7 +549,7 @@ export default EditDoctorDetails;
 //     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
 //       <div className="bg-white rounded-xl w-[1100px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
 //         {/* Header */}
-//         <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
+//         <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
 //           <div className="flex items-center">
 //             <button
 //               onClick={onClose}
@@ -696,18 +684,18 @@ export default EditDoctorDetails;
 //           </div>
 
 //           {/* Footer */}
-//           <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0 bg-white">
+//           <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 shrink-0 bg-white">
 //             <button
 //               type="button"
 //               onClick={onClose}
-//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
+//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
 //             >
 //               Close
 //             </button>
 //             <button
 //               type="submit"
 //               disabled={loading}
-//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
+//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
 //             >
 //               {loading ? "Saving..." : "Save Changes"}
 //             </button>
