@@ -6,6 +6,7 @@ import { useGetAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/do
 import { getStatusColor } from "@/utils/utfuntion";
 import sitescope from "../../../assets/icons/sitescope.svg";
 import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
+import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
     | "All"
@@ -223,9 +224,8 @@ const BookingManagement = () => {
                     <span className="text-xs font-medium px-2 py-1 rounded text-blue-600 bg-blue-50">
                       {appointment.visitingType}
                     </span>
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-blue-100 text-blue-600 hover:bg-blue-200 cursor-pointer">
-                      View Details
-                    </button>
+
+                    <AppointmentDetailsModal />
                   </div>
                 </div>
               ))}
