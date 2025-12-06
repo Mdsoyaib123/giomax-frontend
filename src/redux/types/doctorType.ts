@@ -18,6 +18,7 @@ export interface DoctorData {
     paymentMethods?: PaymentMethod[];
     createdAt: string;
     updatedAt: string;
+    totalAppointments: number;
     __v: number;
     workingHour?: WorkingHour;
     clinicId?: Clinic;
