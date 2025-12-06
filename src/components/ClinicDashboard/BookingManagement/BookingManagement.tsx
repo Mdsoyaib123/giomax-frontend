@@ -1,16 +1,11 @@
 import { useState } from "react";
-import Completed from "./Completed";
-import Cancelled from "./Cancelled";
-import AppointmentDetails from "./AppointmentDetails";
-import All from "./All";
-import Approved from "./Approved";
-import Pending from "./Pending";
 import SectionTitle from "@/common/SectionTitle";
 import { Plus, X, Check } from "lucide-react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useGetAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
-import { getStatusColor, getVisitTypeColor } from "@/utils/utfuntion";
+import { getStatusColor } from "@/utils/utfuntion";
 import sitescope from "../../../assets/icons/sitescope.svg";
+import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
     | "All"
@@ -23,7 +18,7 @@ const BookingManagement = () => {
 
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const { data } = useGetAllAppointmentsQuery(
+  const { data, isLoading } = useGetAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
   console.log(data?.data);
@@ -41,10 +36,11 @@ const BookingManagement = () => {
   // Updated Tabs
   const tabs = [
     { id: "All", label: "All" },
-    { id: "Approved", label: "Approved" },
-    { id: "Completed", label: "Completed" },
-    { id: "Pending", label: "Pending" },
-    { id: "Cancelled", label: "Cancelled" },
+    { id: "approved", label: "Approved" },
+    { id: "completed", label: "Completed" },
+    { id: "pending", label: "Pending" },
+    { id: "cancelled", label: "Cancelled" },
+    { id: "rejected", label: "Rejected" },
   ];
 
   const handleInputChange = (
@@ -73,32 +69,32 @@ const BookingManagement = () => {
     });
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "All":
-        return <All onViewDetails={() => setActiveTab("AppointmentDetails")} />;
-      case "Approved":
-        return (
-          <Approved onViewDetails={() => setActiveTab("AppointmentDetails")} />
-        );
-      case "Completed":
-        return (
-          <Completed onViewDetails={() => setActiveTab("AppointmentDetails")} />
-        );
-      case "Pending":
-        return (
-          <Pending onViewDetails={() => setActiveTab("AppointmentDetails")} />
-        );
-      case "Cancelled":
-        return (
-          <Cancelled onViewDetails={() => setActiveTab("AppointmentDetails")} />
-        );
-      case "AppointmentDetails":
-        return <AppointmentDetails />;
-      default:
-        return null;
-    }
-  };
+  // const renderContent = () => {
+  //   switch (activeTab) {
+  //     case "All":
+  //       return <All onViewDetails={() => setActiveTab("AppointmentDetails")} />;
+  //     case "Approved":
+  //       return (
+  //         <Approved onViewDetails={() => setActiveTab("AppointmentDetails")} />
+  //       );
+  //     case "Completed":
+  //       return (
+  //         <Completed onViewDetails={() => setActiveTab("AppointmentDetails")} />
+  //       );
+  //     case "Pending":
+  //       return (
+  //         <Pending onViewDetails={() => setActiveTab("AppointmentDetails")} />
+  //       );
+  //     case "Cancelled":
+  //       return (
+  //         <Cancelled onViewDetails={() => setActiveTab("AppointmentDetails")} />
+  //       );
+  //     case "AppointmentDetails":
+  //       return <AppointmentDetails />;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   return (
     <div>
@@ -134,10 +130,6 @@ const BookingManagement = () => {
                 }`}
               >
                 {tab.label}
-                {tab.id === "Approved" && " (2)"}
-                {tab.id === "Completed" && " (4)"}
-                {tab.id === "Pending" && " (2)"}
-                {tab.id === "Cancelled" && " (1)"}
               </button>
             ))}
           </div>
@@ -145,99 +137,98 @@ const BookingManagement = () => {
 
         {/* Tab Content */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data?.data.map((appointment: any) => (
-            <div
-              key={appointment?._id}
-              // onClick={() => handleCardClick(appointment)}
-              className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-            >
-              {/* Header with patient info and status */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={appointment.patientImage}
-                    alt={appointment.patientName}
-                    className="w-12 h-12 rounded-lg object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
-                      {appointment.patientName}
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      {appointment.service}
-                    </p>
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <AppointmentSkeleton key={i} />
+              ))
+            : data?.data.map((appointment: any) => (
+                <div
+                  key={appointment?._id}
+                  // onClick={() => handleCardClick(appointment)}
+                  className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                >
+                  {/* Header with patient info and status */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={appointment.patientImage}
+                        alt={appointment.patientName}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900">
+                          {appointment.patientName}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          {appointment.service}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <span
+                        className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
+                          appointment.status
+                        )}`}
+                      >
+                        {appointment.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Appointment details */}
+                  <div className="flex mb-4 items-center justify-between ">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <img src={sitescope} alt="" />
+                      <span>{appointment.doctorName}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>{appointment.prefarenceDate}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2  text-sm text-gray-600">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{appointment.prefarenceTime}</span>
+                    </div>
+                  </div>
+
+                  {/* Footer with visit type */}
+
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <span className="text-xs font-medium px-2 py-1 rounded text-blue-600 bg-blue-50">
+                      {appointment.visitingType}
+                    </span>
+                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-blue-100 text-blue-600 hover:bg-blue-200 cursor-pointer">
+                      View Details
+                    </button>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <span
-                    className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
-                      appointment.status
-                    )}`}
-                  >
-                    {appointment.status}
-                  </span>
-                  <span
-                    className={`text-xs text-[#1D4ED8] font-medium px-2 py-1 capitalize rounded $`}
-                  >
-                    {appointment.visitingType}
-                  </span>
-                </div>
-              </div>
-
-              {/* Appointment details */}
-              <div className="flex mb-4 items-center justify-between ">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <img src={sitescope} alt="" />
-                  <span>{appointment.doctorName}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span>{appointment.prefarenceDate}</span>
-                </div>
-
-                <div className="flex items-center gap-2  text-sm text-gray-600">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span>{appointment.prefarenceTime}</span>
-                </div>
-              </div>
-
-              {/* Footer with visit type */}
-              {/* <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded ${getVisitTypeColor(
-                    appointment.visitingType
-                  )}`}
-                >
-                  {appointment.visitingType}
-                </span>
-              </div> */}
-            </div>
-          ))}
+              ))}
         </div>
       </div>
 
