@@ -7,6 +7,7 @@ import dr3 from "@assets/dr3.png";
 import { Patient } from "@/types/patientsType";
 import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
+import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
 
 interface Appointment {
   dateTime: string;
@@ -35,8 +36,10 @@ const Dialogue: React.FC<DialogueProps> = ({
   const { data: appointmentData, isLoading } =
     useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
 
-  console.log(patient);
-  console.log(appointmentData);
+  console.log(patient?._id);
+  console.log(appointmentData?.data);
+  const allAppointment = appointmentData?.data;
+  console.log(allAppointment);
   if (!patient) return null;
 
   // Appointment History Data
@@ -74,23 +77,23 @@ const Dialogue: React.FC<DialogueProps> = ({
   ];
 
   // Consulate Doctor Data
-  const doctors: Doctor[] = [
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr1,
-    },
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr2,
-    },
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr3,
-    },
-  ];
+  // const doctors: Doctor[] = [
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr1,
+  //   },
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr2,
+  //   },
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr3,
+  //   },
+  // ];
 
   // const handleViewPaymentHistory = () => {
   //   if (onViewPaymentHistory) {
@@ -254,26 +257,37 @@ const Dialogue: React.FC<DialogueProps> = ({
               Consulate Doctor
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {doctors.map((doctor, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg hover:border-blue-300 transition-colors"
-                >
-                  <img
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 truncate">
-                      {doctor.name}
-                    </h4>
-                    <p className="text-xs text-gray-600 truncate">
-                      {doctor.specialization}
-                    </p>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <AppointmentCardSkeleton key={i} />
+                ))
+              ) : allAppointment && allAppointment.length > 0 ? (
+                allAppointment?.map((doctor, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg bg-[#F4F6F8] hover:border-blue-300 transition-colors"
+                  >
+                    <img
+                      src={doctor.doctorId?.userId?.profileImage || ""}
+                      alt={doctor.doctorId?.userId?.fullName}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-gray-900 truncate capitalize">
+                        {doctor.doctorId?.userId?.fullName}
+                      </h4>
+                      <p className="text-xs text-gray-600 truncate">
+                        {doctor.doctorId?.professionalInformation?.speciality}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                // 👉 No items case
+                <p className="text-gray-500 col-span-3 text-sm text-center py-6">
+                  No appointments found
+                </p>
+              )}
             </div>
           </div>
         </div>

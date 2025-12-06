@@ -39,5 +39,5 @@ export interface Appointment {
 export interface GetSinglePenitentAppointmentResponse {
     success: boolean;
     message: string;
-    data: Appointment;
+    data: Appointment[] | undefined;
 }
