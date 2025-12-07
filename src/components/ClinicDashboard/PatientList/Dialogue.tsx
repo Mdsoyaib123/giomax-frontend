@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { X } from "lucide-react";
-import dr1 from "@assets/dr1.png";
-import dr2 from "@assets/dr2.png";
-import dr3 from "@assets/dr3.png";
 import { Patient } from "@/types/patientsType";
 import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
@@ -14,12 +11,6 @@ interface Appointment {
   doctorName: string;
   service: string;
   status: string;
-}
-
-interface Doctor {
-  name: string;
-  specialization: string;
-  image: string;
 }
 
 interface DialogueProps {
