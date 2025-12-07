@@ -1,5 +1,6 @@
 import React from "react";
 import { X, FileText, Edit } from "lucide-react";
+import { DoctorData } from "@/redux/types/doctorType";
 
 // --- Interfaces ---
 interface Appointment {
@@ -9,21 +10,8 @@ interface Appointment {
   status: "Completed" | "Upcoming" | "Cancelled";
 }
 
-interface Doctor {
-  id: number;
-  name: string;
-  email: string;
-  specialty: string;
-  serviceType: string;
-  phone: string;
-  totalAppointments: number;
-  licenseNumber: string;
-  workingHour: string;
-  availability: string[];
-}
-
 interface ViewDoctorDetailsProps {
-  doctor: Doctor;
+  doctor: DoctorData;
   onClose: () => void;
 }
 
@@ -119,9 +107,9 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
       </div>
     </div>
   );
-
+  console.log(doctor);
   const handleEdit = () => {
-    console.log("Edit clicked for doctor:", doctor.name);
+    console.log("Edit clicked for doctor:", doctor.userId);
     // This would typically open the edit modal
   };
 
@@ -149,12 +137,21 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
           {/* Basic Info Grid (Responsive 2-column) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoField label="Doctor Name" value={doctor.name} />
-            <InfoField label="Email Address" value={doctor.email} />
-            <InfoField label="Specialty" value={doctor.specialty} />
-            <InfoField label="Service Type" value={doctor.serviceType} />
-            <InfoField label="Phone Number" value={doctor.phone} />
-            <InfoField label="License Number" value={doctor.licenseNumber} />
+            <InfoField label="Doctor Name" value={doctor?.userId?.fullName} />
+            <InfoField label="Email Address" value={doctor?.userId?.email} />
+            <InfoField
+              label="Specialty"
+              value={doctor?.professionalInformation?.speciality || "not set"}
+            />
+            <InfoField
+              label="Service Type"
+              value={doctor?.serviceType || "not set"}
+            />
+            <InfoField label="Phone Number" value={doctor?.phoneNumber} />
+            <InfoField
+              label="License Number"
+              value={doctor?.licenseNumber || "not set"}
+            />
           </div>
 
           {/* Availability & Working Hour */}
@@ -165,17 +162,24 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Availability Days */}
               <div className="flex flex-wrap gap-2 py-3">
-                {doctor.availability.map((day) => (
+                {doctor?.availabilityScheduleDays?.map((day) => (
                   <span
                     key={day}
-                    className="px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-md"
+                    className="px-3 py-3 text-sm font-medium text-blue-700 capitalize bg-[#EFF6FF] border border-[#BEDBFF] rounded-md"
                   >
                     {day}
                   </span>
                 ))}
               </div>
               {/* Working Hour */}
-              <InfoField label="Working Hour" value={doctor.workingHour} />
+              <InfoField
+                label="Working Hour"
+                value={
+                  (doctor?.workingHour &&
+                    `${doctor?.workingHour?.startTime} - ${doctor?.workingHour?.endTime}`) ||
+                  "not set"
+                }
+              />
             </div>
           </div>
 

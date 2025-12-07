@@ -1,30 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { X } from "lucide-react";
-import dr1 from "@assets/dr1.png";
-import dr2 from "@assets/dr2.png";
-import dr3 from "@assets/dr3.png";
-
-interface Patient {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalBookings: number;
-  lastAppointment: string;
-}
+import { Patient } from "@/types/patientsType";
+import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { skipToken } from "@reduxjs/toolkit/query";
+import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
 
 interface Appointment {
   dateTime: string;
   doctorName: string;
   service: string;
   status: string;
-}
-
-interface Doctor {
-  name: string;
-  specialization: string;
-  image: string;
 }
 
 interface DialogueProps {
@@ -38,6 +24,13 @@ const Dialogue: React.FC<DialogueProps> = ({
   onClose,
   // onViewPaymentHistory,
 }) => {
+  const { data: appointmentData, isLoading } =
+    useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
+
+  console.log(patient?._id);
+  console.log(appointmentData?.data);
+  const allAppointment = appointmentData?.data;
+  console.log(allAppointment);
   if (!patient) return null;
 
   // Appointment History Data
@@ -75,23 +68,23 @@ const Dialogue: React.FC<DialogueProps> = ({
   ];
 
   // Consulate Doctor Data
-  const doctors: Doctor[] = [
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr1,
-    },
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr2,
-    },
-    {
-      name: "Dr. Michael Brown",
-      specialization: "General Physician",
-      image: dr3,
-    },
-  ];
+  // const doctors: Doctor[] = [
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr1,
+  //   },
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr2,
+  //   },
+  //   {
+  //     name: "Dr. Michael Brown",
+  //     specialization: "General Physician",
+  //     image: dr3,
+  //   },
+  // ];
 
   // const handleViewPaymentHistory = () => {
   //   if (onViewPaymentHistory) {
@@ -129,7 +122,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.name}
+                value={patient.userId?.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -140,7 +133,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.email}
+                value={patient.userId?.email}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -151,7 +144,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value="Female"
+                value={patient.gender}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -162,7 +155,12 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value="34"
+                value={
+                  patient?.dateOfBirth
+                    ? new Date().getFullYear() -
+                      new Date(patient.dateOfBirth).getFullYear()
+                    : 0
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -173,7 +171,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.phone}
+                value={patient.phoneNumber}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -184,7 +182,7 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 readOnly
-                value={patient.totalBookings}
+                value={patient?.medicalHistory?.length ?? 0} // show 0 if array is undefined
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -250,26 +248,37 @@ const Dialogue: React.FC<DialogueProps> = ({
               Consulate Doctor
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {doctors.map((doctor, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg hover:border-blue-300 transition-colors"
-                >
-                  <img
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 truncate">
-                      {doctor.name}
-                    </h4>
-                    <p className="text-xs text-gray-600 truncate">
-                      {doctor.specialization}
-                    </p>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <AppointmentCardSkeleton key={i} />
+                ))
+              ) : allAppointment && allAppointment.length > 0 ? (
+                allAppointment?.map((doctor, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg bg-[#F4F6F8] hover:border-blue-300 transition-colors"
+                  >
+                    <img
+                      src={doctor.doctorId?.userId?.profileImage || ""}
+                      alt={doctor.doctorId?.userId?.fullName}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-gray-900 truncate capitalize">
+                        {doctor.doctorId?.userId?.fullName}
+                      </h4>
+                      <p className="text-xs text-gray-600 truncate">
+                        {doctor.doctorId?.professionalInformation?.speciality}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                // 👉 No items case
+                <p className="text-gray-500 col-span-3 text-sm text-center py-6">
+                  No appointments found
+                </p>
+              )}
             </div>
           </div>
         </div>

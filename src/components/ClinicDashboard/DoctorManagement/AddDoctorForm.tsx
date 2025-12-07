@@ -9,6 +9,7 @@ interface DoctorData {
   serviceType: string;
   status: string;
   workingHour: string;
+  totalAppointments: number;
   availabilitySchedule: string;
   certificateFile?: File; // Only this key is File
 }
@@ -35,6 +36,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     status: statusOptions[0],
     workingHour: "",
     availabilitySchedule: "",
+    totalAppointments: 0,
   });
 
   const [_loading, setLoading] = useState(false);

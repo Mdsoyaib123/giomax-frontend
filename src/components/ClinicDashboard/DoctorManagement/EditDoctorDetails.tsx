@@ -1,29 +1,21 @@
 import React, { useState } from "react";
 import { X, ArrowLeft, UploadCloud, Clock } from "lucide-react";
-
-// --- Interface ---
-interface Doctor {
-  id: number;
-  name: string;
-  email: string;
-  specialty: string;
-  serviceType: string;
-  phone: string;
-  totalAppointments: number;
-}
+import { DoctorData } from "@/redux/types/doctorType";
 
 interface EditDoctorDetailsProps {
-  doctor: Doctor;
+  doctor: DoctorData;
   onClose: () => void;
 }
 
-// Extended interface for form data
-interface DoctorFormData extends Doctor {
+interface DoctorFormData {
+  name: string;
+  email: string;
+  phone: string;
+  specialty: string;
   licenseNumber: string;
-  yearsOfExperience: number;
-  status: "Active" | "Inactive";
-  workingDays: string;
+  serviceType: string;
   workingHour: string;
+  availabilityDays: string;
 }
 
 // --- Main Component: EditDoctorDetails ---
@@ -31,15 +23,27 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
   doctor,
   onClose,
 }) => {
-  const [formData, setFormData] = useState<DoctorFormData>({
-    ...doctor,
-    licenseNumber: "MED-001-2024",
-    yearsOfExperience: 12,
-    status: "Active",
-    workingDays: "Monday, Tuesday, Wednesday, Friday",
-    workingHour: "10:00 AM - 05:00 PM",
-  });
+  console.log("Doctor data received:", doctor);
 
+  // Map the API data to form fields
+  const getDefaultFormData = (): DoctorFormData => {
+    return {
+      name: doctor?.userId?.fullName || "",
+      email: doctor?.userId?.email || "",
+      phone: doctor?.phoneNumber || "",
+      specialty: doctor?.professionalInformation?.speciality || "",
+      licenseNumber: doctor?.licenseNumber || "",
+      serviceType: doctor?.serviceType || "",
+      workingHour: `${doctor?.workingHour?.startTime || "09:00 AM"} - ${
+        doctor?.workingHour?.endTime || "05:00 PM"
+      }`,
+      availabilityDays: doctor?.availabilityScheduleDays?.join(", ") || "",
+    };
+  };
+
+  const [formData, setFormData] = useState<DoctorFormData>(
+    getDefaultFormData()
+  );
   const [loading, setLoading] = useState(false);
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
 
@@ -59,6 +63,28 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       console.log("Certificate file:", certificateFile);
     }
 
+    // TODO: Implement API call to update doctor
+    // Example structure for API payload:
+    const updatedData = {
+      fullName: formData.name,
+      email: formData.email,
+      phoneNumber: formData.phone,
+      professionalInformation: {
+        speciality: formData.specialty,
+      },
+      licenseNumber: formData.licenseNumber,
+      serviceType: formData.serviceType,
+      workingHour: {
+        startTime: formData.workingHour.split(" - ")[0] || "09:00 AM",
+        endTime: formData.workingHour.split(" - ")[1] || "05:00 PM",
+      },
+      availabilityScheduleDays: formData.availabilityDays
+        .split(",")
+        .map((day) => day.trim()),
+    };
+
+    console.log("Payload for API:", updatedData);
+
     setTimeout(() => {
       setLoading(false);
       console.log("Save successful!");
@@ -68,20 +94,24 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
   };
 
   const specialtyOptions = [
-    "Cardiology",
     "General Practitioner",
+    "Cardiology",
     "Pediatrics",
     "Neurology",
     "Dermatology",
-  ];
+    "Orthopedic Surgeon",
+    "Gynecologist",
+    "ENT Specialist",
+    "Psychiatrist",
+    doctor?.professionalInformation?.speciality || "Other", // Include current specialty
+  ].filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
 
   const serviceTypeOptions = [
-    "Both (Online & Clinic Visit)",
-    "Online Only",
-    "Clinic Visit Only",
-  ];
-
-  const statusOptions = ["Active", "Inactive"];
+    "both",
+    "online",
+    "clinic",
+    "anything", // From your data
+  ].filter((value, index, self) => self.indexOf(value) === index);
 
   // --- Helpers ---
   const renderInput = (
@@ -122,6 +152,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
           required
           className="w-full appearance-none px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer"
         >
+          <option value="">Select {label.toLowerCase()}</option>
           {options.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -145,7 +176,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
       <div className="bg-white rounded-xl w-[1100px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
           <div className="flex items-center">
             <button
               onClick={onClose}
@@ -159,7 +190,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                 Edit Doctor Information
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Update Dr. {doctor.name.split(" ")[2]}'s details
+                Update Dr. {doctor?.userId?.fullName}'s details
               </p>
             </div>
           </div>
@@ -173,7 +204,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
         </div>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto">
+        <form onSubmit={handleSubmit} className="grow overflow-y-auto">
           <div className="p-6 space-y-8">
             {/* Basic Info */}
             <div>
@@ -195,10 +226,37 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                 {renderSelect("Specialty", "specialty", specialtyOptions)}
-                {renderInput(
-                  "Years of Experience",
-                  "yearsOfExperience",
-                  "number"
+
+                {/* Show existing certificates if available */}
+                {doctor?.certificates && doctor.certificates.length > 0 && (
+                  <div className="col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Existing Certificates
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {doctor.certificates.map(
+                        (cert, index) =>
+                          cert.uploadCertificates && (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-2 bg-gray-50 rounded border"
+                            >
+                              <span className="text-sm text-gray-600 truncate">
+                                Certificate {index + 1}
+                              </span>
+                              <a
+                                href={cert.uploadCertificates}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:text-blue-700 text-sm"
+                              >
+                                View
+                              </a>
+                            </div>
+                          )
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -242,7 +300,19 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                   "serviceType",
                   serviceTypeOptions
                 )}
-                {renderSelect("Status", "status", statusOptions)}
+
+                {/* Appointment Type if available */}
+                {doctor?.appointmentType && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Appointment Type
+                    </label>
+                    <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-900 text-sm">
+                      {doctor.appointmentType}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">(Read only)</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -253,14 +323,14 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                 <div>
-                  {renderInput("Working Days", "workingDays")}
+                  {renderInput("Working Days", "availabilityDays")}
                   <p className="text-xs text-gray-500 mt-1">
                     Separate days with commas (e.g., Monday, Tuesday, Wednesday)
                   </p>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
-                    Working Hour <span className="text-red-500">*</span>
+                    Working Hours <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -270,28 +340,58 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="e.g., 10:00 AM - 05:00 PM"
+                      placeholder="e.g., 09:00 AM - 05:00 PM"
                     />
                     <Clock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Format: Start Time - End Time
+                  </p>
                 </div>
               </div>
             </div>
+
+            {/* Clinic Info (Read only) */}
+            {doctor?.clinicId && (
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4 border-t border-gray-100 pt-6">
+                  Clinic Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Clinic Phone
+                    </label>
+                    <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-900 text-sm">
+                      {doctor.clinicId.phoneNumber || "Not available"}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Medical License
+                    </label>
+                    <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-900 text-sm">
+                      {doctor.clinicId.medicalLicenseNumber || "Not available"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Footer */}
-          <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0 bg-white">
+          <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 shrink-0 bg-white">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
+              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
+              className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>
@@ -449,7 +549,7 @@ export default EditDoctorDetails;
 //     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
 //       <div className="bg-white rounded-xl w-[1100px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
 //         {/* Header */}
-//         <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
+//         <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
 //           <div className="flex items-center">
 //             <button
 //               onClick={onClose}
@@ -584,18 +684,18 @@ export default EditDoctorDetails;
 //           </div>
 
 //           {/* Footer */}
-//           <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0 bg-white">
+//           <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3 shrink-0 bg-white">
 //             <button
 //               type="button"
 //               onClick={onClose}
-//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
+//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md text-gray-700 bg-[#EFF4FF] hover:bg-gray-200 transition-colors border border-transparent"
 //             >
 //               Close
 //             </button>
 //             <button
 //               type="submit"
 //               disabled={loading}
-//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-[56px] rounded-[6px] bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
+//               className="px-6 py-2.5 text-sm font-semibold w-[493px] h-14 rounded-md bg-[#2E6FF3] text-white hover:bg-blue-700 transition-colors border border-transparent"
 //             >
 //               {loading ? "Saving..." : "Save Changes"}
 //             </button>
