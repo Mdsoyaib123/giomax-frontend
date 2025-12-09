@@ -7,15 +7,9 @@ import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
 import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
-
-interface Patient {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalBookings: number;
-  lastAppointment: string;
-}
+import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
+import { Patient } from "@/types/patientsType";
+import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 
 interface Props {
   id: string | number;
@@ -26,7 +20,7 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { data: apiResponse, isLoading } = useGetAllPatientsQuery();
   // Navigate to payment history page
   const handleClick = (patientId: number) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
@@ -36,84 +30,85 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const handleMessageClick = () => {
     navigate("/clinic-dashboard/message");
   };
+  const patients = apiResponse?.data || [];
+  // // Provided Patient Data
+  // const patients: Patient[] = [
+  //   {
+  //     id: 1,
+  //     name: "Sarah Johnson",
+  //     email: "sarah.j@gmail.com",
+  //     phone: "+995 595 123 456",
+  //     totalBookings: 12,
+  //     lastAppointment: "Oct 12, 2025",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Michael Chen",
+  //     email: "michael.c@gmail.com",
+  //     phone: "+995 577 987 654",
+  //     totalBookings: 20,
+  //     lastAppointment: "Oct 10, 2025",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Emily Rodriguez",
+  //     email: "emily.r@gmail.com",
+  //     phone: "+995 599 001 223",
+  //     totalBookings: 4,
+  //     lastAppointment: "Oct 8, 2025",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "James Wilson",
+  //     email: "james.w@gmail.com",
+  //     phone: "+995 32 245 6789",
+  //     totalBookings: 10,
+  //     lastAppointment: "Oct 5, 2025",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Lisa Anderson",
+  //     email: "lisa.a@gmail.com",
+  //     phone: "+995 431 102 345",
+  //     totalBookings: 1,
+  //     lastAppointment: "Oct 3, 2025",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Ekvom Nabuin",
+  //     email: "ekvom_nabuin@gmail.com",
+  //     phone: "+995 422 789 012",
+  //     totalBookings: 2,
+  //     lastAppointment: "Sep 28, 2025",
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Jonathan Kimali",
+  //     email: "j.kimali@gmail.com",
+  //     phone: "+995 555 334 455",
+  //     totalBookings: 5,
+  //     lastAppointment: "Sep 25, 2025",
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Hon. Naomi Wapo",
+  //     email: "naomiw@gmail.com",
+  //     phone: "+995 341 508 708",
+  //     totalBookings: 15,
+  //     lastAppointment: "Sep 20, 2025",
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "Brian Kirkogali Koech",
+  //     email: "brian.kiplog@gmail.com",
+  //     phone: "+995 503 678 901",
+  //     totalBookings: 10,
+  //     lastAppointment: "Sep 15, 2025",
+  //   },
+  // ];
+  console.log(apiResponse);
 
-  // Provided Patient Data
-  const patients: Patient[] = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.j@gmail.com",
-      phone: "+995 595 123 456",
-      totalBookings: 12,
-      lastAppointment: "Oct 12, 2025",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.c@gmail.com",
-      phone: "+995 577 987 654",
-      totalBookings: 20,
-      lastAppointment: "Oct 10, 2025",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      email: "emily.r@gmail.com",
-      phone: "+995 599 001 223",
-      totalBookings: 4,
-      lastAppointment: "Oct 8, 2025",
-    },
-    {
-      id: 4,
-      name: "James Wilson",
-      email: "james.w@gmail.com",
-      phone: "+995 32 245 6789",
-      totalBookings: 10,
-      lastAppointment: "Oct 5, 2025",
-    },
-    {
-      id: 5,
-      name: "Lisa Anderson",
-      email: "lisa.a@gmail.com",
-      phone: "+995 431 102 345",
-      totalBookings: 1,
-      lastAppointment: "Oct 3, 2025",
-    },
-    {
-      id: 6,
-      name: "Ekvom Nabuin",
-      email: "ekvom_nabuin@gmail.com",
-      phone: "+995 422 789 012",
-      totalBookings: 2,
-      lastAppointment: "Sep 28, 2025",
-    },
-    {
-      id: 7,
-      name: "Jonathan Kimali",
-      email: "j.kimali@gmail.com",
-      phone: "+995 555 334 455",
-      totalBookings: 5,
-      lastAppointment: "Sep 25, 2025",
-    },
-    {
-      id: 8,
-      name: "Hon. Naomi Wapo",
-      email: "naomiw@gmail.com",
-      phone: "+995 341 508 708",
-      totalBookings: 15,
-      lastAppointment: "Sep 20, 2025",
-    },
-    {
-      id: 9,
-      name: "Brian Kirkogali Koech",
-      email: "brian.kiplog@gmail.com",
-      phone: "+995 503 678 901",
-      totalBookings: 10,
-      lastAppointment: "Sep 15, 2025",
-    },
-  ];
-
-  const totalPages = 9;
+  const totalPages = Math.ceil(patients.length / 9);
   let currentpatients: Patient[] = [];
 
   if (currentPage === 1) {
@@ -174,101 +169,116 @@ const PatientList: React.FC<Props> = ({ id }) => {
           </div>
 
           {/* Table */}
-          <div className="p-5 border border-[#E4E4E4] rounded-lg">
-            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
-              <div className="xl:col-span-4 w-full">
-                <div className="overflow-x-auto rounded-lg border border-gray-200">
-                  <table className="min-w-[800px] w-full text-sm">
-                    <thead className="bg-gray-100 border-b border-gray-200">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Patient Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Email Address
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Phone Number
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+          <div className="px-6">
+            <div className="p-5 border border-[#E4E4E4] rounded-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+                <div className="xl:col-span-4 w-full">
+                  <div className="overflow-x-auto rounded-lg border border-gray-200">
+                    <table className="min-w-[800px] w-full text-sm">
+                      <thead className="bg-gray-100 border-b border-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Patient Name
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Email Address
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Phone Number
+                          </th>
+                          {/* <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Total Bookings
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                           Last Appointment
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
+                        </th> */}
+                          <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
 
-                    <tbody className="divide-y divide-[#E5E7EB] bg-white">
-                      {currentpatients.length > 0 ? (
-                        currentpatients.map((user) => (
-                          <tr
-                            key={user.id}
-                            className="hover:bg-gray-50 transition-colors duration-150"
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                              {user.name}
+                      <tbody className="divide-y divide-[#E5E7EB] bg-white  ">
+                        {isLoading ? (
+                          <>
+                            <TableRowSkeleton columns={4} rows={9} />
+                          </>
+                        ) : patients.length > 0 ? (
+                          patients.map((user) => (
+                            <tr
+                              key={user._id}
+                              className="hover:bg-gray-50 transition-colors duration-150 "
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
+                                {user?.userId?.fullName || "No Name"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                                {user?.userId?.email}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                                {user?.phoneNumber}
+                              </td>
+                              {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
+                              {user.medicalHistory?.length > 0
+                                ? user.medicalHistory.lengt h
+                                : "0"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.email}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.phone}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111827]">
-                              {user.totalBookings < 10
-                                ? `0${user.totalBookings}`
-                                : user.totalBookings}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                              {user.lastAppointment}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={handleMessageClick}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
-                                >
-                                  <img
-                                    src={text}
-                                    alt="Message"
-                                    className="w-4 h-4"
-                                  />
-                                  Message Patient
-                                </button>
-                                <button
-                                  onClick={() => setOpenProfile(user)}
-                                  className="flex items-center gap-1.5 px-4 py-2 bg-[#2E6FF3] text-white rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer text-sm font-medium"
-                                >
-                                  <FaEye className="w-4 h-4" />
-                                  View
-                                </button>
-                              </div>
+                              {user.createdAt
+                                ? new Date(user.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    }
+                                  )
+                                : "No Date"}
+                            </td> */}
+                              <td className="px-6 flex items-center justify-center  py-4 whitespace-nowrap text-sm">
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={handleMessageClick}
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
+                                  >
+                                    <img
+                                      src={text}
+                                      alt="Message"
+                                      className="w-4 h-4"
+                                    />
+                                    Message Patient
+                                  </button>
+                                  <button
+                                    onClick={() => setOpenProfile(user)}
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-[#2E6FF3] text-white rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer text-sm font-medium"
+                                  >
+                                    <FaEye className="w-4 h-4" />
+                                    View
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan={6}
+                              className="px-6 py-8 text-center text-gray-500"
+                            >
+                              No patients found on this page
                             </td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={6}
-                            className="px-6 py-8 text-center text-gray-500"
-                          >
-                            No patients found on this page
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Pagination */}
-          <div className="px-6 py-4 flex items-center justify-between border-t border-[#E5E7EB]">
+          <div className="px-6 py-4 flex items-center justify-between  border-[#E5E7EB]">
             <p className="text-sm text-gray-600">
               {currentPage === 1 && `Showing 9 of 9 patients`}
               {currentPage === 2 && `Showing 5 of 5 patients`}
