@@ -1,366 +1,3 @@
-// // src/pages/Login.tsx
-// import React, { useState } from "react";
-// import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-// import { useNavigate } from "react-router-dom";
-// import loginphoto from "@/assets/newphoto/login1.svg";
-// import logo from "@/assets/Logo/LogoMain.svg";
-// import { setUser } from "@/redux/features/auth/authSlice";
-// import { useAppDispatch } from "@/redux/hooks/redux-hook";
-// import { useLoginMutation } from "@/redux/features/auth/authApi";
-// import { LoginResponse } from "@/redux/types/auth.type";
-// import { Link } from "react-router-dom";
-
-// const Login: React.FC = () => {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   const navigate = useNavigate();
-//   const dispatch = useAppDispatch();
-//   const [login, { isLoading }] = useLoginMutation();
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//       const response: LoginResponse = await login({ email, password }).unwrap();
-//       const token = response.data?.accessToken;
-//       // Try to construct user object: prefer decoding token; fallback to payload
-//       let user = null;
-//       try {
-//         // decode token via jwt-decode (slice in authSlice does this too) - here just try to read payload.user if present
-//         if (response.data.user) {
-//           user = {
-//             id:
-//               (response.data.user as any).id ||
-//               (response.data.user as any)._id ||
-//               response.data.userId ||
-//               "",
-//             email: (response.data.user as any).email,
-//             name: (response.data.user as any).name,
-//             role: (response.data.user as any).role || response.data.role,
-//           };
-//         } else {
-//           user = {
-//             id: response.data.userId || "",
-//             role: response.data.role,
-//           };
-//         }
-//       } catch (_) {
-//         user = { id: response.data.userId || "", role: response.data.role };
-//       }
-
-//       if (token && user) {
-//         // Save via slice action so cookies/localStorage handled consistently
-//         dispatch(
-//           setUser({
-//             user,
-//             token,
-//           })
-//         );
-
-//         // redirect by role
-//         const role = (user as any).role?.toString().toLowerCase();
-//         if (role === "admin") {
-//           navigate("/admin-dashboard");
-//         } else {
-//           navigate("/clinic-dashboard");
-//         }
-//       } else {
-//         alert("Login succeeded but token/user missing from response.");
-//       }
-//     } catch (err: any) {
-//       console.error("Login failed:", err);
-//       alert(
-//         err?.data?.message || err?.error || "Login failed. Check credentials."
-//       );
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center  text-black bg-white">
-//       <div>
-//         <div className="w-52 h-20 mb-4">
-//           {" "}
-//           <img src={logo} alt="" />
-//         </div>
-//         <div className="max-w-5xl w-full  flex overflow-hidden">
-//           {/* Left Side - Image */}
-//           <div className="hidden md:flex w-1/2  items-center justify-center">
-//             <img
-//               src={loginphoto}
-//               alt="artist"
-//               className="h-full w-full object-cover rounded-l-xl"
-//             />
-//           </div>
-
-//           {/* Right Side - Form */}
-//           <div className="w-full md:w-1/2 p-10 flex flex-col justify-center space-y-8">
-//             <div>
-//               <h2 className=" text-2xl md:text-3xl lg:text-4xl font-sans mb-2">
-//                 Login to Med Connect
-//               </h2>
-//               <p className="text-center">
-//                 Enter your credentials to access your stories
-//               </p>
-//             </div>
-
-//             {/* Form */}
-//             <form className="space-y-4" onSubmit={handleSubmit}>
-//               {/* Email */}
-//               <div className="flex flex-col">
-//                 <label htmlFor="email" className="text-white mb-2">
-//                   Email address
-//                 </label>
-//                 <input
-//                   id="email"
-//                   type="email"
-//                   value={email}
-//                   onChange={(e) => setEmail(e.target.value)}
-//                   placeholder="jason_smith@gmail.com"
-//                   className="w-full px-4 py-3 rounded-xl bg-[#F5F7FB] text-black focus:ring-2 focus:ring-sky-300 outline-none"
-//                   required
-//                 />
-//               </div>
-
-//               {/* Password */}
-//               <div className="flex flex-col">
-//                 <label htmlFor="password" className="text-white mb-2">
-//                   Password
-//                 </label>
-
-//                 <div className="relative">
-//                   <input
-//                     id="password"
-//                     type={showPassword ? "text" : "password"}
-//                     placeholder="Enter your password"
-//                     value={password}
-//                     onChange={(e) => setPassword(e.target.value)}
-//                     aria-label={
-//                       showPassword ? "Hide password" : "Show password"
-//                     }
-//                     className="w-full px-4 py-3 pr-12 rounded-xl bg-[#F5F7FB] text-black placeholder-gray-400 focus:ring-2 focus:ring-sky-300 focus:border-sky-300 outline-none transition-all duration-300 shadow-sm hover:shadow-md"
-//                     //                 />
-//                   />
-
-//                   {password && (
-//                     <button
-//                       type="button"
-//                       onClick={() => setShowPassword(!showPassword)}
-//                       className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white"
-//                     >
-//                       {showPassword ? (
-//                         <AiOutlineEyeInvisible size={22} />
-//                       ) : (
-//                         <AiOutlineEye size={22} />
-//                       )}
-//                     </button>
-//                   )}
-//                 </div>
-//               </div>
-
-//               {/* Forget Password */}
-//               <div className=" flex justify-end items-center text-end">
-//                 <Link
-//                   to="/forgot-password"
-//                   className="text-sm text-[#2A779E] mt-4 text-center"
-//                 >
-//                   Forgot Password?
-//                 </Link>
-//               </div>
-
-//               {/* Login Button */}
-//               <Link to="/admin-dashboard">
-//                 <button
-//                   type="submit"
-//                   disabled={isLoading}
-//                   className="w-full bg-[#2E6FF3] text-white hover:bg-[#0c4dcf] font-sans py-3 rounded-xl transition cursor-pointer"
-//                 >
-//                   {isLoading ? "Sign in..." : "Sign In"}
-//                 </button>
-//               </Link>
-//             </form>
-
-//             {/* Register */}
-//             <p className="text-sm text-gray-700 mt-4 text-center ">
-//               Don’t have an account?{" "}
-//               <a
-//                 href="/signup"
-//                 className="text-[#2A779E] hover:text-sky-300 ml-1"
-//               >
-//                 Register
-//               </a>
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-// // src/pages/Login.tsx
-// import React, { useState } from "react";
-// import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-// import { useNavigate } from "react-router-dom";
-// import loginphoto from "@/assets/newphoto/login1.svg";
-// import logo from "@/assets/Logo/LogoMain.svg";
-// import { setUser } from "@/redux/features/auth/authSlice";
-// import { useAppDispatch } from "@/redux/hooks/redux-hook";
-// import { useLoginMutation } from "@/redux/features/auth/authApi";
-// import { LoginResponse } from "@/redux/types/auth.type";
-
-// const Login: React.FC = () => {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   const navigate = useNavigate();
-//   const dispatch = useAppDispatch();
-//   const [login, { isLoading }] = useLoginMutation();
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//       const response: LoginResponse = await login({ email, password }).unwrap();
-//       const token = response.data?.accessToken;
-//       // Try to construct user object: prefer decoding token; fallback to payload
-//       let user = null;
-//       try {
-//         // decode token via jwt-decode (slice in authSlice does this too) - here just try to read payload.user if present
-//         if (response.data.user) {
-//           user = {
-//             id:
-//               (response.data.user as any).id ||
-//               (response.data.user as any)._id ||
-//               response.data.userId ||
-//               "",
-//             email: (response.data.user as any).email,
-//             name: (response.data.user as any).name,
-//             role: (response.data.user as any).role || response.data.role,
-//           };
-//         } else {
-//           user = {
-//             id: response.data.userId || "",
-//             role: response.data.role,
-//           };
-//         }
-//       } catch (_) {
-//         user = { id: response.data.userId || "", role: response.data.role };
-//       }
-
-//       if (token && user) {
-//         // Save via slice action so cookies/localStorage handled consistently
-//         dispatch(
-//           setUser({
-//             user,
-//             token,
-//           })
-//         );
-
-//         // redirect by role
-//         const role = (user as any).role?.toString().toLowerCase();
-//         if (role === "admin") {
-//           navigate("/admin-dashboard");
-//         } else {
-//           navigate("/clinic-dashboard");
-//         }
-//       } else {
-//         alert("Login succeeded but token/user missing from response.");
-//       }
-//     } catch (err: any) {
-//       console.error("Login failed:", err);
-//       alert(
-//         err?.data?.message || err?.error || "Login failed. Check credentials."
-//       );
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center text-white bg-white">
-//       <div className="max-w-5xl w-full flex overflow-hidden shadow-lg rounded-xl">
-//         <div className="hidden md:flex w-1/2 items-center justify-center bg-[#edf6fb]">
-//           <img
-//             src={loginphoto}
-//             alt="illustration"
-//             className="h-full w-full object-cover rounded-l-xl"
-//           />
-//         </div>
-
-//         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-[#0F2B2E] rounded-r-xl">
-//           <h2 className="text-center text-3xl md:text-4xl font-sans font-semibold tracking-wide mb-4 text-white">
-//             LOGIN
-//           </h2>
-
-//           <p className="text-start text-base md:text-lg  mb-6 text-gray-200">
-//             Access to Med Connect
-//           </p>
-
-//           <form className="space-y-4" onSubmit={handleSubmit}>
-//             <div className="flex flex-col">
-//               <label htmlFor="email" className="text-white mb-2">
-//                 Email
-//               </label>
-//               <input
-//                 id="email"
-//                 type="email"
-//                 placeholder="Email"
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 className="w-full px-4 py-3 rounded-[20px] bg-[#05282b] text-white focus:ring-2 focus:ring-sky-300 outline-none"
-//                 required
-//               />
-//             </div>
-
-//             <div className="flex flex-col">
-//               <label htmlFor="password" className="text-white mb-2">
-//                 Password
-//               </label>
-//               <div className="relative">
-//                 <input
-//                   id="password"
-//                   type={showPassword ? "text" : "password"}
-//                   placeholder="Enter your password"
-//                   value={password}
-//                   onChange={(e) => setPassword(e.target.value)}
-//                   className="w-full px-4 py-3 pr-12 rounded-[20px] bg-[#05282b] text-white placeholder-gray-400 focus:ring-2 focus:ring-sky-300 outline-none"
-//                   required
-//                 />
-//                 {password && (
-//                   <button
-//                     type="button"
-//                     onClick={() => setShowPassword((s) => !s)}
-//                     className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white"
-//                     aria-label={
-//                       showPassword ? "Hide password" : "Show password"
-//                     }
-//                   >
-//                     {showPassword ? (
-//                       <AiOutlineEyeInvisible size={22} />
-//                     ) : (
-//                       <AiOutlineEye size={22} />
-//                     )}
-//                   </button>
-//                 )}
-//               </div>
-//             </div>
-
-//             <button
-//               type="submit"
-//               disabled={isLoading}
-//               className="w-full bg-[#346778] cursor-pointer text-white hover:bg-[#114050] py-3 rounded-[20px] transition"
-//             >
-//               {isLoading ? "Logging in..." : "Login"}
-//             </button>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
 // src/pages/Login.tsx
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -439,82 +76,105 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-white bg-white">
-      <div className="max-w-5xl w-full flex overflow-hidden shadow-lg rounded-xl">
-        <div className="hidden md:flex w-1/2 items-center justify-center bg-[#edf6fb]">
-          <img
-            src={loginphoto}
-            alt="illustration"
-            className="h-full w-full object-cover rounded-l-xl"
-          />
+    <div className="min-h-screen flex items-center justify-center  text-black bg-white">
+      <div>
+        <div className="w-52 h-20 mb-4">
+          {" "}
+          <img src={logo} alt="" />
         </div>
+        <div className="max-w-5xl w-full  flex overflow-hidden">
+          {/* Left Side - Image */}
+          <div className="hidden md:flex w-1/2  items-center justify-center">
+            <img
+              src={loginphoto}
+              alt="artist"
+              className="h-full w-full object-cover rounded-l-xl"
+            />
+          </div>
 
-        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-[#0F2B2E] rounded-r-xl">
-          <h2 className="text-center text-3xl md:text-4xl font-sans font-semibold tracking-wide mb-4 text-white">
-            LOGIN
-          </h2>
-
-          <p className="text-start text-base md:text-lg  mb-6 text-gray-200">
-            Access to Med Connect
-          </p>
-
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col">
-              <label htmlFor="email" className="text-white mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-[20px] bg-[#05282b] text-white focus:ring-2 focus:ring-sky-300 outline-none"
-                required
-              />
+          {/* Right Side - Form */}
+          <div className="w-full md:w-1/2 p-10 flex flex-col justify-center space-y-8">
+            <div>
+              <h2 className=" text-2xl md:text-3xl lg:text-4xl font-sans mb-2">
+                Login to Med Connect
+              </h2>
+              <p className="text-center">
+                Enter your credentials to access your stories
+              </p>
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="password" className="text-white mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 rounded-[20px] bg-[#05282b] text-white placeholder-gray-400 focus:ring-2 focus:ring-sky-300 outline-none"
-                  required
-                />
-                {password && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white"
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showPassword ? (
-                      <AiOutlineEyeInvisible size={22} />
-                    ) : (
-                      <AiOutlineEye size={22} />
+            <div>
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div className="flex flex-col">
+                  <label htmlFor="email" className="text-white mb-2">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-[#F5F7FB] text-black focus:ring-2 focus:ring-sky-300 outline-none"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label htmlFor="password" className="text-white mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 pr-12 rounded-xl bg-[#F5F7FB] text-black placeholder-gray-400 focus:ring-2 focus:ring-sky-300 focus:border-sky-300 outline-none transition-all duration-300 shadow-sm hover:shadow-md"
+                      required
+                    />
+                    {password && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((s) => !s)}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white"
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showPassword ? (
+                          <AiOutlineEyeInvisible size={22} />
+                        ) : (
+                          <AiOutlineEye size={22} />
+                        )}
+                      </button>
                     )}
-                  </button>
-                )}
-              </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#346778] cursor-pointer text-white hover:bg-[#114050] py-3 rounded-[20px] transition"
+                >
+                  {isLoading ? "Logging in..." : "Login"}
+                </button>
+              </form>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-[#346778] cursor-pointer text-white hover:bg-[#114050] py-3 rounded-[20px] transition"
-            >
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
-          </form>
+            <div>
+              <p className="text-sm text-gray-700 mt-4 text-center ">
+                Don’t have an account?
+                <a
+                  href="/signup"
+                  className="text-[#2A779E] hover:text-sky-300 ml-1"
+                >
+                  Register
+                </a>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
