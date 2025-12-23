@@ -3,7 +3,7 @@ import logo from "@/assets/Logo/LogoMain.svg";
 import logo1 from "@/assets/Logo/userLogout.svg";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 // Import custom icons
@@ -17,6 +17,9 @@ import d7 from "@/assets/d7.png";
 import d8 from "@/assets/d8.png";
 
 import { FiLogOut } from "react-icons/fi";
+import { logOut } from "@/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { baseApi } from "@/redux/hooks/baseApi";
 
 // Types
 export interface SidebarItem {
@@ -81,8 +84,18 @@ const AdminSidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
+  };
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    // 🔥 Clear RTK Query cache
+    dispatch(baseApi.util.resetApiState());
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -200,7 +213,10 @@ const AdminSidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Help & Support */}
-      <div className=" p-2 flex justify-between items-center gap-5 bg-[#F8F9FA]  border border-[#CED4DA]  m-4 rounded-2xl">
+      <div
+        onClick={handleLogout}
+        className=" p-2 cursor-pointer flex justify-between items-center gap-5 bg-[#F8F9FA]  border border-[#CED4DA]  m-4 rounded-2xl"
+      >
         <div className="gap-3 flex items-center justify-baseline">
           <div>
             <img
@@ -284,7 +300,7 @@ export default AdminSidebar;
 //     label: "Clinic Management",
 //     href: "/admin-dashboard/clinic-management",
 //   },
-  
+
 //   {
 //     icon: IoSettingsOutline,
 //     label: "Settings",
@@ -456,12 +472,6 @@ export default AdminSidebar;
 // };
 
 // export default AdminSidebar;
-
-
-
-
-
-
 
 // // AdminSidebar.tsx
 // import logo from "@/assets/Logo/LogoMain.svg";

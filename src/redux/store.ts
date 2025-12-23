@@ -2,6 +2,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./hooks/baseApi";
 import authReducer from "@/redux/features/auth/authSlice";
+import adminPatientReducer from "@/redux/features/admin/patient/adminPatientSlice";
 
 import {
   persistReducer,
@@ -28,6 +29,7 @@ export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     auth: persistedReducer,
+    adminPatient: adminPatientReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
