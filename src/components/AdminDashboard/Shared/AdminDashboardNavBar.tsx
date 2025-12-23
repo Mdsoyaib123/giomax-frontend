@@ -12,9 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logo1 from "@/assets/Logo/userLogout.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
+import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { logOut } from "@/redux/features/auth/authSlice";
+import { baseApi } from "@/redux/hooks/baseApi";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -30,6 +33,16 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    // 🔥 Clear RTK Query cache
+    dispatch(baseApi.util.resetApiState());
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -160,12 +173,12 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                 Privacy Policy
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={`px-4 py-3 cursor-pointer rounded-lg text-base font-medium transition-colors ${
+                className={`px-4 py-3  cursor-pointer rounded-lg text-base font-medium transition-colors ${
                   activeItem === "signout"
-                    ? "bg-blue-400 text-white"
-                    : "text-gray-700 hover:bg-blue-400 hover:text-white"
+                    ? "bg-blue-400 text-red-700"
+                    : "text-red-600 hover:bg-blue-400 hover:text-red-600"
                 }`}
-                onClick={() => setActiveItem("signout")}
+                onClick={handleLogout}
               >
                 Sign Out
               </DropdownMenuItem>
