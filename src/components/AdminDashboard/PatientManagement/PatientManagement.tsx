@@ -497,7 +497,7 @@ const PatientManagement: React.FC = () => {
     refetch,
   } = useGetAllPatientsQuery();
 
-  const { data: singlePatientResponse, isLoading: isLoadingSinglePatient } =
+  const { data: singlePatientResponse } =
     useGetSinglePatientQuery(selectedPatient?.id!, {
       skip: !selectedPatient?.id || !isViewModalOpen,
     });

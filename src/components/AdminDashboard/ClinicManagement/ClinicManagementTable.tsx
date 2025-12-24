@@ -14,8 +14,7 @@ import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
 import { useGetAllClinicsQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Clinic } from "@/redux/types/admin/clinicManagementTypes";
 import { setFilterStatus, setSearchTerm } from "@/redux/features/admin/clinic/clinicManagementSlice";
-import { format } from "date-fns";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
+ import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 
 interface Props {
   id?: string | number;
@@ -77,10 +76,10 @@ const ClinicManagementTable: React.FC<Props> = () => {
   };
 
   // Helper function to get total doctors (placeholder - you'll need to fetch this from another endpoint)
-  const getTotalDoctors = (clinicId: string): string => {
-    // Implement actual doctor count logic
-    return "0"; // Placeholder
-  };
+  // const getTotalDoctors = (clinicId: string): string => {
+  //   // Implement actual doctor count logic
+  //   return "0"; // Placeholder
+  // };
 
   const handleClick = () => {
     if (openProfile) {
@@ -108,13 +107,13 @@ const ClinicManagementTable: React.FC<Props> = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
-  };
+  // const formatDate = (dateString: string) => {
+  //   try {
+  //     return format(new Date(dateString), "MMM dd, yyyy");
+  //   } catch {
+  //     return dateString;
+  //   }
+  // };
 
   const getClinicName = (clinic: Clinic): string => {
     if (typeof clinic.userId === "object") {
@@ -556,7 +555,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                     Verification Documents
                   </h1>
 
-                  {openProfile.clinicCertificates.map((cert, index) => (
+                  {openProfile.clinicCertificates.map((cert) => (
                     <div
                       key={cert._id}
                       className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300"

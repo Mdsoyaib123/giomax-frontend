@@ -109,14 +109,14 @@ const PatientList: React.FC<Props> = ({ id }) => {
   console.log(apiResponse);
 
   const totalPages = Math.ceil(patients.length / 9);
-  let currentpatients: Patient[] = [];
+  const [currentpatients, setCurrentpatients] = useState<Patient[]>([]);
 
   if (currentPage === 1) {
-    currentpatients = patients;
+    setCurrentpatients(patients);
   } else if (currentPage === 2) {
-    currentpatients = patients.slice(0, 5);
+    setCurrentpatients(patients.slice(0, 5));
   } else {
-    currentpatients = []; // Pages 3-9 are empty
+    setCurrentpatients([]); // Pages 3-9 are empty
   }
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -203,8 +203,8 @@ const PatientList: React.FC<Props> = ({ id }) => {
                           <>
                             <TableRowSkeleton columns={4} rows={9} />
                           </>
-                        ) : patients.length > 0 ? (
-                          patients.map((user) => (
+                        ) : currentpatients.length > 0 ? (
+                          currentpatients.map((user) => (
                             <tr
                               key={user._id}
                               className="hover:bg-gray-50 transition-colors duration-150 "

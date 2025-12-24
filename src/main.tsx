@@ -7,13 +7,17 @@ import routes from "./routes/Routes.tsx";
 // import { store } from "./store/store.ts";
 import ReduxProviderWrapper from "./redux/readux-provider/reduxProviderWrapper.tsx";
 import { DashboardToaster } from "./components/ui/Toaster.tsx";
-
+import { SocketProvider } from "./hooks/contexts/SocketContext.tsx";
+ 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* <Provider store={store}> */}
     <ReduxProviderWrapper>
+      <SocketProvider>
+
       <RouterProvider router={routes} />
       <DashboardToaster />
+      </SocketProvider>
     </ReduxProviderWrapper>
     {/* </Provider> */}
   </StrictMode>
