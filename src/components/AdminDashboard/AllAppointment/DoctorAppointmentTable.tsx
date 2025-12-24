@@ -215,16 +215,41 @@ const DoctorAppointmentTable: React.FC = () => {
                   value={filters.status}
                   onValueChange={(value) => handleFilterChange("status", value)}
                 >
-                  <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
+                  <SelectTrigger className="w-full cursor-pointer  h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-none">
                     <SelectGroup>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="all"
+                      >
+                        All Status
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="confirmed"
+                      >
+                        Confirmed
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="pending"
+                      >
+                        Pending
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="cancelled"
+                      >
+                        Cancelled
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="completed"
+                      >
+                        Completed
+                      </SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -238,14 +263,29 @@ const DoctorAppointmentTable: React.FC = () => {
                     handleFilterChange("serviceType", value)
                   }
                 >
-                  <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
+                  <SelectTrigger className="w-full cursor-pointer h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
                     <SelectValue placeholder="Select Type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-none">
                     <SelectGroup>
-                      <SelectItem value="all">All Type</SelectItem>
-                      <SelectItem value="online">Online</SelectItem>
-                      <SelectItem value="inClinic">In-Clinic</SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="all"
+                      >
+                        All Type
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="online"
+                      >
+                        Online
+                      </SelectItem>
+                      <SelectItem
+                        className=" cursor-pointer hover:bg-gray-100"
+                        value="inClinic"
+                      >
+                        In-Clinic
+                      </SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
