@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineDoNotDisturb } from "react-icons/md";
+import { useGetAllClinicsQuery } from "@/redux/features/clinicMnagemant/clinicManagementApi";
 
 interface Booking {
   id: string;
@@ -31,6 +32,8 @@ interface Props {
 }
 
 const ClinicManagementTable: React.FC<Props> = ({ id }) => {
+  const { data: clinics } = useGetAllClinicsQuery({});
+  console.log(clinics);
   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
