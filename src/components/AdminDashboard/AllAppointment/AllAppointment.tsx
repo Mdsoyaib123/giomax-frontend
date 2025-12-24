@@ -1,5 +1,5 @@
 import SectionTitle from "@/common/SectionTitle";
-import BookingManagementTable from "./BookingManagementTable";
+import DoctorAppointmentTable from "./DoctorAppointmentTable";
 
 import {
   Select,
@@ -10,15 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import NurseAppointmentTable from "./NurseAppointmentTable";
 
-const BookingManagement = () => {
+const AllAppointment = () => {
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4">
         {/* Section Title */}
         <div className="w-full md:w-auto">
           <SectionTitle
-            title="Booking Management"
+            title="All Appointment Management"
             description="Monitor and manage all appointments"
           />
         </div>
@@ -53,10 +54,16 @@ const BookingManagement = () => {
       </div>
 
       <div>
-        <BookingManagementTable />
+        <DoctorAppointmentTable />
+      </div>
+      <div>
+        <h1 className="text-3xl  font-semibold">Nurse Appointment</h1>
+      </div>
+      <div>
+        <NurseAppointmentTable />
       </div>
     </div>
   );
 };
 
-export default BookingManagement;
+export default AllAppointment;
