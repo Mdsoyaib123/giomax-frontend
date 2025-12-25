@@ -222,10 +222,10 @@ const Dialogue: React.FC<DialogueProps> = ({
                             <td className="px-4 py-3 whitespace-nowrap text-gray-900">
                               {formatLocalDate(apt.createdAt)}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                            <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
                               {apt?.doctorId?.userId?.fullName ?? "N/A"}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                            <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
                               {apt?.serviceType}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
