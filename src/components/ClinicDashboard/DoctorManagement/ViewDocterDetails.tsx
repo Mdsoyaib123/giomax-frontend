@@ -21,13 +21,19 @@ interface ViewDoctorDetailsProps {
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   let colorClasses = "";
   switch (status) {
-    case "Completed":
+    case "completed":
       colorClasses = "bg-green-100 text-green-700";
       break;
-    case "Upcoming":
+    case "confirmed":
+      colorClasses = "bg-green-100 text-green-700";
+      break;
+    case "upcoming":
       colorClasses = "bg-blue-100 text-blue-700";
       break;
-    case "Cancelled":
+    case "cancelled":
+      colorClasses = "bg-red-100 text-red-700";
+      break;
+    case "pending":
       colorClasses = "bg-red-100 text-red-700";
       break;
     default:
@@ -224,7 +230,7 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
                           {appt.serviceType}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 capitalize">
                         <StatusBadge status={appt.status} />
                       </td>
                     </tr>
