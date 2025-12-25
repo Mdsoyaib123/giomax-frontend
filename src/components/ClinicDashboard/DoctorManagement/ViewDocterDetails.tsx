@@ -3,6 +3,7 @@ import { X, FileText, Edit } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
 import { useGetSingleDoctorAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
+import TableSkeleton from "./TableSkeleton";
 
 // --- Interfaces ---
 interface Appointment {
@@ -84,9 +85,8 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
     console.log("Edit clicked for doctor:", doctor.userId);
     // This would typically open the edit modal
   };
-  const { data: appointments } = useGetSingleDoctorAppointmentByIdQuery(
-    doctor._id ?? skipToken
-  );
+  const { data: appointments, isLoading } =
+    useGetSingleDoctorAppointmentByIdQuery(doctor._id ?? skipToken);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
@@ -216,26 +216,41 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
-                  {appointments?.data.map((appt, index) => (
-                    <tr key={index} className="hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {appt.prefarenceDate}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {appt.prefarenceTime}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-blue-600">
-                        <span className="inline-block px-2 py-0.5 bg-blue-50 rounded-md text-xs font-medium">
-                          {appt.serviceType}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 capitalize">
-                        <StatusBadge status={appt.status} />
+                {isLoading ? (
+                  <TableSkeleton rows={5} />
+                ) : appointments?.data?.length ? (
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {appointments?.data.map((appt, index) => (
+                      <tr key={index} className="hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {appt.prefarenceDate} - {appt.prefarenceTime}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {appt.patientId?.userId.fullName || "N/A"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-blue-600">
+                          <span className="inline-block capitalize px-4 py-2 bg-[#EFF6FF] text-[#2E6FF3] rounded-md text-xs font-medium border-[#BEDBFF]">
+                            {appt.serviceType}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 capitalize">
+                          <StatusBadge status={appt.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No appointments found
                       </td>
                     </tr>
-                  ))}
-                </tbody>
+                  </tbody>
+                )}
               </table>
             </div>
           </div>
