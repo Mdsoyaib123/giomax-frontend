@@ -3,12 +3,13 @@ import { useState } from "react";
 import SectionTitle from "@/common/SectionTitle";
 import { Plus, X, Check, User } from "lucide-react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useGetAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { getStatusColor } from "@/utils/utfuntion";
 import sitescope from "../../../assets/icons/sitescope.svg";
 import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
+import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { divIcon } from "leaflet";
 
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
@@ -25,11 +26,12 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const { data, isLoading } = useGetAllAppointmentsQuery(
+  const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
 
-  console.log(data?.data);
+  console.log(activeTab);
+  console.log(activeTab === "All" ? "" : activeTab);
   const [formData, setFormData] = useState({
     patientName: "",
     age: "",
@@ -118,103 +120,109 @@ const BookingManagement = () => {
 
         {/* Tab Content */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <AppointmentSkeleton key={i} />
-              ))
-            : data?.data.map((appointment) => (
-                <div
-                  onClick={() => {
-                    setSelectedAppointment(appointment);
-                    setShowDetailsModal(true);
-                  }}
-                  key={appointment._id}
-                  className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                >
-                  {/* Header with patient info and status */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3 ">
-                      {appointment?.patientId?.userId?.profileImage ? (
-                        <img
-                          src={appointment?.patientId?.userId?.profileImage}
-                          alt=""
-                          className="size-14 rounded-lg"
-                        />
-                      ) : (
-                        <div className="size-14 flex items-center justify-center bg-[#2E6FF3] rounded-lg ">
-                          <User size={20} className="text-white" />
-                        </div>
-                      )}
-                      <div className="flex flex-col items-start gap-2 h-full justify-between ">
-                        <h3 className="font-semibold text-gray-900">
-                          {appointment.patientId?.userId.fullName || "N/A"}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          {appointment?.serviceType}
-                        </p>
+          {isLoading || isFetching ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <AppointmentSkeleton key={i} />
+            ))
+          ) : data?.data && data.data.length > 0 ? (
+            data?.data.map((appointment: any) => (
+              <div
+                onClick={() => {
+                  setSelectedAppointment(appointment);
+                  setShowDetailsModal(true);
+                }}
+                key={appointment._id}
+                className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
+              >
+                {/* Header with patient info and status */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3 ">
+                    {appointment?.patientId?.userId?.profileImage ? (
+                      <img
+                        src={appointment?.patientId?.userId?.profileImage}
+                        alt=""
+                        className="size-14 rounded-lg"
+                      />
+                    ) : (
+                      <div className="size-14 flex items-center justify-center bg-[#2E6FF3] rounded-lg ">
+                        <User size={20} className="text-white" />
                       </div>
+                    )}
+                    <div className="flex flex-col items-start gap-2 h-full justify-between ">
+                      <h3 className="font-semibold text-gray-900">
+                        {appointment.patientId?.userId.fullName || "N/A"}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {appointment?.serviceType}
+                      </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1.5">
-                      <span
-                        className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
-                          appointment.status
-                        )}`}
-                      >
-                        {appointment.status}
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <span
+                      className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
+                        appointment.status
+                      )}`}
+                    >
+                      {appointment.status}
+                    </span>
+                    <div className="text-sm">
+                      <span className="text-[#1D4ED8]">
+                        {appointment.visitingType}
                       </span>
-                      <div className="text-sm">
-                        <span className="text-[#1D4ED8]">
-                          {appointment.visitingType}
-                        </span>
-                      </div>
                     </div>
                   </div>
-
-                  {/* Appointment details */}
-                  <div className="flex mb-4 items-center justify-between ">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <img src={sitescope} alt="" />
-                      <span>{appointment?.doctorId?.userId?.fullName}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span>{appointment.prefarenceDate}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2  text-sm text-gray-600">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span>{appointment.prefarenceTime}</span>
-                    </div>
-                  </div>
-
-                  {/* Footer with visit type */}
                 </div>
-              ))}
+
+                {/* Appointment details */}
+                <div className="flex mb-4 items-center justify-between ">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <img src={sitescope} alt="" />
+                    <span>{appointment?.doctorId?.userId?.fullName}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span>{appointment.prefarenceDate}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2  text-sm text-gray-600">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{appointment.prefarenceTime}</span>
+                  </div>
+                </div>
+
+                {/* Footer with visit type */}
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500 py-10">
+              No appointments found
+            </div>
+          )}
         </div>
       </div>
 
