@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import SectionTitle from "@/common/SectionTitle";
-import { Plus, X, Check } from "lucide-react";
+import { Plus, X, Check, User } from "lucide-react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useGetAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { getStatusColor } from "@/utils/utfuntion";
@@ -133,13 +133,19 @@ const BookingManagement = () => {
                 >
                   {/* Header with patient info and status */}
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={appointment.patientId?.userId.profileImage}
-                        alt={appointment.patientId?.userId.fullName}
-                        className="w-12 h-12 rounded-lg object-cover"
-                      />
-                      <div>
+                    <div className="flex items-center gap-3 ">
+                      {appointment?.patientId?.userId?.profileImage ? (
+                        <img
+                          src={appointment?.patientId?.userId?.profileImage}
+                          alt=""
+                          className="size-14 rounded-lg"
+                        />
+                      ) : (
+                        <div className="size-14 flex items-center justify-center bg-[#2E6FF3] rounded-lg ">
+                          <User size={20} className="text-white" />
+                        </div>
+                      )}
+                      <div className="flex flex-col items-start gap-2 h-full justify-between ">
                         <h3 className="font-semibold text-gray-900">
                           {appointment.patientId?.userId.fullName || "N/A"}
                         </h3>
@@ -148,7 +154,7 @@ const BookingManagement = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-end gap-1.5">
                       <span
                         className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
                           appointment.status
@@ -156,6 +162,11 @@ const BookingManagement = () => {
                       >
                         {appointment.status}
                       </span>
+                      <div className="text-sm">
+                        <span className="text-[#1D4ED8]">
+                          {appointment.visitingType}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -202,12 +213,6 @@ const BookingManagement = () => {
                   </div>
 
                   {/* Footer with visit type */}
-
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <span className="text-xs font-medium px-2 py-1 rounded text-blue-600 bg-blue-50">
-                      {appointment.visitingType}
-                    </span>
-                  </div>
                 </div>
               ))}
         </div>

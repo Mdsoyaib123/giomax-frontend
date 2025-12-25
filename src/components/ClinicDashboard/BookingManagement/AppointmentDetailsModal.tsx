@@ -25,12 +25,12 @@ export function AppointmentDetailsModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-[700px] w-full border-none px-9 bg-white focus:border-none">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center  gap-3.5 ">
           <DialogTitle className="text-black text-2xl font-semibold">
             Appointment Details
           </DialogTitle>
           <span
-            className={`px-3 py-1 rounded-full text-xs font-medium ${
+            className={`px-3 py-1 rounded-full text-xs capitalize font-medium ${
               appointment.status === "approved"
                 ? "bg-green-100 text-green-800"
                 : appointment.status === "pending"
@@ -43,7 +43,7 @@ export function AppointmentDetailsModal({
             {appointment.status}
           </span>
         </div>
-        <DialogDescription className="mb-6">
+        <DialogDescription className="m">
           View and manage appointment information
         </DialogDescription>
 
