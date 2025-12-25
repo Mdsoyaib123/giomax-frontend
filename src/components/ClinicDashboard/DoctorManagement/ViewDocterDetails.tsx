@@ -6,12 +6,6 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import TableSkeleton from "./TableSkeleton";
 
 // --- Interfaces ---
-interface Appointment {
-  dateAndTime: string;
-  patientName: string;
-  serviceType: "Clinic Visit" | "Both" | "Online";
-  status: "Completed" | "Upcoming" | "Cancelled";
-}
 
 interface ViewDoctorDetailsProps {
   doctor: DoctorData;
