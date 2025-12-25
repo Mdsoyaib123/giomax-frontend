@@ -5,6 +5,7 @@ import { Patient } from "@/types/patientsType";
 import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
 import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
+import { formatLocalDate } from "@/utils/DateDisplayLocal";
 
 interface Appointment {
   dateTime: string;
@@ -28,7 +29,7 @@ const Dialogue: React.FC<DialogueProps> = ({
     useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
 
   console.log(patient?._id);
-  console.log(appointmentData?.data);
+  console.log("h", appointmentData?.data);
   const allAppointment = appointmentData?.data;
   console.log(allAppointment);
   if (!patient) return null;
@@ -90,7 +91,7 @@ const Dialogue: React.FC<DialogueProps> = ({
   //   if (onViewPaymentHistory) {
   //     onViewPaymentHistory(patient.id);
   //   }
-  // };
+  // };/*  */
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ">
@@ -216,16 +217,16 @@ const Dialogue: React.FC<DialogueProps> = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {appointments.map((apt, index) => (
+                        {allAppointment?.map((apt, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.dateTime}
+                              {formatLocalDate(apt.createdAt)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.doctorName}
+                              {apt?.doctorId?.userId?.fullName ?? "N/A"}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.service}
+                              {apt?.serviceType}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
@@ -259,7 +260,7 @@ const Dialogue: React.FC<DialogueProps> = ({
                     className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg bg-[#F4F6F8] hover:border-blue-300 transition-colors"
                   >
                     <img
-                      src={doctor.doctorId?.userId?.profileImage || ""}
+                      src={doctor.doctorId?.userId?.profileImage}
                       alt={doctor.doctorId?.userId?.fullName}
                       className="w-12 h-12 rounded-full object-cover"
                     />
