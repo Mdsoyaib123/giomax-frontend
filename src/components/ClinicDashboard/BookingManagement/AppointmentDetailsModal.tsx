@@ -38,6 +38,8 @@ export function AppointmentDetailsModal({
                 Patient Name
               </label>
               <input
+                readOnly
+                value={appointment.patientId?.userId.fullName}
                 type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
@@ -48,6 +50,8 @@ export function AppointmentDetailsModal({
                 Doctor Name
               </label>
               <input
+                readOnly
+                value={appointment.doctorId?.userId.fullName}
                 type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
@@ -58,6 +62,7 @@ export function AppointmentDetailsModal({
                 Service Name
               </label>
               <input
+                readOnly
                 type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
@@ -68,6 +73,10 @@ export function AppointmentDetailsModal({
                 Date & Time
               </label>
               <input
+                readOnly
+                value={
+                  appointment.prefarenceDate + " " + appointment.prefarenceTime
+                }
                 type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
@@ -78,6 +87,8 @@ export function AppointmentDetailsModal({
                 Service Type
               </label>
               <input
+                readOnly
+                value={appointment.serviceType}
                 type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
