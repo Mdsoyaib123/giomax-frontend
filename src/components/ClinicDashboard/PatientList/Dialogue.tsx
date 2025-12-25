@@ -5,6 +5,7 @@ import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/docto
 import { skipToken } from "@reduxjs/toolkit/query";
 import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
 import { formatLocalDate } from "@/utils/DateDisplayLocal";
+import TableSkeleton from "../DoctorManagement/TableSkeleton";
 
 interface DialogueProps {
   patient: Patient | null;
@@ -57,7 +58,6 @@ const Dialogue: React.FC<DialogueProps> = ({
               </label>
               <input
                 type="text"
-                
                 readOnly
                 value={patient.userId?.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
@@ -153,24 +153,36 @@ const Dialogue: React.FC<DialogueProps> = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {allAppointment?.map((apt, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {formatLocalDate(apt.createdAt)}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
-                              {apt?.doctorId?.userId?.fullName ?? "N/A"}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
-                              {apt?.serviceType}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                                {apt.status}
-                              </span>
+                        {isLoading ? (
+                          <TableSkeleton rows={8} />
+                        ) : allAppointment && allAppointment.length > 0 ? (
+                          <>
+                            {allAppointment?.map((apt, index) => (
+                              <tr key={index} className="hover:bg-gray-50">
+                                <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                                  {formatLocalDate(apt.createdAt)}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
+                                  {apt?.doctorId?.userId?.fullName ?? "N/A"}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
+                                  {apt?.serviceType}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                                    {apt.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </>
+                        ) : (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-3 text-center">
+                              No Appointments
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
