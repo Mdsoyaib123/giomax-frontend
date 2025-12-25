@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { X } from "lucide-react";
 import { Patient } from "@/types/patientsType";
@@ -57,6 +56,8 @@ const Dialogue: React.FC<DialogueProps> = ({
                 Patient Name
               </label>
               <input
+                type="text"
+                
                 readOnly
                 value={patient.userId?.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"

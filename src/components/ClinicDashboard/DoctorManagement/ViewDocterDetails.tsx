@@ -1,6 +1,8 @@
 import React from "react";
 import { X, FileText, Edit } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
+import { useGetSingleDoctorAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 // --- Interfaces ---
 interface Appointment {
@@ -15,44 +17,8 @@ interface ViewDoctorDetailsProps {
   onClose: () => void;
 }
 
-// --- Mock Data ---
-const mockAppointments: Appointment[] = [
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Mike Shinoda",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Emily Rodriguez",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Lisa Anderson",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Michael Chan",
-    serviceType: "Both",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Sarah Johnson",
-    serviceType: "Clinic Visit",
-    status: "Upcoming",
-  },
-];
-
 // --- Status Badge Helper ---
-const StatusBadge: React.FC<{ status: Appointment["status"] }> = ({
-  status,
-}) => {
+const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   let colorClasses = "";
   switch (status) {
     case "Completed":
@@ -112,6 +78,9 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
     console.log("Edit clicked for doctor:", doctor.userId);
     // This would typically open the edit modal
   };
+  const { data: appointments } = useGetSingleDoctorAppointmentByIdQuery(
+    doctor._id ?? skipToken
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
@@ -137,8 +106,14 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
           {/* Basic Info Grid (Responsive 2-column) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoField label="Doctor Name" value={doctor?.userId?.fullName} />
-            <InfoField label="Email Address" value={doctor?.userId?.email} />
+            <InfoField
+              label="Doctor Name"
+              value={doctor?.userId?.fullName || "Not Set"}
+            />
+            <InfoField
+              label="Email Address"
+              value={doctor?.userId?.email || "Not set"}
+            />
             <InfoField
               label="Specialty"
               value={doctor?.professionalInformation?.speciality || "not set"}
@@ -147,7 +122,7 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
               label="Service Type"
               value={doctor?.serviceType || "not set"}
             />
-            <InfoField label="Phone Number" value={doctor?.phoneNumber} />
+            <InfoField label="Phone Number" value={doctor?.phoneNumber || ""} />
             <InfoField
               label="License Number"
               value={doctor?.licenseNumber || "not set"}
@@ -236,13 +211,13 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
-                  {mockAppointments.map((appt, index) => (
+                  {appointments?.data.map((appt, index) => (
                     <tr key={index} className="hover:bg-gray-50 transition">
                       <td className="px-4 py-3 text-sm text-gray-900">
-                        {appt.dateAndTime}
+                        {appt.prefarenceDate}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">
-                        {appt.patientName}
+                        {appt.prefarenceTime}
                       </td>
                       <td className="px-4 py-3 text-sm text-blue-600">
                         <span className="inline-block px-2 py-0.5 bg-blue-50 rounded-md text-xs font-medium">

@@ -197,15 +197,16 @@ const DoctorManagement: React.FC = () => {
                             className="border-b border-gray-100 hover:bg-gray-50 transition"
                           >
                             <td className="px-6 whitespace-nowrap py-3 font-semibold text-[#343A40] capitalize">
-                              {doctor?.userId?.fullName}
+                              {doctor?.userId?.fullName || "Unknown Name"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">
-                              {doctor?.userId?.email}
+                              {doctor?.userId?.email || "Unknown Email"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">
-                              {doctor?.professionalInformation?.speciality}
+                              {doctor?.professionalInformation?.speciality ||
+                                "N/A"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">

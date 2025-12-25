@@ -1,5 +1,6 @@
 import { baseApi } from "@/redux/hooks/baseApi";
 import { GetSinglePenitentAppointmentResponse } from "@/redux/types/doctorAppinmentType";
+import { AppointmentResponseByDoctorId } from "./doctorAppointment.type";
 
 export const doctorAppointmentApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -10,7 +11,10 @@ export const doctorAppointmentApi = baseApi.injectEndpoints({
         getAllAppointments: builder.query({
             query: (status) => `/doctor-appointment/getAll?status=${status}`,
             providesTags: ["DOCTOR_APPOINTMENT"]
+        }),
+        getSingleDoctorAppointmentById: builder.query<AppointmentResponseByDoctorId, string>({
+            query: (id) => `/doctor-appointment/getSingleDoctorAppointment/${id}`
         })
     })
 })
-export const { useGetSinglePenitentAppointmentByIdQuery, useGetAllAppointmentsQuery } = doctorAppointmentApi;
+export const { useGetSinglePenitentAppointmentByIdQuery, useGetAllAppointmentsQuery, useGetSingleDoctorAppointmentByIdQuery } = doctorAppointmentApi;
