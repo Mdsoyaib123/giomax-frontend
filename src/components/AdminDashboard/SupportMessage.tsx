@@ -99,7 +99,7 @@ console.log(currentAdmin,"currentAdmin")
       
       const data = await response.json();
       console.log('📦 Users API response:', data);
-      
+      console.log('data.users', data.users);
       if (data.users && Array.isArray(data.users)) {
         const formattedUsers: User[] = data.users.map((user: any) => ({
           _id: user._id,
@@ -145,10 +145,10 @@ console.log(currentAdmin,"currentAdmin")
         throw new Error('No authentication token found');
       }
       
-      console.log('🔗 Fetching from:', `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${userId}`);
+      console.log('🔗 Fetching from:', `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/getUserConversation/${userId}`);
       
       const response = await fetch(
-        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${userId}`, 
+        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/getUserConversation/${userId}`, 
         {
           headers: {
             'Authorization': `Bearer ${token}`,

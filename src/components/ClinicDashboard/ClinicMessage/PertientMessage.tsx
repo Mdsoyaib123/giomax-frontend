@@ -1,9 +1,10 @@
 // src/components/UserDashboard/PatientMessage.tsx
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Check, Paperclip, Menu, X, RefreshCw, Bug } from 'lucide-react';
+import { Send, Check, Paperclip, Menu, X, RefreshCw, Bug, CloudCog } from 'lucide-react';
 import { useSocket } from '@/hooks/contexts/SocketContext';
+import Cookies from 'js-cookie';
 
-interface Message {
+ interface Message {
   _id: string;
   message: string;
   senderId: string;
@@ -26,6 +27,7 @@ interface AdminContact {
 
 const PatientMessage = () => {
   const { socket, isConnected, debugInfo } = useSocket();
+  const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -90,13 +92,18 @@ const PatientMessage = () => {
       if (data.success && data.data) {
         const admin = data.data;
         console.log('✅ Admin data loaded:', admin);
-        setAdminContact({
+        const adminData = {
           _id: admin._id,
           name: admin.fullName || admin.name || 'Support Admin',
           role: admin.role || 'admin',
           avatar: admin.profileImage || admin.avatar || `https://ui-avatars.com/api/?name=${admin.fullName || 'Admin'}&background=random`,
           online: true
-        });
+        };
+        setAdminContact(adminData);
+        // Auto-select admin when fetched
+        if (admin._id) {
+          setSelectedAdminId(admin._id);
+        }
       }
     } catch (error) {
       console.error('❌ Error fetching admin:', error);
@@ -113,24 +120,25 @@ const PatientMessage = () => {
     });
   }, [isConnected, messages.length, currentUser, isAdminTyping]);
 
-  // Fetch messages - FIXED: Use different API endpoint
-  const fetchMessages = useCallback(async () => {
-    if (!currentUser) return;
+  // Fetch messages - Updated to use selected admin ID
+  const fetchMessages = useCallback(async (adminId: string) => {
+    console.log('adminId', adminId);
+    if (!currentUser || !adminId) return;
     
     try {
       setIsLoading(true);
       setError(null);
       
-      const token = getToken();
-      const currentUserId = currentUser._id || currentUser.id;
-      
-      // FIXED: Try different endpoints in order
+      // const token = getToken(); // Current user token (sender)
+      const currentUserId = currentUser._id || currentUser.id; // Current user ID for filtering
+ const token = Cookies.get('token'); 
+ console.log('token', token);     // API expects admin ID (recipient) - same logic as SupportMessage
       let response;
       let endpoints = [
-        // `https://giomaxatadxe-backend.onrender.com/api/v1/chat/conversation/admin`,  // Try this first
-        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${currentUserId}`,  // Then try this
-        // `https://giomaxatadxe-backend.onrender.com/api/v1/chat/messages`  // Last resort
+        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${adminId}`,  // Use selected admin ID
       ];
+
+      console.log('endpoints', endpoints);
       
       let messagesData: Message[] = [];
       
@@ -143,11 +151,26 @@ const PatientMessage = () => {
               'Content-Type': 'application/json'
             }
           });
+
+          console.log('response', response);
           
           if (response.ok) {
             const data = await response.json();
-            if (data.success) {
-              messagesData = data.data || [];
+            console.log('data', data);
+            // Handle different response formats
+            if (Array.isArray(data)) {
+              // API returns array directly (like Postman response)
+              messagesData = data;
+              console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
+              break;
+            } else if (data.success && Array.isArray(data.data)) {
+              // API returns object with success and data array
+              messagesData = data.data;
+              console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
+              break;
+            } else if (data.data && Array.isArray(data.data)) {
+              // API returns object with data array
+              messagesData = data.data;
               console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
               break;
             }
@@ -159,7 +182,16 @@ const PatientMessage = () => {
       }
       
       if (messagesData.length === 0 && response && !response.ok) {
-        throw new Error(`Failed to fetch messages: ${response.status}`);
+        // Try to get error message from response
+        let errorMessage = `Failed to fetch messages: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+          console.error('❌ API Error:', errorData);
+        } catch {
+          // If response is not JSON, use default message
+        }
+        throw new Error(errorMessage);
       }
       
       // Filter messages: only show messages between this user and admin
@@ -190,6 +222,18 @@ const PatientMessage = () => {
       setIsLoading(false);
     }
   }, [currentUser]);
+  
+  // Handle admin selection
+  const handleAdminSelect = useCallback((adminId: string) => {
+    setSelectedAdminId(adminId);
+    setIsSidebarOpen(false);
+    setError(null);
+    fetchMessages(adminId);
+    
+    setTimeout(() => {
+      messageInputRef.current?.focus();
+    }, 100);
+  }, [fetchMessages]);
 
   // Mark messages as seen
   const markMessagesAsSeen = useCallback(async (messagesToMark: Message[]) => {
@@ -270,9 +314,6 @@ const PatientMessage = () => {
     socket.on('message_sent', handleMessageSent);
     socket.on('user_typing', handleTyping);
 
-    // Initial fetch only once
-    fetchMessages();
-
     // Cleanup
     return () => {
       socket.off('receive_message_from_admin', handleAdminMessage);
@@ -283,12 +324,13 @@ const PatientMessage = () => {
 
   // Send message - FIXED
   const sendMessage = useCallback(() => {
-    if (!messageInput.trim() || !socket || !isConnected || !currentUser) {
+    if (!messageInput.trim() || !socket || !isConnected || !currentUser || !selectedAdminId) {
       console.error('❌ Cannot send message:', {
         hasMessage: !!messageInput.trim(),
         hasSocket: !!socket,
         isConnected,
         currentUserId: currentUser?._id || currentUser?.id,
+        selectedAdminId,
         currentUser
       });
       return;
@@ -364,8 +406,10 @@ const PatientMessage = () => {
 
   // Refresh messages
   const handleRefresh = useCallback(() => {
-    fetchMessages();
-  }, [fetchMessages]);
+    if (selectedAdminId) {
+      fetchMessages(selectedAdminId);
+    }
+  }, [fetchMessages, selectedAdminId]);
 
   // Admin contact (static for user)
   
@@ -380,13 +424,12 @@ const PatientMessage = () => {
     fetchAdmin();
   }, [fetchAdmin]);
 
-  // FIXED: Prevent auto-fetch loop
+  // Auto-fetch messages when admin is selected
   useEffect(() => {
-    // Only fetch if messages are empty
-    if (messages.length === 0 && !isLoading && !error) {
-      fetchMessages();
+    if (selectedAdminId && adminContact._id === selectedAdminId) {
+      fetchMessages(selectedAdminId);
     }
-  }, []); // Empty dependency array - only run once on mount
+  }, [selectedAdminId, adminContact._id]); // Fetch when admin is selected
 
   return (
     <div className="bg-gray-50 flex justify-center">
@@ -440,23 +483,41 @@ const PatientMessage = () => {
 
           {/* Contact */}
           <div className="flex-1 overflow-y-auto">
-            <div className="flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50">
-              <div className="relative flex-shrink-0">
-                <img src={adminContact.avatar} alt={adminContact.name} className="w-11 h-11 rounded-full object-cover" />
-                {adminContact.online && <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{adminContact.name}</h3>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500 truncate">Support Team</p>
-                  {isAdminTyping && (
-                    <span className="text-xs text-blue-500 animate-pulse">
-                      typing...
-                    </span>
-                  )}
+            {(() => {
+              // Safety check: ensure adminContact exists before rendering
+              const adminToRender = adminContact?._id ? adminContact : null;
+              
+              if (!adminToRender) {
+                return (
+                  <div className="p-6 text-center">
+                    <p className="text-gray-500">No admin available</p>
+                  </div>
+                );
+              }
+              
+              return (
+                <div 
+                  onClick={() => adminToRender._id && handleAdminSelect(adminToRender._id)}
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedAdminId === adminToRender._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                >
+                  <div className="relative flex-shrink-0">
+                    <img src={adminToRender.avatar} alt={adminToRender.name} className="w-11 h-11 rounded-full object-cover" />
+                    {adminToRender.online && <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{adminToRender.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-gray-500 truncate">Support Team</p>
+                      {isAdminTyping && (
+                        <span className="text-xs text-blue-500 animate-pulse">
+                          typing...
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              );
+            })()}
           </div>
 
           {/* Connection Status */}
@@ -514,7 +575,17 @@ const PatientMessage = () => {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-white">
-            {isLoading ? (
+            {!selectedAdminId ? (
+              <div className="h-full flex flex-col items-center justify-center">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send size={24} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
+                <p className="text-gray-500 text-center max-w-md">
+                  Select an admin from the sidebar to start chatting.
+                </p>
+              </div>
+            ) : isLoading ? (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
@@ -551,7 +622,26 @@ const PatientMessage = () => {
             ) : (
               <>
                 {messages.map((message) => {
-                  const isOwnMessage = message.senderId === (currentUser?._id || currentUser?.id);
+                  // Determine if message is from current user (own message) - same logic as SupportMessage
+                  const currentUserId = currentUser?._id || currentUser?.id;
+                  const adminId = selectedAdminId || adminContact._id;
+                  
+                  const isOwnMessage = 
+                    message.senderId === currentUserId ||
+                    (message.chatType === 'user_admin' && message.senderId === currentUserId) ||
+                    (message.receiverId === adminId && message.senderId === currentUserId);
+                  
+                  // Debug logging
+                  console.log('Message alignment check:', {
+                    messageId: message._id,
+                    senderId: message.senderId,
+                    receiverId: message.receiverId,
+                    currentUserId,
+                    adminId,
+                    isOwnMessage,
+                    chatType: message.chatType
+                  });
+                  
                   const messageTime = new Date(message.createdAt).toLocaleTimeString([], { 
                     hour: '2-digit', 
                     minute: '2-digit' 
@@ -560,13 +650,18 @@ const PatientMessage = () => {
                   return (
                     <div 
                       key={message._id} 
-                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4`}
                     >
-                      <div className="max-w-md">
-                        <div className={`rounded-2xl px-4 py-3 ${isOwnMessage ? 'bg-blue-500 text-white rounded-tr-md' : 'bg-gray-100 text-gray-800 rounded-tl-md'}`}>
-                          <p className="text-sm leading-relaxed">{message.message}</p>
+                      <div className={`max-w-lg ${isOwnMessage ? 'flex flex-col items-end' : 'flex flex-col items-start'}`}>
+                        <div 
+                          className={`rounded-2xl px-4 py-3 ${isOwnMessage 
+                            ? 'bg-blue-500 text-white rounded-tr-md' 
+                            : 'bg-white text-gray-800 border border-gray-200 rounded-tl-md'
+                          }`}
+                        >
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.message}</p>
                         </div>
-                        <div className={`flex items-center gap-1 mt-1.5 px-1 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`flex items-center gap-1.5 mt-1.5 px-1 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
                           <span className="text-xs text-gray-500">
                             {isOwnMessage ? 'You' : 'Admin'} • {messageTime}
                           </span>
@@ -595,21 +690,25 @@ const PatientMessage = () => {
               <input
                 ref={messageInputRef}
                 type="text"
-                placeholder={!isConnected ? "Connecting to server..." : "Type your message here..."}
+                placeholder={
+                  !selectedAdminId ? "Select an admin to message..." :
+                  !isConnected ? "Connecting to server..." : 
+                  `Message ${adminContact.name}...`
+                }
                 value={messageInput}
                 onChange={(e) => {
                   setMessageInput(e.target.value);
                   handleTyping();
                 }}
                 onKeyDown={handleKeyDown}
-                disabled={!isConnected}
+                disabled={!isConnected || !selectedAdminId}
                 className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-full 
                          focus:outline-none focus:border-blue-400 bg-white placeholder:text-gray-400 
                          disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 onClick={sendMessage}
-                disabled={!isConnected || !messageInput.trim()}
+                disabled={!isConnected || !selectedAdminId || !messageInput.trim()}
                 className="w-11 h-11 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 
                          disabled:cursor-not-allowed rounded-full flex items-center justify-center 
                          text-white flex-shrink-0"
