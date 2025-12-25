@@ -15,7 +15,7 @@ import img7 from "@/assets/side7.png";
 
 // Types
 export interface SidebarItem {
-  icon: ReactNode; 
+  icon: ReactNode;
   label: string;
   href?: string;
   badge?: string;
@@ -42,7 +42,11 @@ const defaultSidebarItems: SidebarItem[] = [
     href: "/clinic-dashboard/booking-management",
   },
   { icon: img5, label: "Payment & Earning", href: "/clinic-dashboard/payment" },
-  { icon: <BiMessageRoundedDetail />, label: "Messages", href: "/clinic-dashboard/message" },
+  {
+    icon: <BiMessageRoundedDetail />,
+    label: "Messages",
+    href: "/clinic-dashboard/message",
+  },
   { icon: img7, label: "Setting", href: "/clinic-dashboard/settings" },
 ];
 
@@ -71,7 +75,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
     >
       {/* Logo */}
-      <Link to="/admin-dashboard/dashboard">
+      <Link to="/clinic-dashboard/dashboard">
         <div className="flex items-center border-b border-gray-200 mt-1 p-2">
           <div className="flex-shrink-0 w-12 h-12 mr-3">
             <img
