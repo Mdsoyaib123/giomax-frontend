@@ -14,7 +14,7 @@ export const patientsApi = baseApi.injectEndpoints({
         }),
         CreatePatient: builder.mutation({
             query: (data) => ({
-                url: "user/create-paient",
+                url: "/user/create-paient",
                 method: "POST",
                 body: data,
             }),

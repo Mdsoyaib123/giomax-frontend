@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaSpinner } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +24,7 @@ const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [itemsPerPage] = useState(9);
   const [patientData, setPatientData] = useState({
-    patientName: "",
+    fullName: "",
     gender: "",
     email: "",
     phone: "",
@@ -32,7 +33,7 @@ const PatientList = () => {
     date: "",
     time: "",
     password: "",
-    confirmPassword: "",
+    comfirmPassword: "",
     bloodGroup: "",
     dateOfBirth: "",
   });
@@ -137,17 +138,28 @@ const PatientList = () => {
   };
 
   const handleAddPatient = async () => {
-    console.log("Patient Data:", patientData);
     try {
       await createPatient(patientData).unwrap();
       toast.success("Patient created successfully!");
-      console.log("Patient created successfully!");
-    } catch (error) {
-      console.error("Error creating patient:", error);
-      toast.error("Failed to create patient. Please try again.");
+      setShowAddPatientModal(false);
+      setPatientData({
+        fullName: "",
+        gender: "",
+        email: "",
+        phone: "",
+        service: "",
+        serviceType: "",
+        date: "",
+        time: "",
+        password: "",
+        comfirmPassword: "",
+        bloodGroup: "",
+        dateOfBirth: "",
+      });
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
     // send to API or Redux
-    setShowAddPatientModal(false);
   };
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -396,9 +408,9 @@ const PatientList = () => {
                     </label>
                     <input
                       type="text"
-                      name="patientName"
+                      name="fullName"
                       placeholder="Ex: David Gongonza"
-                      value={patientData.patientName}
+                      value={patientData.fullName}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
@@ -414,9 +426,9 @@ const PatientList = () => {
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
                     >
                       <option value="">Select Patient Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      {/* <option value="Other">Other</option> */}
                     </select>
                   </div>
                 </div>
@@ -572,9 +584,9 @@ const PatientList = () => {
                     </label>
                     <input
                       type="password"
-                      name="confirmPassword"
+                      name="comfirmPassword"
                       placeholder="Confirm Password"
-                      value={patientData.confirmPassword}
+                      value={patientData.comfirmPassword}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
@@ -591,10 +603,18 @@ const PatientList = () => {
                   Close
                 </button>
                 <button
+                  disabled={isCreating}
                   onClick={handleAddPatient}
                   className="flex-1 font-medium text-sm cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white border border-[#2E6FF3] hover:bg-[#0b51de] transition"
                 >
-                  Add patient
+                  {isCreating ? (
+                    <div className="flex items-center justify-center">
+                      <FaSpinner className="animate-spin mr-2" />
+                      <span className="ml-2">Adding...</span>
+                    </div>
+                  ) : (
+                    "Add Patient"
+                  )}
                 </button>
               </div>
             </div>
