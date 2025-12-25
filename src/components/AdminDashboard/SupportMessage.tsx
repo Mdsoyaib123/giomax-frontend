@@ -1,6 +1,6 @@
 // src/components/AdminDashboard/SupportMessage.tsx
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Send, Check, ChevronDown, Menu, X, Paperclip, RefreshCw, Bug, CloudCog } from 'lucide-react';
+import { Search, Send, Check, ChevronDown, Menu, X, Paperclip, RefreshCw, Bug } from 'lucide-react';
 import { useSocket } from '@/hooks/contexts/SocketContext';
 import Cookies from 'js-cookie';
 
@@ -33,7 +33,7 @@ interface User {
 }
 
 const SupportMessage = () => {
-  const { socket, isConnected, debugInfo } = useSocket();
+  const { socket, isConnected } = useSocket();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
