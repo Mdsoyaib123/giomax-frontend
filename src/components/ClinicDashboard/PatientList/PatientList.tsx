@@ -7,9 +7,13 @@ import { useNavigate } from "react-router-dom";
 import Dialogue from "./Dialogue";
 import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
-import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
+import {
+  useCreatePatientMutation,
+  useGetAllPatientsQuery,
+} from "@/redux/features/patients/patientsApi";
 import { Patient } from "@/types/patientsType";
 import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
+import { toast } from "sonner";
 
 const PatientList = () => {
   const navigate = useNavigate();
@@ -34,6 +38,7 @@ const PatientList = () => {
   });
 
   const { data: apiResponse, isLoading } = useGetAllPatientsQuery();
+  const [createPatient, { isLoading: isCreating }] = useCreatePatientMutation();
 
   // Navigate to payment history page
   const handleClick = (patientId: number) => {
@@ -131,8 +136,16 @@ const PatientList = () => {
     return pageNumbers;
   };
 
-  const handleAddPatient = () => {
+  const handleAddPatient = async () => {
     console.log("Patient Data:", patientData);
+    try {
+      await createPatient(patientData).unwrap();
+      toast.success("Patient created successfully!");
+      console.log("Patient created successfully!");
+    } catch (error) {
+      console.error("Error creating patient:", error);
+      toast.error("Failed to create patient. Please try again.");
+    }
     // send to API or Redux
     setShowAddPatientModal(false);
   };
