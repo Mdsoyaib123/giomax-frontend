@@ -1,6 +1,6 @@
 // src/components/UserDashboard/PatientMessage.tsx
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, Check, Paperclip, Menu, X, RefreshCw, Bug, CloudCog } from 'lucide-react';
+import { Send, Check, Paperclip, Menu, X, RefreshCw, Bug } from 'lucide-react';
 import { useSocket } from '@/hooks/contexts/SocketContext';
 import Cookies from 'js-cookie';
 
