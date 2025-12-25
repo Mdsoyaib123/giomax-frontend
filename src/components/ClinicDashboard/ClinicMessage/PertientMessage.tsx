@@ -33,6 +33,13 @@ const PatientMessage = () => {
   const [error, setError] = useState<string | null>(null);
   const [showDebug, setShowDebug] = useState(false);
   const [isAdminTyping, setIsAdminTyping] = useState(false);
+  const [adminContact, setAdminContact] = useState<AdminContact>({
+    _id: 'admin',
+    name: 'Support Admin',
+    role: 'admin',
+    avatar: 'https://ui-avatars.com/api/?name=Admin&background=random',
+    online: true
+  });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +60,49 @@ const PatientMessage = () => {
   const getToken = () => {
     return localStorage.getItem('token') || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
   };
+
+  // Fetch admin data from API
+  const fetchAdmin = useCallback(async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        console.warn('No token found for fetching admin');
+        return;
+      }
+
+      console.log('📥 Fetching admin data...');
+      const response = await fetch(
+        'https://giomaxatadxe-backend.onrender.com/api/v1/user/get-admin',
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch admin: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        const admin = data.data;
+        console.log('✅ Admin data loaded:', admin);
+        setAdminContact({
+          _id: admin._id,
+          name: admin.fullName || admin.name || 'Support Admin',
+          role: admin.role || 'admin',
+          avatar: admin.profileImage || admin.avatar || `https://ui-avatars.com/api/?name=${admin.fullName || 'Admin'}&background=random`,
+          online: true
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error fetching admin:', error);
+      // Keep default adminContact on error
+    }
+  }, []);
 
   useEffect(() => {
     console.log('🔧 User Component State:', {
@@ -318,13 +368,17 @@ const PatientMessage = () => {
   }, [fetchMessages]);
 
   // Admin contact (static for user)
-  const adminContact: AdminContact = {
-    _id: 'admin',
-    name: 'Support Admin',
-    role: 'admin',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
-    online: true
-  };
+  
+
+
+
+
+  // Admin contact is now fetched from API (see fetchAdmin function above)
+
+  // Fetch admin data on component mount
+  useEffect(() => {
+    fetchAdmin();
+  }, [fetchAdmin]);
 
   // FIXED: Prevent auto-fetch loop
   useEffect(() => {
