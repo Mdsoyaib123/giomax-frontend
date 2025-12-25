@@ -11,11 +11,7 @@ import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 import { Patient } from "@/types/patientsType";
 import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 
-interface Props {
-  id: string | number;
-}
-
-const PatientList: React.FC<Props> = ({ id }) => {
+const PatientList = () => {
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
@@ -25,7 +21,6 @@ const PatientList: React.FC<Props> = ({ id }) => {
   const handleClick = (patientId: number) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
   };
-  console.log(id);
 
   const handleMessageClick = () => {
     navigate("/clinic-dashboard/message");
@@ -239,14 +234,17 @@ const PatientList: React.FC<Props> = ({ id }) => {
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={handleMessageClick}
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] transition-colors cursor-pointer text-sm font-medium"
+                                    className="flex items-center gap-1.5  px-5 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] justify-center transition-colors cursor-pointer text-sm font-medium"
                                   >
                                     <img
                                       src={text}
                                       alt="Message"
-                                      className="w-4 h-4"
+                                      className="w-4 h-4 "
                                     />
-                                    Message Patient
+                                    <span>Message</span>{" "}
+                                    <span className="hidden md:block">
+                                      Patient
+                                    </span>
                                   </button>
                                   <button
                                     onClick={() => setOpenProfile(user)}
