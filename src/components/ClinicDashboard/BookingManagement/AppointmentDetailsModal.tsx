@@ -5,9 +5,11 @@ import {
   DialogContent,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useDoctorAppointmentStatusUpdateMutation } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
 
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { toast } from "sonner";
 
 interface AppointmentDetailsProps {
   appointment: Appointment | null;
@@ -20,7 +22,26 @@ export function AppointmentDetailsModal({
   open,
   onClose,
 }: AppointmentDetailsProps) {
+  const [doctorAppointmentStatusUpdate, { isLoading }] =
+    useDoctorAppointmentStatusUpdateMutation();
   if (!appointment) return null;
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: string
+  ) => {
+    try {
+      const result = await doctorAppointmentStatusUpdate({
+        id: appointmentId,
+        status: newStatus,
+      }).unwrap();
+      toast.success("Status updated successfully!");
+      console.log("Status updated successfully:", result);
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update status!");
+      console.error("Failed to update status:", error);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -43,7 +64,7 @@ export function AppointmentDetailsModal({
             {appointment.status}
           </span>
         </div>
-        <DialogDescription className="m">
+        <DialogDescription>
           View and manage appointment information
         </DialogDescription>
 
@@ -139,6 +160,9 @@ export function AppointmentDetailsModal({
               <>
                 <Button
                   type="button"
+                  onClick={() =>
+                    handleStatusChange(appointment._id, "cancelled")
+                  }
                   variant={"destructive"}
                   className="flex-1 bg-[#FFEAEB] text-[#F04438] hover:bg-[#F04438] hover:text-white"
                 >
@@ -147,10 +171,13 @@ export function AppointmentDetailsModal({
 
                 {appointment.status === "pending" && (
                   <Button
+                    onClick={() =>
+                      handleStatusChange(appointment._id, "confirmed")
+                    }
                     type="button"
                     className="flex-1 text-white bg-[#1B9268] hover:bg-[#157953]"
                   >
-                    Approve Appointment
+                    {isLoading ? "Loading..." : "Confirm Appointment"}
                   </Button>
                 )}
               </>

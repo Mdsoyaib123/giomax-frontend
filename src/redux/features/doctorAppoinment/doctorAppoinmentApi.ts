@@ -14,7 +14,16 @@ export const doctorAppointmentApi = baseApi.injectEndpoints({
         }),
         getSingleDoctorAppointmentById: builder.query<AppointmentResponseByDoctorId, string>({
             query: (id) => `/doctor-appointment/getSingleDoctorAppointment/${id}`
+        }),
+        doctorAppointmentStatusUpdate: builder.mutation({
+            query: ({ id, status }) => ({
+                url: `/doctor-appointment/update-status/${id}`,
+                method: "PATCH",
+                body: { status }
+            }),
+            invalidatesTags: ["DOCTOR_APPOINTMENT"]
         })
+
     })
 })
-export const { useGetSinglePenitentAppointmentByIdQuery, useClinicDoctorAllAppointmentsQuery, useGetSingleDoctorAppointmentByIdQuery } = doctorAppointmentApi;
+export const { useGetSinglePenitentAppointmentByIdQuery, useClinicDoctorAllAppointmentsQuery, useGetSingleDoctorAppointmentByIdQuery, useDoctorAppointmentStatusUpdateMutation } = doctorAppointmentApi;

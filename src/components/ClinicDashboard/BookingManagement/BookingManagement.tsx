@@ -9,7 +9,6 @@ import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
-import { divIcon } from "leaflet";
 
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
@@ -29,9 +28,6 @@ const BookingManagement = () => {
   const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
-
-  console.log(activeTab);
-  console.log(activeTab === "All" ? "" : activeTab);
   const [formData, setFormData] = useState({
     patientName: "",
     age: "",
