@@ -8,6 +8,8 @@ import { getStatusColor } from "@/utils/utfuntion";
 import sitescope from "../../../assets/icons/sitescope.svg";
 import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
+import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
+
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
     | "All"
@@ -19,11 +21,9 @@ const BookingManagement = () => {
   >("All");
 
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<any | null>(
-    null
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const { data, isLoading } = useGetAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
@@ -123,95 +123,92 @@ const BookingManagement = () => {
                 <AppointmentSkeleton key={i} />
               ))
             : data?.data.map((appointment) => (
-                <AppointmentDetailsModal
+                <div
+                  onClick={() => {
+                    setSelectedAppointment(appointment);
+                    setShowDetailsModal(true);
+                  }}
                   key={appointment._id}
-                  appointment={selectedAppointment}
+                  className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
                 >
-                  <div
-                    onClick={() => {
-                      setSelectedAppointment(appointment);
-                    }}
-                    className="bg-white border border-[#DBE0E5] rounded-xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                  >
-                    {/* Header with patient info and status */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={appointment.patientId?.userId.profileImage}
-                          alt={appointment.patientId?.userId.fullName}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div>
-                          <h3 className="font-semibold text-gray-900">
-                            {appointment.patientId?.userId.fullName || "N/A"}
-                          </h3>
-                          <p className="text-xs text-gray-500">
-                            {appointment?.serviceType}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span
-                          className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
-                            appointment.status
-                          )}`}
-                        >
-                          {appointment.status}
-                        </span>
+                  {/* Header with patient info and status */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={appointment.patientId?.userId.profileImage}
+                        alt={appointment.patientId?.userId.fullName}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900">
+                          {appointment.patientId?.userId.fullName || "N/A"}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          {appointment?.serviceType}
+                        </p>
                       </div>
                     </div>
-
-                    {/* Appointment details */}
-                    <div className="flex mb-4 items-center justify-between ">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <img src={sitescope} alt="" />
-                        <span>{appointment?.doctorId?.userId?.fullName}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span>{appointment.prefarenceDate}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2  text-sm text-gray-600">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span>{appointment.prefarenceTime}</span>
-                      </div>
-                    </div>
-
-                    {/* Footer with visit type */}
-
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <span className="text-xs font-medium px-2 py-1 rounded text-blue-600 bg-blue-50">
-                        {appointment.visitingType}
+                    <div className="flex flex-col gap-2">
+                      <span
+                        className={`px-3 py-2 capitalize rounded-full text-xs font-medium ${getStatusColor(
+                          appointment.status
+                        )}`}
+                      >
+                        {appointment.status}
                       </span>
                     </div>
                   </div>
-                </AppointmentDetailsModal>
+
+                  {/* Appointment details */}
+                  <div className="flex mb-4 items-center justify-between ">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <img src={sitescope} alt="" />
+                      <span>{appointment?.doctorId?.userId?.fullName}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>{appointment.prefarenceDate}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2  text-sm text-gray-600">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{appointment.prefarenceTime}</span>
+                    </div>
+                  </div>
+
+                  {/* Footer with visit type */}
+
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <span className="text-xs font-medium px-2 py-1 rounded text-blue-600 bg-blue-50">
+                      {appointment.visitingType}
+                    </span>
+                  </div>
+                </div>
               ))}
         </div>
       </div>
@@ -406,6 +403,13 @@ const BookingManagement = () => {
       )}
 
       {/* Success Dialog */}
+      {selectedAppointment && (
+        <AppointmentDetailsModal
+          appointment={selectedAppointment}
+          open={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+        />
+      )}
       {showSuccessDialog && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-[0.2px] bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8 text-center">
