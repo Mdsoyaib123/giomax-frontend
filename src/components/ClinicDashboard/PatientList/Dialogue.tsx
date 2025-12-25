@@ -259,17 +259,25 @@ const Dialogue: React.FC<DialogueProps> = ({
                     key={index}
                     className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg bg-[#F4F6F8] hover:border-blue-300 transition-colors"
                   >
-                    <img
-                      src={doctor.doctorId?.userId?.profileImage}
-                      alt={doctor.doctorId?.userId?.fullName}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
+                    {doctor.doctorId?.userId?.profileImage ? (
+                      <img
+                        src={doctor.doctorId?.userId?.profileImage}
+                        alt={doctor.doctorId?.userId?.fullName}
+                        className="size-14 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="border size-14 rounded-lg flex items-center justify-center text-2xl bg-[#BEDBFF] text-[#2E6FF3]">
+                        <span>{doctor.doctorId?.userId?.fullName[0]}</span>
+                      </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col gap-3 min-w-0">
                       <h4 className="text-sm font-semibold text-gray-900 truncate capitalize">
-                        {doctor.doctorId?.userId?.fullName}
+                        {doctor.doctorId?.userId?.fullName || "N/A"}
                       </h4>
                       <p className="text-xs text-gray-600 truncate">
-                        {doctor.doctorId?.professionalInformation?.speciality}
+                        {doctor.doctorId?.professionalInformation?.speciality ||
+                          "N/A"}
                       </p>
                     </div>
                   </div>
