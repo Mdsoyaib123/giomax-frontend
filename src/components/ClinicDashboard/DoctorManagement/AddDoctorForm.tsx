@@ -3,9 +3,9 @@ import { X, ArrowLeft, UploadCloud, Clock, Edit } from "lucide-react";
 import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 
 interface DoctorData {
-  name: string;
+  doctorName: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   licenseNumber: string;
   serviceType: string;
   status: string;
@@ -29,9 +29,9 @@ const statusOptions = ["Select Status", "Active", "Inactive", "On Leave"];
 
 const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [formData, setFormData] = useState<DoctorData>({
-    name: "",
+    doctorName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     licenseNumber: "",
     serviceType: serviceTypeOptions[0],
     status: statusOptions[0],
@@ -177,7 +177,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {renderInput(
                 "Doctor Name",
-                "name",
+                "doctorName",
                 "text",
                 "Dr. David Giorgadze"
               )}
@@ -190,7 +190,12 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {renderInput("Phone Number", "phone", "text", "+995 595 123456")}
+              {renderInput(
+                "Phone Number",
+                "phoneNumber",
+                "text",
+                "+995 595 123456"
+              )}
               {renderInput(
                 "License Number",
                 "licenseNumber",
