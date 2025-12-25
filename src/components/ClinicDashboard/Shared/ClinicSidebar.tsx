@@ -2,16 +2,17 @@ import logo from "@/assets/Pic.png";
 import { Badge } from "@/components/ui/badge";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 import { RiShareBoxLine } from "react-icons/ri";
-import { ChevronDown } from "lucide-react";
+import {
+  Calendar,
+  ChartPie,
+  ChevronDown,
+  CreditCard,
+  Settings,
+  Stethoscope,
+  Users,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ReactNode, useState } from "react";
-
-import img1 from "@/assets/side1.png";
-import img2 from "@/assets/side2.png";
-import img3 from "@/assets/side3.png";
-import img4 from "@/assets/side4.png";
-import img5 from "@/assets/side5.png";
-import img7 from "@/assets/side7.png";
 
 // Types
 export interface SidebarItem {
@@ -29,25 +30,37 @@ export interface SidebarProps {
 
 // Sidebar Items
 const defaultSidebarItems: SidebarItem[] = [
-  { icon: img1, label: "Dashboard", href: "/clinic-dashboard/dashboard" },
-  { icon: img2, label: "Parient List", href: "/clinic-dashboard/patient-list" },
   {
-    icon: img3,
+    icon: <ChartPie />,
+    label: "Dashboard",
+    href: "/clinic-dashboard/dashboard",
+  },
+  {
+    icon: <Users />,
+    label: "Parient List",
+    href: "/clinic-dashboard/patient-list",
+  },
+  {
+    icon: <Stethoscope />,
     label: "Doctor Management",
     href: "/clinic-dashboard/doctor-management",
   },
   {
-    icon: img4,
+    icon: <Calendar />,
     label: "Book Management",
     href: "/clinic-dashboard/booking-management",
   },
-  { icon: img5, label: "Payment & Earning", href: "/clinic-dashboard/payment" },
+  {
+    icon: <CreditCard />,
+    label: "Payment & Earning",
+    href: "/clinic-dashboard/payment",
+  },
   {
     icon: <BiMessageRoundedDetail />,
     label: "Messages",
     href: "/clinic-dashboard/message",
   },
-  { icon: img7, label: "Setting", href: "/clinic-dashboard/settings" },
+  { icon: <Settings />, label: "Setting", href: "/clinic-dashboard/settings" },
 ];
 
 const ClinicSidebar: React.FC<SidebarProps> = ({
