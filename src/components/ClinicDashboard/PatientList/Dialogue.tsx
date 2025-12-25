@@ -7,13 +7,6 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
 import { formatLocalDate } from "@/utils/DateDisplayLocal";
 
-interface Appointment {
-  dateTime: string;
-  doctorName: string;
-  service: string;
-  status: string;
-}
-
 interface DialogueProps {
   patient: Patient | null;
   onClose: () => void;
@@ -33,66 +26,6 @@ const Dialogue: React.FC<DialogueProps> = ({
   const allAppointment = appointmentData?.data;
   console.log(allAppointment);
   if (!patient) return null;
-
-  // Appointment History Data
-  const appointments: Appointment[] = [
-    {
-      dateTime: "25/10/2025 - 10:00 AM",
-      doctorName: "Dr. Mike Shinoda",
-      service: "General Checkup",
-      status: "Completed",
-    },
-    {
-      dateTime: "28/10/2025 - 10:00 AM",
-      doctorName: "Dr. Emily Rodriguez",
-      service: "Blood Test",
-      status: "Completed",
-    },
-    {
-      dateTime: "29/10/2025 - 10:00 AM",
-      doctorName: "Dr. Lisa Anderson",
-      service: "Follow-up",
-      status: "Completed",
-    },
-    {
-      dateTime: "25/10/2025 - 10:00 AM",
-      doctorName: "Dr. Michael Chan",
-      service: "Medical Consultation",
-      status: "Completed",
-    },
-    {
-      dateTime: "28/10/2025 - 10:00 AM",
-      doctorName: "Dr. Sarah Johnson",
-      service: "General Checkup",
-      status: "Completed",
-    },
-  ];
-
-  // Consulate Doctor Data
-  // const doctors: Doctor[] = [
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr1,
-  //   },
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr2,
-  //   },
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr3,
-  //   },
-  // ];
-
-  // const handleViewPaymentHistory = () => {
-  //   if (onViewPaymentHistory) {
-  //     onViewPaymentHistory(patient.id);
-  //   }
-  // };/*  */
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ">
       <div className="bg-white rounded-lg w-full max-w-4xl relative shadow-2xl border border-[#DBE0E5] max-h-[94vh] overflow-y-auto">
@@ -107,6 +40,8 @@ const Dialogue: React.FC<DialogueProps> = ({
             </p>
           </div>
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
           >
