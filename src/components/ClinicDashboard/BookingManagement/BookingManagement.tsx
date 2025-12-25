@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import SectionTitle from "@/common/SectionTitle";
-import { Plus, X, Check, User } from "lucide-react";
+import { Plus, X, Check, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { FaArrowLeft } from "react-icons/fa";
 import { getStatusColor } from "@/utils/utfuntion";
 import sitescope from "../../../assets/icons/sitescope.svg";
@@ -9,6 +9,8 @@ import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+
+const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
@@ -19,6 +21,7 @@ const BookingManagement = () => {
     | "Cancelled"
     | "AppointmentDetails"
   >("All");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [showAppointmentDialog, setShowAppointmentDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] =
@@ -49,6 +52,29 @@ const BookingManagement = () => {
     { id: "rejected", label: "Rejected" },
   ];
 
+  // Calculate pagination
+  const appointments = data?.data || [];
+  const totalAppointments = appointments.length;
+  const totalPages = Math.ceil(totalAppointments / ITEMS_PER_PAGE);
+
+  // Get current page appointments
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentAppointments = appointments.slice(startIndex, endIndex);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset page when tab changes
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId as typeof activeTab);
+    setCurrentPage(1);
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -73,6 +99,57 @@ const BookingManagement = () => {
       serviceType: "",
       selectDoctor: "",
     });
+  };
+
+  // Generate page numbers with ellipsis
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+
+      // Calculate start and end of visible page range
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+
+      // Adjust if at the beginning
+      if (currentPage <= 2) {
+        end = 4;
+      }
+
+      // Adjust if at the end
+      if (currentPage >= totalPages - 1) {
+        start = totalPages - 3;
+      }
+
+      // Add ellipsis after first page if needed
+      if (start > 2) {
+        pageNumbers.push("...");
+      }
+
+      // Add middle pages
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+
+      // Add ellipsis before last page if needed
+      if (end < totalPages - 1) {
+        pageNumbers.push("...");
+      }
+
+      // Always show last page if there's more than 1 page
+      if (totalPages > 1) {
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
   };
 
   return (
@@ -100,7 +177,7 @@ const BookingManagement = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`px-6 cursor-pointer py-2 text-sm font-medium rounded-lg transition-all duration-300
                 ${
                   activeTab === tab.id
@@ -117,11 +194,11 @@ const BookingManagement = () => {
         {/* Tab Content */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {isLoading || isFetching ? (
-            Array.from({ length: 6 }).map((_, i) => (
+            Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
               <AppointmentSkeleton key={i} />
             ))
-          ) : data?.data && data.data.length > 0 ? (
-            data?.data.map((appointment: any) => (
+          ) : currentAppointments.length > 0 ? (
+            currentAppointments.map((appointment: any) => (
               <div
                 onClick={() => {
                   setSelectedAppointment(appointment);
@@ -220,6 +297,69 @@ const BookingManagement = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination Component */}
+        {totalAppointments > ITEMS_PER_PAGE && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+            {/* Items per page info */}
+            <div className="text-sm text-gray-600">
+              Showing {startIndex + 1} to{" "}
+              {Math.min(endIndex, totalAppointments)} of {totalAppointments}{" "}
+              appointments
+            </div>
+
+            {/* Pagination controls */}
+            <div className="flex items-center space-x-2">
+              {/* Previous button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`p-2 rounded-lg border ${
+                  currentPage === 1
+                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                }`}
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              {/* Page numbers */}
+              <div className="flex items-center space-x-1">
+                {getPageNumbers().map((page, index) => (
+                  <button
+                    key={index}
+                    onClick={() =>
+                      typeof page === "number" && handlePageChange(page)
+                    }
+                    className={`min-w-[40px] h-10 px-3 rounded-lg text-sm font-medium transition-colors ${
+                      page === currentPage
+                        ? "bg-blue-500 text-white"
+                        : page === "..."
+                        ? "text-gray-400 cursor-default"
+                        : "text-gray-700 hover:bg-gray-100 border border-gray-300 cursor-pointer"
+                    }`}
+                    disabled={page === "..."}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              {/* Next button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded-lg border ${
+                  currentPage === totalPages
+                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                }`}
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add New Appointment Dialog */}
@@ -229,11 +369,6 @@ const BookingManagement = () => {
             {/* Header */}
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-3">
-                {/* <button 
-                  
-                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
-                >
-                </button> */}
                 <div className=" flex justify-start ">
                   <FaArrowLeft
                     onClick={() => setShowAppointmentDialog(false)}
