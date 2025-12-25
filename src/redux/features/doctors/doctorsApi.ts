@@ -7,7 +7,15 @@ export const doctorsApi = baseApi.injectEndpoints({
             query: () => "doctor/getAll",
             providesTags: ["DOCTOR"]
 
+        }),
+        addNewDoctor: builder.mutation({
+            query: (data) => ({
+                url: "user/create-doctor",
+                method: "POST",
+                body: data
+            }),
+            invalidatesTags: ["DOCTOR"]
         })
     })
 })
-export const { useGetAllDoctorsQuery } = doctorsApi;
+export const { useGetAllDoctorsQuery, useAddNewDoctorMutation } = doctorsApi;

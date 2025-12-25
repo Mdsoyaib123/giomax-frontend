@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, ArrowLeft, UploadCloud, Clock, Edit } from "lucide-react";
+import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 
 interface DoctorData {
   name: string;
@@ -38,7 +39,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     availabilitySchedule: "",
     totalAppointments: 0,
   });
-
+  const [addNewDoctor, { isLoading: isAdding }] = useAddNewDoctorMutation();
   const [_loading, setLoading] = useState(false);
 
   const handleChange = (

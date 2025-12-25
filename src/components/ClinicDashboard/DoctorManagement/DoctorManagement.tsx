@@ -21,7 +21,6 @@ const DoctorManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: doctorsData, isLoading } = useGetAllDoctorsQuery();
-
   // Use API data or fallback to mock data
   const allDoctors =
     doctorsData?.data ||
