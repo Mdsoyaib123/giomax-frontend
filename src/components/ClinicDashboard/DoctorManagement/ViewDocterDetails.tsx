@@ -1,67 +1,34 @@
 import React from "react";
 import { X, FileText, Edit } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
+import { useGetSingleDoctorAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { skipToken } from "@reduxjs/toolkit/query";
+import TableSkeleton from "./TableSkeleton";
 
 // --- Interfaces ---
-interface Appointment {
-  dateAndTime: string;
-  patientName: string;
-  serviceType: "Clinic Visit" | "Both" | "Online";
-  status: "Completed" | "Upcoming" | "Cancelled";
-}
 
 interface ViewDoctorDetailsProps {
   doctor: DoctorData;
   onClose: () => void;
 }
 
-// --- Mock Data ---
-const mockAppointments: Appointment[] = [
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Mike Shinoda",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Emily Rodriguez",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Lisa Anderson",
-    serviceType: "Clinic Visit",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Michael Chan",
-    serviceType: "Both",
-    status: "Completed",
-  },
-  {
-    dateAndTime: "25/10/2025 - 10:20 AM",
-    patientName: "Dr. Sarah Johnson",
-    serviceType: "Clinic Visit",
-    status: "Upcoming",
-  },
-];
-
 // --- Status Badge Helper ---
-const StatusBadge: React.FC<{ status: Appointment["status"] }> = ({
-  status,
-}) => {
+const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   let colorClasses = "";
   switch (status) {
-    case "Completed":
+    case "completed":
       colorClasses = "bg-green-100 text-green-700";
       break;
-    case "Upcoming":
+    case "confirmed":
+      colorClasses = "bg-green-100 text-green-700";
+      break;
+    case "upcoming":
       colorClasses = "bg-blue-100 text-blue-700";
       break;
-    case "Cancelled":
+    case "cancelled":
+      colorClasses = "bg-red-100 text-red-700";
+      break;
+    case "pending":
       colorClasses = "bg-red-100 text-red-700";
       break;
     default:
@@ -112,6 +79,8 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
     console.log("Edit clicked for doctor:", doctor.userId);
     // This would typically open the edit modal
   };
+  const { data: appointments, isLoading } =
+    useGetSingleDoctorAppointmentByIdQuery(doctor._id ?? skipToken);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
@@ -137,8 +106,14 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
           {/* Basic Info Grid (Responsive 2-column) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoField label="Doctor Name" value={doctor?.userId?.fullName} />
-            <InfoField label="Email Address" value={doctor?.userId?.email} />
+            <InfoField
+              label="Doctor Name"
+              value={doctor?.userId?.fullName || "Not Set"}
+            />
+            <InfoField
+              label="Email Address"
+              value={doctor?.userId?.email || "Not set"}
+            />
             <InfoField
               label="Specialty"
               value={doctor?.professionalInformation?.speciality || "not set"}
@@ -147,7 +122,7 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
               label="Service Type"
               value={doctor?.serviceType || "not set"}
             />
-            <InfoField label="Phone Number" value={doctor?.phoneNumber} />
+            <InfoField label="Phone Number" value={doctor?.phoneNumber || ""} />
             <InfoField
               label="License Number"
               value={doctor?.licenseNumber || "not set"}
@@ -235,26 +210,41 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
-                  {mockAppointments.map((appt, index) => (
-                    <tr key={index} className="hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {appt.dateAndTime}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {appt.patientName}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-blue-600">
-                        <span className="inline-block px-2 py-0.5 bg-blue-50 rounded-md text-xs font-medium">
-                          {appt.serviceType}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={appt.status} />
+                {isLoading ? (
+                  <TableSkeleton rows={5} />
+                ) : appointments?.data?.length ? (
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {appointments?.data.map((appt, index) => (
+                      <tr key={index} className="hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {appt.prefarenceDate} - {appt.prefarenceTime}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {appt.patientId?.userId.fullName || "N/A"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-blue-600">
+                          <span className="inline-block capitalize px-4 py-2 bg-[#EFF6FF] text-[#2E6FF3] rounded-md text-xs font-medium border-[#BEDBFF]">
+                            {appt.serviceType}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 capitalize">
+                          <StatusBadge status={appt.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No appointments found
                       </td>
                     </tr>
-                  ))}
-                </tbody>
+                  </tbody>
+                )}
               </table>
             </div>
           </div>

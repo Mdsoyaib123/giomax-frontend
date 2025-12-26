@@ -4,47 +4,80 @@ import {
   DialogClose,
   DialogContent,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDoctorAppointmentStatusUpdateMutation } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
 
-export function AppointmentDetailsModal() {
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { toast } from "sonner";
+
+interface AppointmentDetailsProps {
+  appointment: Appointment | null;
+  open: boolean;
+  onClose: () => void;
+}
+
+export function AppointmentDetailsModal({
+  appointment,
+  open,
+  onClose,
+}: AppointmentDetailsProps) {
+  const [doctorAppointmentStatusUpdate, { isLoading }] =
+    useDoctorAppointmentStatusUpdateMutation();
+  if (!appointment) return null;
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: string
+  ) => {
+    try {
+      const result = await doctorAppointmentStatusUpdate({
+        id: appointmentId,
+        status: newStatus,
+      }).unwrap();
+      toast.success("Status updated successfully!");
+      console.log("Status updated successfully:", result);
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update status!");
+      console.error("Failed to update status:", error);
+    }
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-blue-100 text-blue-600 hover:bg-blue-200 cursor-pointer"
-          variant="default"
-        >
-          View Details
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[700px] w-full border-none p-1.5 bg-white">
-        <div className="flex items-center justify-between p-6">
-          <div className="flex items-center gap-3">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Appointment Details
-              </h2>
-              <p className="text-xs text-gray-500 mt-1">
-                View and manage appointment information
-              </p>
-            </div>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F9AA00] text-black">
-              Pending
-            </span>
-          </div>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-[700px] w-full border-none px-9 bg-white focus:border-none">
+        <div className="flex items-center  gap-3.5 ">
+          <DialogTitle className="text-black text-2xl font-semibold">
+            Appointment Details
+          </DialogTitle>
+          <span
+            className={`px-3 py-1 rounded-full text-xs capitalize font-medium ${
+              appointment.status === "approved"
+                ? "bg-green-100 text-green-800"
+                : appointment.status === "pending"
+                ? "bg-yellow-100 text-yellow-800"
+                : appointment.status === "cancelled"
+                ? "bg-red-100 text-red-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {appointment.status}
+          </span>
         </div>
+        <DialogDescription>
+          View and manage appointment information
+        </DialogDescription>
 
-        <div className="p-6 pt-0">
+        <div className="mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Patient Name
               </label>
               <input
-                type="text"
-                // value={selectedAppointment.patientName}
                 readOnly
+                value={appointment?.patientId?.userId?.fullName ?? "N/A"}
+                type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
             </div>
@@ -54,9 +87,9 @@ export function AppointmentDetailsModal() {
                 Doctor Name
               </label>
               <input
-                type="text"
-                // value={selectedAppointment.doctorName}
                 readOnly
+                value={appointment?.doctorId?.userId?.fullName ?? "N/A"}
+                type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
             </div>
@@ -66,9 +99,9 @@ export function AppointmentDetailsModal() {
                 Service Name
               </label>
               <input
-                type="text"
-                // value={selectedAppointment.service}
                 readOnly
+                // value={appointment.serviceName ?? "N/A"}
+                type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
             </div>
@@ -78,9 +111,9 @@ export function AppointmentDetailsModal() {
                 Date & Time
               </label>
               <input
-                type="text"
-                // value={`${selectedAppointment.date} - ${selectedAppointment.time}`}
                 readOnly
+                value={`${appointment.prefarenceDate} ${appointment.prefarenceTime}`}
+                type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
             </div>
@@ -90,40 +123,65 @@ export function AppointmentDetailsModal() {
                 Service Type
               </label>
               <input
-                type="text"
-                // value={selectedAppointment.visitType}
                 readOnly
+                value={appointment.serviceType || "N/A"}
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Visiting Type
+              </label>
+              <input
+                readOnly
+                value={appointment.visitingType || "N/A"}
+                type="text"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
               />
             </div>
           </div>
+        </div>
 
-          {/* <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            <button
-              onClick={handleClose}
-              className="flex-1 py-3 rounded-lg bg-[#EFF4FF] text-[#2E6FF3] hover:bg-[#d2e3ff] font-medium text-sm transition-colors cursor-pointer"
+        <DialogFooter className="w-full flex justify-between gap-3">
+          <DialogClose asChild>
+            <Button
+              className="flex-1 text-[#2E6FF3] border border-[#2E6FF3] bg-white hover:bg-gray-50"
+              variant="outline"
+              onClick={onClose}
             >
               Close
-            </button>
-            <button
-            //   onClick={handleCancel}
-              className="flex-1 py-3 bg-[#FFEAEB] text-[#E9575A] rounded-lg hover:bg-[#ffd5d7] font-medium text-sm transition-colors cursor-pointer"
-            >
-              Cancel Appointment
-            </button>
-            <button
-            //   onClick={handleApprove}
-              className="flex-1 py-3 bg-[#1B9268] text-white rounded-lg hover:bg-[#157a56] font-medium text-sm transition-colors cursor-pointer"
-            >
-              Approve Appointment
-            </button>
-          </div> */}
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            </Button>
           </DialogClose>
-          <Button type="submit">Save changes</Button>
+
+          {appointment.status !== "cancelled" &&
+            appointment.status !== "completed" && (
+              <>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    handleStatusChange(appointment._id, "cancelled")
+                  }
+                  variant={"destructive"}
+                  className="flex-1 bg-[#FFEAEB] text-[#F04438] hover:bg-[#F04438] hover:text-white"
+                >
+                  Cancel Appointment
+                </Button>
+
+                {appointment.status === "pending" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusChange(appointment._id, "confirmed")
+                    }
+                    type="button"
+                    className="flex-1 text-white bg-[#1B9268] hover:bg-[#157953]"
+                  >
+                    {isLoading ? "Loading..." : "Confirm Appointment"}
+                  </Button>
+                )}
+              </>
+            )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

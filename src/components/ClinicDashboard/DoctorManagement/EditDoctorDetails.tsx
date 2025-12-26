@@ -118,7 +118,8 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
     label: string,
     name: keyof DoctorFormData,
     type: string = "text",
-    required: boolean = true
+    required: boolean = true,
+    placeholder?: string
   ) => (
     <div>
       <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -127,6 +128,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       <input
         type={type}
         name={name as string}
+        placeholder={placeholder}
         value={formData[name] as string}
         onChange={handleChange}
         required={required}
@@ -177,13 +179,13 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       <div className="bg-white rounded-xl w-[1100px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
-          <div className="flex items-center">
+          <div className="flex items-start">
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 transition-colors p-1 mr-2 rounded-full hover:bg-gray-50"
               aria-label="Go Back"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-6 h-6 text-black" />
             </button>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
@@ -212,10 +214,34 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                 Basic Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                {renderInput("Doctor Name", "name")}
-                {renderInput("Email Address", "email", "email")}
-                {renderInput("Phone Number", "phone")}
-                {renderInput("License Number", "licenseNumber")}
+                {renderInput(
+                  "Doctor Name",
+                  "name",
+                  "text",
+                  true,
+                  "Dr. John Doe"
+                )}
+                {renderInput(
+                  "Email Address",
+                  "email",
+                  "email",
+                  true,
+                  "doctor@gmail.com"
+                )}
+                {renderInput(
+                  "Phone Number",
+                  "phone",
+                  "text",
+                  true,
+                  "+995 595 123456"
+                )}
+                {renderInput(
+                  "License Number",
+                  "licenseNumber",
+                  "text",
+                  true,
+                  "MED-001-2024"
+                )}
               </div>
             </div>
 
