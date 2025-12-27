@@ -33,15 +33,17 @@ export const nurseAppointmentApi = baseApi.injectEndpoints({
     ),
 
     // Get single appointment
-    getNurseAppointment: builder.query<SingleAppointmentResponse, string>({
-      query: (id) => ({
-        url: `/solo-nurse-appointment/getSingle/${id}`,
-        method: "GET",
-      }),
-      providesTags: (_result, _error, id) => [
-        { type: "NURSE_APPOINTMENT", id },
-      ],
-    }),
+    getNurseSingleAppointment: builder.query<SingleAppointmentResponse, string>(
+      {
+        query: (id) => ({
+          url: `/solo-nurse-appointment/getSingle/${id}`,
+          method: "GET",
+        }),
+        providesTags: (_result, _error, id) => [
+          { type: "NURSE_APPOINTMENT", id },
+        ],
+      }
+    ),
 
     // Update appointment status
     updateNurseAppointment: builder.mutation<
@@ -94,7 +96,7 @@ export const nurseAppointmentApi = baseApi.injectEndpoints({
 
 export const {
   useGetNurseAppointmentsQuery,
-  useGetNurseAppointmentQuery,
+  useGetNurseSingleAppointmentQuery,
   useUpdateNurseAppointmentMutation,
   useCancelNurseAppointmentMutation,
   useConfirmNurseAppointmentMutation,

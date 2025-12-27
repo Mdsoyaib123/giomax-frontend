@@ -6,7 +6,7 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import AdminLayout from "@/Layout/AdminLayout";
 import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
-import SettingsPage from "@/pages/Admin/SettingsPage";
+// import SettingsPage from "@/pages/Admin/SettingsPage";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import PatientManagementPage from "@/pages/Admin/PatientManagementPage";
@@ -26,7 +26,7 @@ import PaymentEarning from "@/components/ClinicDashboard/Dashboard/PaymentEarnin
 import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/PertientMessage";
 import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
 import SupportMessage from "@/components/AdminDashboard/SupportMessage";
-
+import AdminProfile from "@/components/AdminDashboard/Shared/AdminProfile";
 
 const routes = createBrowserRouter([
   {
@@ -97,7 +97,8 @@ const routes = createBrowserRouter([
       { path: "nurse-management", element: <NurseManagementPage /> },
       { path: "clinic-management", element: <ClinicManagementPage /> },
       { path: "clinic-management/:id", element: <PaymentHistoryClinic /> },
-      { path: "settings", element: <SettingsPage /> },
+      { path: "profile", element: <AdminProfile /> },
+      // { path: "settings", element: <SettingsPage /> },
     ],
   },
 

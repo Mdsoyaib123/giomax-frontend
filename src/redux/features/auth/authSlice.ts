@@ -21,6 +21,7 @@ interface DecodedToken {
 const initialState: TAuth = {
   user: null,
   token: null,
+  admin: undefined,
 };
 
 const decodeToken = (token: string): User | null => {
@@ -109,6 +110,16 @@ const authSlice = createSlice({
       authApi.endpoints.register.matchFulfilled,
       (state, { payload }) => {
         state.user = payload.data;
+      }
+    );
+    /* New */
+    builder.addMatcher(
+      authApi.endpoints.getAdmin.matchFulfilled,
+      (state, { payload }) => {
+        state.admin = {
+          name: payload.data.fullName,
+          role: payload.data.role,
+        };
       }
     );
   },

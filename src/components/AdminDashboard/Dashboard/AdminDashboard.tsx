@@ -1,20 +1,29 @@
 import SectionTitle from "@/common/SectionTitle";
-import AppointmentStatistics from "./AppointmentStatistics";
+// import AppointmentStatistics from "./AppointmentStatistics";
 import DashboardCard from "./DashboardCard";
-import QuickActions from "./QuickActions";
-import RevenueOverview from "./RevenueOverview";
+// import QuickActions from "./QuickActions";
+// import RevenueOverview from "./RevenueOverview";
+import AllTransactions from "./AllTransation";
 
 const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <SectionTitle title="Dashboard Overview" description="Welcome back Giorgi! Here's overview of what's happening today." />
+        <SectionTitle
+          title="Dashboard Overview"
+          description="Welcome back Giorgi! Here's overview of what's happening today."
+        />
       </div>
       <div>
         <DashboardCard />
       </div>
+      <div>
+        <div>
+          <AllTransactions />
+        </div>
+      </div>
       {/* part-3 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4  gap-5">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4  gap-5">
         <div className="xl:col-span-2 w-full">
           <AppointmentStatistics />
         </div>
@@ -24,7 +33,7 @@ const AdminDashboard = () => {
       </div>
       <div>
         <QuickActions />
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,4 +1,20 @@
 // src/redux/types/auth.type.ts
+
+export type AdminUser = {
+  _id: string;
+  fullName: string;
+  email: string;
+  role: "admin";
+  createdAt: string;
+  updatedAt: string;
+  fcmToken?: string;
+};
+
+export type GetAdminResponse = {
+  success: boolean;
+  data: AdminUser;
+};
+
 export type User = {
   id: string;
   name?: string;
@@ -28,9 +44,18 @@ export type RegisterResponse = {
   data: User;
 };
 
+// export type TAuth = {
+//   user: User | null;
+//   token: string | null;
+// };
+
 export type TAuth = {
   user: User | null;
   token: string | null;
+  admin?: {
+    name: string;
+    role: string;
+  };
 };
 
 export type RegisterRequest = {
