@@ -59,7 +59,7 @@ const NurseAppointmentTable: React.FC = () => {
   });
 
   // RTK Query mutations
-  const [updateAppointment] = useUpdateNurseAppointmentMutation();
+  const [_updateAppointment] = useUpdateNurseAppointmentMutation();
   const [cancelAppointment] = useCancelNurseAppointmentMutation();
   const [confirmAppointment] = useConfirmNurseAppointmentMutation();
 
@@ -108,24 +108,24 @@ const NurseAppointmentTable: React.FC = () => {
   };
 
   // Handle status change
-  const handleStatusChange = async (
-    appointmentId: string,
-    status: AppointmentStatus
-  ) => {
-    try {
-      await updateAppointment({
-        id: appointmentId,
-        data: { status },
-      }).unwrap();
+  // const handleStatusChange = async (
+  //   appointmentId: string,
+  //   status: AppointmentStatus
+  // ) => {
+  //   try {
+  //     await updateAppointment({
+  //       id: appointmentId,
+  //       data: { status },
+  //     }).unwrap();
 
-      refetch(); // Refresh the list
-      if (selectedAppointmentId === appointmentId) {
-        refetchSingle();
-      }
-    } catch (error) {
-      console.error("Failed to update appointment:", error);
-    }
-  };
+  //     refetch(); // Refresh the list
+  //     if (selectedAppointmentId === appointmentId) {
+  //       refetchSingle();
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to update appointment:", error);
+  //   }
+  // };
 
   // Handle cancel appointment
   const handleCancelAppointment = async (appointmentId: string) => {
@@ -153,9 +153,10 @@ const NurseAppointmentTable: React.FC = () => {
     }
   };
 
-  const handleRefundConfirm = () => {
-    setShowRefundSuccess(true);
-  };
+  // const handleRefundConfirm = () => {
+
+  //   setShowRefundSuccess(true);
+  // };
 
   // Get patient name safely
   const getPatientName = (appointment: Appointment) => {
