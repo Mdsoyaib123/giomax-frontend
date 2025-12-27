@@ -4,6 +4,7 @@ export type AdminUser = {
   _id: string;
   fullName: string;
   email: string;
+  profileImage: string;
   role: "admin";
   createdAt: string;
   updatedAt: string;
