@@ -70,11 +70,11 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Support Message",
     href: "/admin-dashboard/Support-message",
   },
-  {
-    icon: d8,
-    label: "Settings",
-    href: "/admin-dashboard/settings",
-  },
+  // {
+  //   icon: d8,
+  //   label: "Settings",
+  //   href: "/admin-dashboard/settings",
+  // },
 ];
 
 const AdminSidebar: React.FC<SidebarProps> = ({
