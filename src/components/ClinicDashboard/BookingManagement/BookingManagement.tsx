@@ -19,6 +19,7 @@ import {
 } from "@/redux/features/doctors/doctorsApi";
 import { useAppSelector } from "@/redux/hooks/redux-hook";
 import { toast } from "sonner";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
@@ -39,12 +40,12 @@ const BookingManagement = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const userId = useAppSelector((state) => state.auth.user?.id);
-  console.log(userId);
 
   const { data: clinicData } = useGetSignalClinicQuery(userId!, {
     skip: !userId,
   });
-  console.log(clinicData?.data?.userId?._id);
+  const { clinicId } = useSingleClinicId();
+  console.log(clinicId);
 
   const { data: patientsData, isLoading: isLoadingPatient } =
     useGetAllPatientsQuery();
@@ -123,7 +124,7 @@ const BookingManagement = () => {
       await createDoctorAppointment({
         patientId: formData.patientId,
         doctorId: formData.doctorId,
-        clinicId: clinicData?.data?._id,
+        clinicId: clinicId,
         prefarenceDate: formData.prefarenceDate,
         reasonForVisit: formData.reasonForVisit,
         prefarenceTime: formData.prefarenceTime,

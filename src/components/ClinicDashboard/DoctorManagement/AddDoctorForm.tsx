@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  X,
-  ArrowLeft,
-  UploadCloud,
-  Clock,
-  Edit,
-  DollarSign,
-} from "lucide-react";
+import { X, ArrowLeft, UploadCloud, Edit, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 interface DoctorData {
