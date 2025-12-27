@@ -9,6 +9,8 @@ import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
+import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 
 const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
@@ -28,6 +30,11 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const { data: patientsData, isLoading: isLoadingPatient } =
+    useGetAllPatientsQuery();
+  const { data: doctorsData, isLoading: isLoadingDoctors } =
+    useGetAllDoctorsQuery();
+  console.log("object", patientsData, doctorsData);
   const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
@@ -403,14 +410,31 @@ const BookingManagement = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Patient Name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="patientName"
                     value={formData.patientName}
                     onChange={handleInputChange}
-                    placeholder="Enter Patient Name"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                    disabled={isLoading}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg
+             focus:outline-none focus:ring-2 focus:ring-blue-500
+             disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {isLoadingPatient ? (
+                      <option>Loading patients...</option>
+                    ) : (
+                      <>
+                        <option value="">Select patient</option>
+                        {patientsData?.data?.map((patient) => (
+                          <option
+                            key={patient._id}
+                            value={patient?.userId?.fullName}
+                          >
+                            {patient?.userId?.fullName}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
                 </div>
 
                 {/* Age */}
@@ -518,10 +542,18 @@ const BookingManagement = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
                   >
-                    <option value="">Select your Clinic Doctor</option>
-                    <option value="dr-smith">Dr. John Smith</option>
-                    <option value="dr-johnson">Dr. Sarah Johnson</option>
-                    <option value="dr-williams">Dr. Michael Williams</option>
+                    {isLoadingDoctors ? (
+                      <option>Loading doctors...</option>
+                    ) : (
+                      <>
+                        <option value="">Select Doctor</option>
+                        {doctorsData?.data.map((doctor) => (
+                          <option key={doctor._id} value={doctor._id}>
+                            {doctor?.userId?.fullName || "unknown"}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
                 </div>
               </div>

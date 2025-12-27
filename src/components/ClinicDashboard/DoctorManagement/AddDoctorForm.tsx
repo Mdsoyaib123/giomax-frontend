@@ -12,7 +12,7 @@ interface DoctorData {
   workingHour: string;
   totalAppointments: number;
   availabilitySchedule: string;
-  certificateFile?: File; // Only this key is File
+  certificateFile?: File;
 }
 
 // 🔥 Exclude `certificateFile` so inputs never receive File type
