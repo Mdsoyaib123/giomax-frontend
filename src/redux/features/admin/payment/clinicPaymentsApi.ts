@@ -1,5 +1,5 @@
 import { baseApi } from "@/redux/hooks/baseApi";
-import { create } from "domain";
+
 
 export const clinicPaymentApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -15,8 +15,11 @@ export const clinicPaymentApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: data
             })
+        }),
+        getSingleWithdrawRequest: builder.query({
+            query: (id) => `/wallet/getSingle/${id}`
         })
     }),
 });
 
-export const { useGetClinicPaymentsOverviewQuery, useGetWithdrawRequestsQuery, useCreateWithdrawRequestMutation } = clinicPaymentApi;
+export const { useGetClinicPaymentsOverviewQuery, useGetWithdrawRequestsQuery, useCreateWithdrawRequestMutation, useGetSingleWithdrawRequestQuery } = clinicPaymentApi;

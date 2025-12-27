@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { X, Info, CheckCircle } from "lucide-react";
-import { useCreateWithdrawRequestMutation } from "@/redux/features/admin/payment/clinicPaymentsApi";
+import {
+  useCreateWithdrawRequestMutation,
+  useGetSingleWithdrawRequestQuery,
+} from "@/redux/features/admin/payment/clinicPaymentsApi";
 import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { useSingleClinicId } from "@/hooks/userClinicId";
+import { toast } from "sonner";
 
 interface WithdrawFundsProps {
   isOpen: boolean;
@@ -9,12 +15,18 @@ interface WithdrawFundsProps {
 }
 
 const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
+  const { clinicId } = useSingleClinicId();
   const [createWithdrawRequest, { isLoading }] =
     useCreateWithdrawRequestMutation();
-  const [amount, setAmount] = React.useState("1200.00");
+  const { data: single } = useGetSingleWithdrawRequestQuery(
+    clinicId as string,
+    {
+      skip: !clinicId,
+    }
+  );
+  const [amount, setAmount] = React.useState("0");
   const [cardNumber, setCardNumber] = React.useState("");
   const [showConfirmation, setShowConfirmation] = React.useState(false);
-  const useId = useAppSelector((state) => state.auth.user?.id);
   const [errors, setErrors] = React.useState({
     amount: "",
     cardNumber: "",
@@ -66,16 +78,19 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
       const withdrawData = {
         amount: parseFloat(amount),
         cardNumber: cardNumber.replace(/\s/g, ""),
-        ownerId: useId,
+        ownerId: clinicId as string,
+        walletId: single?.data?._id,
+        ownerType: "CLINIC",
       };
 
       const response = await createWithdrawRequest(withdrawData).unwrap();
+      console.log(response);
 
       setShowConfirmation(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Withdrawal failed:", error);
       // You can show an error message here
-      alert("Withdrawal request failed. Please try again.");
+      toast.error(error.data.message || "Withdrawal failed!");
     }
   };
 
@@ -139,12 +154,12 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Available for Withdrawal */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+            {/* <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
               <p className="text-gray-700 text-sm font-medium mb-2">
                 Available for Withdrawal
               </p>
               <p className="text-3xl font-semibold text-green-600">$1,600.00</p>
-            </div>
+            </div> */}
 
             {/* Form */}
             <div className="space-y-6">
