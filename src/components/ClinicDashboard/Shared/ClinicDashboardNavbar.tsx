@@ -107,7 +107,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           {/* Notification */}
-          <div
+          {/* <div
             className="relative p-2 border border-gray-300 rounded-xl w-fit cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => setIsNotifOpen(true)}
           >
@@ -115,7 +115,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
             <span className="absolute top-0.5 right-2 bg-green-600 text-white text-xs font-semibold rounded-2xl w-5 h-5 flex items-center justify-center">
               3
             </span>
-          </div>
+          </div> */}
 
           {/* User Dropdown */}
           <DropdownMenu>
@@ -171,7 +171,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
       </header>
 
       {/* Notification Drawer */}
-      {isNotifOpen && (
+      {/* {isNotifOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div
             className="fixed inset-0 bg-black/40"
@@ -182,7 +182,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
             <NotificationPanel onClose={() => setIsNotifOpen(false)} />
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Advanced Filter Modal */}
       {isFilterOpen && (
