@@ -45,7 +45,13 @@ const BookingManagement = () => {
     useGetAllDoctorsQuery();
   console.log("object", patientsData, doctorsData);
   const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
-    activeTab === "All" ? "" : activeTab
+    {
+      id: clinicId,
+      status: activeTab === "All" ? "" : activeTab,
+    },
+    {
+      skip: !clinicId,
+    }
   );
   const [createDoctorAppointment, { isLoading: isCreating }] =
     useCreateDoctorAppointmentMutation();

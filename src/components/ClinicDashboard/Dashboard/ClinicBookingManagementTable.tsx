@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { useDoctorAppointmentStatusUpdateMutation } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 interface Appointment {
   _id: string;
@@ -73,13 +75,15 @@ const ClinicBookingManagementTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("all");
   const itemsPerPage = 6;
-
+  const { clinicId } = useSingleClinicId();
   const {
     data: apiData,
     isLoading,
-    isFetching,
     refetch,
-  } = useClinicDoctorAllAppointmentsQuery("");
+  } = useClinicDoctorAllAppointmentsQuery(
+    { id: clinicId, status: " " },
+    { skip: !clinicId }
+  );
   const [doctorAppointmentStatusUpdate, { isLoading: isUpdating }] =
     useDoctorAppointmentStatusUpdateMutation();
 
