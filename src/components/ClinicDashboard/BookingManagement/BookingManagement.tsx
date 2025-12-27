@@ -13,7 +13,10 @@ import {
   useCreateDoctorAppointmentMutation,
 } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
-import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
+import {
+  useGetAllDoctorsQuery,
+  useGetSignalClinicQuery,
+} from "@/redux/features/doctors/doctorsApi";
 import { useAppSelector } from "@/redux/hooks/redux-hook";
 import { toast } from "sonner";
 
@@ -37,6 +40,12 @@ const BookingManagement = () => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const userId = useAppSelector((state) => state.auth.user?.id);
   console.log(userId);
+
+  const { data: clinicData } = useGetSignalClinicQuery(userId!, {
+    skip: !userId,
+  });
+  console.log(clinicData?.data?.userId?._id);
+
   const { data: patientsData, isLoading: isLoadingPatient } =
     useGetAllPatientsQuery();
   const { data: doctorsData, isLoading: isLoadingDoctors } =
@@ -114,7 +123,7 @@ const BookingManagement = () => {
       await createDoctorAppointment({
         patientId: formData.patientId,
         doctorId: formData.doctorId,
-        clinicId: userId,
+        clinicId: clinicData?.data?._id,
         prefarenceDate: formData.prefarenceDate,
         reasonForVisit: formData.reasonForVisit,
         prefarenceTime: formData.prefarenceTime,
@@ -588,7 +597,7 @@ const BookingManagement = () => {
                   onClick={handleCreateBooking}
                   className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium cursor-pointer transition"
                 >
-                  Create New Booking
+                  {isCreating ? "Creating..." : "Create Appointment"}
                 </button>
               </div>
             </div>
