@@ -22,8 +22,16 @@ export const doctorAppointmentApi = baseApi.injectEndpoints({
                 body: { status }
             }),
             invalidatesTags: ["DOCTOR_APPOINTMENT"]
+        }),
+        createDoctorAppointment: builder.mutation({
+            query: (data) => ({
+                url: "/doctor-appointment/create",
+                method: "POST",
+                body: data
+            }),
+            invalidatesTags: ["DOCTOR_APPOINTMENT"]
         })
 
     })
 })
-export const { useGetSinglePenitentAppointmentByIdQuery, useClinicDoctorAllAppointmentsQuery, useGetSingleDoctorAppointmentByIdQuery, useDoctorAppointmentStatusUpdateMutation } = doctorAppointmentApi;
+export const { useGetSinglePenitentAppointmentByIdQuery, useClinicDoctorAllAppointmentsQuery, useGetSingleDoctorAppointmentByIdQuery, useDoctorAppointmentStatusUpdateMutation, useCreateDoctorAppointmentMutation } = doctorAppointmentApi;
