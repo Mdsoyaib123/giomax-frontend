@@ -11,6 +11,7 @@ import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
+import { useAppSelector } from "@/redux/hooks/redux-hook";
 
 const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
@@ -30,6 +31,8 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const userId = useAppSelector((state) => state.auth.user?.id);
+  console.log(userId);
   const { data: patientsData, isLoading: isLoadingPatient } =
     useGetAllPatientsQuery();
   const { data: doctorsData, isLoading: isLoadingDoctors } =
@@ -39,14 +42,14 @@ const BookingManagement = () => {
     activeTab === "All" ? "" : activeTab
   );
   const [formData, setFormData] = useState({
-    patientName: "",
+    patientId: "",
     age: "",
     phoneNumber: "",
-    selectDate: "",
-    service: "",
-    selectTime: "",
+    prefarenceDate: "",
+    reasonForVisit: "",
+    prefarenceTime: "",
     serviceType: "",
-    selectDoctor: "",
+    doctorId: "",
   });
 
   // Updated Tabs
@@ -97,14 +100,14 @@ const BookingManagement = () => {
   const handleCloseSuccess = () => {
     setShowSuccessDialog(false);
     setFormData({
-      patientName: "",
+      patientId: "",
       age: "",
       phoneNumber: "",
-      selectDate: "",
-      service: "",
-      selectTime: "",
+      prefarenceDate: "",
+      reasonForVisit: "",
+      prefarenceTime: "",
       serviceType: "",
-      selectDoctor: "",
+      doctorId: "",
     });
   };
 
@@ -412,7 +415,7 @@ const BookingManagement = () => {
                   </label>
                   <select
                     name="patientName"
-                    value={formData.patientName}
+                    value={formData.patientId}
                     onChange={handleInputChange}
                     disabled={isLoading}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg
@@ -425,10 +428,7 @@ const BookingManagement = () => {
                       <>
                         <option value="">Select patient</option>
                         {patientsData?.data?.map((patient) => (
-                          <option
-                            key={patient._id}
-                            value={patient?.userId?.fullName}
-                          >
+                          <option key={patient._id} value={patient?._id ?? ""}>
                             {patient?.userId?.fullName}
                           </option>
                         ))}
@@ -474,8 +474,8 @@ const BookingManagement = () => {
                   </label>
                   <input
                     type="date"
-                    name="selectDate"
-                    value={formData.selectDate}
+                    name="prefarenceDate"
+                    value={formData.prefarenceDate}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   />
@@ -484,19 +484,17 @@ const BookingManagement = () => {
                 {/* Service */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Service <span className="text-red-500">*</span>
+                    Reason For Visit <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="service"
-                    value={formData.service}
+
+                  <input
+                    name="reasonForVisit"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter Reason For Visit"
+                    value={formData.reasonForVisit}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
-                  >
-                    <option value="">Select Service Name</option>
-                    <option value="consultation">Consultation</option>
-                    <option value="checkup">Health Checkup</option>
-                    <option value="vaccination">Vaccination</option>
-                  </select>
+                    type="text"
+                  />
                 </div>
 
                 {/* Select Time */}
@@ -506,8 +504,8 @@ const BookingManagement = () => {
                   </label>
                   <input
                     type="time"
-                    name="selectTime"
-                    value={formData.selectTime}
+                    name="prefarenceTime"
+                    value={formData.prefarenceTime}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   />
@@ -525,9 +523,8 @@ const BookingManagement = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
                   >
                     <option value="">Select Service Type</option>
-                    <option value="online">Online Consultation</option>
-                    <option value="clinic">Clinic Visit</option>
-                    <option value="home">Home Visit</option>
+                    <option value="inClinic">Clinic Visit</option>
+                    <option value="online">Online</option>
                   </select>
                 </div>
 
@@ -538,7 +535,7 @@ const BookingManagement = () => {
                   </label>
                   <select
                     name="selectDoctor"
-                    value={formData.selectDoctor}
+                    value={formData.doctorId}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
                   >
