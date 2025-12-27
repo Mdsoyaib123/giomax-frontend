@@ -33,7 +33,7 @@ const NurseAppointmentTable: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showRefundDialog] = useState(false);
   const [showRefundSuccess, setShowRefundSuccess] = useState(false);
-  const [showStatusUpdateDialog] = useState(false);
+  const [showStatusUpdateDialog, setShowStatusUpdateDialog] = useState(false);
   // const [newStatus, setNewStatus] = useState<AppointmentStatus>("pending");
 
   const itemsPerPage = 6;

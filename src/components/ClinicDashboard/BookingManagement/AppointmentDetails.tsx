@@ -1,11 +1,11 @@
-import React from 'react';
-import { Clock } from 'lucide-react';
+import React from "react";
+import { Clock } from "lucide-react";
 
 interface Appointment {
   id: string;
   patientName: string;
   doctorName: string;
-  visitType: 'Online' | 'Clinic Visit';
+  visitType: "Online" | "Clinic Visit";
   time: string;
   status: string;
 }
@@ -14,11 +14,15 @@ interface AppointmentDetailsProps {
   appointments?: Appointment[];
 }
 
-const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({ appointments = [] }) => {
+const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({
+  appointments = [],
+}) => {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">All Appointments</h2>
+        <h2 className="text-lg font-semibold text-gray-800">
+          All Appointments
+        </h2>
       </div>
       <div className="divide-y divide-gray-200">
         {appointments.map((appointment) => (
@@ -33,7 +37,9 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({ appointments = 
                   {appointment.patientName}
                 </h3>
                 <p className="text-sm text-gray-500 mb-1">Appointment with</p>
-                <p className="text-sm text-gray-600 mb-2">{appointment.doctorName}</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  {appointment.doctorName}
+                </p>
                 <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                   {appointment.visitType}
                 </button>
@@ -46,7 +52,7 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({ appointments = 
                 </span>
 
                 <div className="flex items-center text-gray-500">
-                  <Clock className="w-4 h-4 mr-1" />
+                  <Clock className="w-4 h-4 mr-1 " />
                   <span className="text-sm">{appointment.time}</span>
                 </div>
               </div>
@@ -55,7 +61,9 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = ({ appointments = 
         ))}
 
         {appointments.length === 0 && (
-          <div className="p-6 text-center text-gray-500">No appointments found</div>
+          <div className="p-6 text-center text-gray-500">
+            No appointments found
+          </div>
         )}
       </div>
     </div>

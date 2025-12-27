@@ -1,17 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { X } from "lucide-react";
 import { Patient } from "@/types/patientsType";
 import { useGetSinglePenitentAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
 import AppointmentCardSkeleton from "@/components/Skeleton/AppointmentCardSkeleton";
-
-interface Appointment {
-  dateTime: string;
-  doctorName: string;
-  service: string;
-  status: string;
-}
+import { formatLocalDate } from "@/utils/DateDisplayLocal";
+import TableSkeleton from "../DoctorManagement/TableSkeleton";
 
 interface DialogueProps {
   patient: Patient | null;
@@ -28,70 +22,10 @@ const Dialogue: React.FC<DialogueProps> = ({
     useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
 
   console.log(patient?._id);
-  console.log(appointmentData?.data);
+  console.log("h", appointmentData?.data);
   const allAppointment = appointmentData?.data;
   console.log(allAppointment);
   if (!patient) return null;
-
-  // Appointment History Data
-  const appointments: Appointment[] = [
-    {
-      dateTime: "25/10/2025 - 10:00 AM",
-      doctorName: "Dr. Mike Shinoda",
-      service: "General Checkup",
-      status: "Completed",
-    },
-    {
-      dateTime: "28/10/2025 - 10:00 AM",
-      doctorName: "Dr. Emily Rodriguez",
-      service: "Blood Test",
-      status: "Completed",
-    },
-    {
-      dateTime: "29/10/2025 - 10:00 AM",
-      doctorName: "Dr. Lisa Anderson",
-      service: "Follow-up",
-      status: "Completed",
-    },
-    {
-      dateTime: "25/10/2025 - 10:00 AM",
-      doctorName: "Dr. Michael Chan",
-      service: "Medical Consultation",
-      status: "Completed",
-    },
-    {
-      dateTime: "28/10/2025 - 10:00 AM",
-      doctorName: "Dr. Sarah Johnson",
-      service: "General Checkup",
-      status: "Completed",
-    },
-  ];
-
-  // Consulate Doctor Data
-  // const doctors: Doctor[] = [
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr1,
-  //   },
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr2,
-  //   },
-  //   {
-  //     name: "Dr. Michael Brown",
-  //     specialization: "General Physician",
-  //     image: dr3,
-  //   },
-  // ];
-
-  // const handleViewPaymentHistory = () => {
-  //   if (onViewPaymentHistory) {
-  //     onViewPaymentHistory(patient.id);
-  //   }
-  // };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ">
       <div className="bg-white rounded-lg w-full max-w-4xl relative shadow-2xl border border-[#DBE0E5] max-h-[94vh] overflow-y-auto">
@@ -106,6 +40,8 @@ const Dialogue: React.FC<DialogueProps> = ({
             </p>
           </div>
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
           >
@@ -121,6 +57,7 @@ const Dialogue: React.FC<DialogueProps> = ({
                 Patient Name
               </label>
               <input
+                type="text"
                 readOnly
                 value={patient.userId?.fullName}
                 className="w-full px-3 py-2 border border-[#DBE0E5] rounded-lg bg-gray-50 text-gray-900 text-sm"
@@ -216,24 +153,36 @@ const Dialogue: React.FC<DialogueProps> = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {appointments.map((apt, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.dateTime}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.doctorName}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-gray-900">
-                              {apt.service}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                                {apt.status}
-                              </span>
+                        {isLoading ? (
+                          <TableSkeleton rows={8} />
+                        ) : allAppointment && allAppointment.length > 0 ? (
+                          <>
+                            {allAppointment?.map((apt, index) => (
+                              <tr key={index} className="hover:bg-gray-50">
+                                <td className="px-4 py-3 whitespace-nowrap text-gray-900">
+                                  {formatLocalDate(apt.createdAt)}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
+                                  {apt?.doctorId?.userId?.fullName ?? "N/A"}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap capitalize text-gray-900">
+                                  {apt?.serviceType}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                                    {apt.status}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </>
+                        ) : (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-3 text-center">
+                              No Appointments
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -258,17 +207,25 @@ const Dialogue: React.FC<DialogueProps> = ({
                     key={index}
                     className="flex items-center gap-3 p-3 border border-[#DBE0E5] rounded-lg bg-[#F4F6F8] hover:border-blue-300 transition-colors"
                   >
-                    <img
-                      src={doctor.doctorId?.userId?.profileImage || ""}
-                      alt={doctor.doctorId?.userId?.fullName}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
+                    {doctor.doctorId?.userId?.profileImage ? (
+                      <img
+                        src={doctor.doctorId?.userId?.profileImage}
+                        alt={doctor.doctorId?.userId?.fullName}
+                        className="size-14 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="border size-14 rounded-lg flex items-center justify-center text-2xl bg-[#BEDBFF] text-[#2E6FF3]">
+                        <span>{doctor.doctorId?.userId?.fullName[0]}</span>
+                      </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col gap-3 min-w-0">
                       <h4 className="text-sm font-semibold text-gray-900 truncate capitalize">
-                        {doctor.doctorId?.userId?.fullName}
+                        {doctor.doctorId?.userId?.fullName || "N/A"}
                       </h4>
                       <p className="text-xs text-gray-600 truncate">
-                        {doctor.doctorId?.professionalInformation?.speciality}
+                        {doctor.doctorId?.professionalInformation?.speciality ||
+                          "N/A"}
                       </p>
                     </div>
                   </div>

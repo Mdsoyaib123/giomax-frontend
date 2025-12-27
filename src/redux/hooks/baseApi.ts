@@ -58,6 +58,8 @@ export const baseApi = createApi({
     "CLINIC_MANAGEMENT",
     "NURSE_APPOINTMENT",
     "NURSE_MANAGEMENT",
+    "WITHDRAW_REQUEST",
+    "PAYMENT_STATS",
   ],
   endpoints: () => ({}),
 });

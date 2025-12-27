@@ -9,9 +9,7 @@ import ViewDoctorDetails from "./ViewDocterDetails";
 import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 import { DoctorData } from "@/redux/types/doctorType";
 
-// Update the Doctor interface to include all required properties
-
-const ITEMS_PER_PAGE = 10; // You can adjust this
+const ITEMS_PER_PAGE = 10;
 
 const DoctorManagement: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<DoctorData | null>(null);
@@ -21,7 +19,6 @@ const DoctorManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: doctorsData, isLoading } = useGetAllDoctorsQuery();
-
   // Use API data or fallback to mock data
   const allDoctors =
     doctorsData?.data ||
@@ -197,15 +194,16 @@ const DoctorManagement: React.FC = () => {
                             className="border-b border-gray-100 hover:bg-gray-50 transition"
                           >
                             <td className="px-6 whitespace-nowrap py-3 font-semibold text-[#343A40] capitalize">
-                              {doctor?.userId?.fullName}
+                              {doctor?.userId?.fullName || "Unknown Name"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">
-                              {doctor?.userId?.email}
+                              {doctor?.userId?.email || "Unknown Email"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">
-                              {doctor?.professionalInformation?.speciality}
+                              {doctor?.professionalInformation?.speciality ||
+                                "N/A"}
                             </td>
 
                             <td className="px-6 whitespace-nowrap py-3 text-gray-700">

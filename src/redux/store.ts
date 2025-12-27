@@ -7,6 +7,7 @@ import doctorAppointmentReducer from "@/redux/features/admin/doctorAppoinment/do
 import clinicManagementReducer from "@/redux/features/admin/clinic/clinicManagementSlice";
 import nurseAppointmentReducer from "@/redux/features/admin/nurseAppointment/nurseAppointmentSlice";
 import nurseManagementReducer from "@/redux/features/admin/nurse/adminNurseManagementSlice";
+import adminPaymentReducer from "@/redux/features/admin/payment/adminPaymentSlice";
 
 import {
   persistReducer,
@@ -38,6 +39,7 @@ export const store = configureStore({
     clinicManagement: clinicManagementReducer,
     nurseAppointment: nurseAppointmentReducer,
     nurseManagement: nurseManagementReducer,
+    adminPayment: adminPaymentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
