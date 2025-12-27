@@ -17,7 +17,15 @@ export const doctorsApi = baseApi.injectEndpoints({
         getSignalClinic: builder.query({
             query: (id) => `/clinic/getSingle/${id}`,
 
+        }),
+        updateDoctor: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `/doctor/update/${id}`,
+                method: "PATCH",
+                body: data
+            }),
+            invalidatesTags: ["DOCTOR"]
         })
     })
 })
-export const { useGetAllDoctorsQuery, useAddNewDoctorMutation, useGetSignalClinicQuery } = doctorsApi;
+export const { useGetAllDoctorsQuery, useAddNewDoctorMutation, useGetSignalClinicQuery, useUpdateDoctorMutation } = doctorsApi;
