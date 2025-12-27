@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Send, Check, Paperclip, Menu, X, RefreshCw, Bug } from 'lucide-react';
 import { useSocket } from '@/hooks/contexts/SocketContext';
 import Cookies from 'js-cookie';
+import { useLocation } from 'react-router-dom';
 
  interface Message {
   _id: string;
@@ -25,9 +26,26 @@ interface AdminContact {
   online: boolean;
 }
 
+interface User {
+  _id: string;
+  name: string;
+  email?: string;
+  role: string;
+  avatar?: string;
+  online?: boolean;
+  lastSeen?: string;
+  unreadCount?: number;
+  lastMessage?: string;
+  lastMessageTime?: string;
+}
+
 const PatientMessage = () => {
   const { socket, isConnected, debugInfo } = useSocket();
+  const location = useLocation();
+  const [isAdminMode, setIsAdminMode] = useState(false);
   const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [patients, setPatients] = useState<User[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,6 +61,7 @@ const PatientMessage = () => {
     online: true
   });
   
+  console.log('location', location);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLInputElement>(null);
   
@@ -62,6 +81,76 @@ const PatientMessage = () => {
   const getToken = () => {
     return localStorage.getItem('token') || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
   };
+
+  // Detect mode from location state
+  useEffect(() => {
+    const showAdmin = (location.state as any)?.showAdmin === true;
+    setIsAdminMode(showAdmin);
+    console.log('Mode detected:', showAdmin ? 'Admin Mode' : 'Patient List Mode');
+  }, [location.state]);
+
+  // Fetch clinic patients list (for patient list mode)
+  const fetchClinicPatients = useCallback(async () => {
+    if (!currentUser) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const currentUserId = currentUser._id || currentUser.id;
+      console.log('📥 Fetching clinic patients...');
+      
+      const response = await fetch(
+        `https://giomaxatadxe-backend.onrender.com/api/v1/doctor-appointment/getSingleClinicChats/${currentUserId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch patients: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('📦 Clinic patients API response:', data);
+
+      if (data.success && Array.isArray(data.data)) {
+        const formattedPatients: User[] = data.data.map((item: any) => {
+          const user = item.userId || item;
+          return {
+            _id: user._id,
+            name: user.fullName || user.name || 'Unknown Patient',
+            email: user.email,
+            role: user.role || 'patient',
+            avatar: user.profileImage || `https://ui-avatars.com/api/?name=${user.fullName || 'Patient'}&background=random`,
+            online: false,
+            unreadCount: 0,
+            lastMessage: '',
+            lastMessageTime: ''
+          };
+        });
+
+        setPatients(formattedPatients);
+        console.log('✅ Fetched patients:', formattedPatients.length);
+      } else {
+        console.warn('⚠️ No patients array in response');
+        setPatients([]);
+      }
+    } catch (error: any) {
+      console.error('❌ Error fetching patients:', error);
+      setError(error.message);
+      setPatients([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentUser]);
 
   // Fetch admin data from API
   const fetchAdmin = useCallback(async () => {
@@ -121,114 +210,242 @@ const PatientMessage = () => {
   }, [isConnected, messages.length, currentUser, isAdminTyping]);
 
   // Fetch messages - Updated to use selected admin ID
-  const fetchMessages = useCallback(async (adminId: string) => {
-    console.log('adminId', adminId);
-    if (!currentUser || !adminId) return;
+//   const fetchMessages = useCallback(async (adminId: string) => {
+//     console.log('adminId', adminId);
+//     if (!currentUser || !adminId) return;
     
-    try {
-      setIsLoading(true);
-      setError(null);
+//     try {
+//       setIsLoading(true);
+//       setError(null);
       
-      // const token = getToken(); // Current user token (sender)
-      const currentUserId = currentUser._id || currentUser.id; // Current user ID for filtering
- const token = Cookies.get('token'); 
- console.log('token', token);     // API expects admin ID (recipient) - same logic as SupportMessage
-      let response;
-      let endpoints = [
-        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${adminId}`,  // Use selected admin ID
-      ];
+//       // const token = getToken(); // Current user token (sender)
+//       const currentUserId = currentUser._id || currentUser.id; // Current user ID for filtering
+//  const token = Cookies.get('token'); 
+//  console.log('token', token);     // API expects admin ID (recipient) - same logic as SupportMessage
+//       let response;
+//       let endpoints = [
+//         `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/getChat/${adminId}`,  // Use selected admin ID
+//       ];
 
-      console.log('endpoints', endpoints);
+//       console.log('endpoints', endpoints);
       
-      let messagesData: Message[] = [];
+//       let messagesData: Message[] = [];
       
-      for (const endpoint of endpoints) {
-        try {
-          console.log(`Trying endpoint: ${endpoint}`);
-          response = await fetch(endpoint, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
+//       for (const endpoint of endpoints) {
+//         try {
+//           console.log(`Trying endpoint: ${endpoint}`);
+//           response = await fetch(endpoint, {
+//             headers: {
+//               'Authorization': `Bearer ${token}`,
+//               'Content-Type': 'application/json'
+//             }
+//           });
 
-          console.log('response', response);
+//           console.log('response', response);
           
-          if (response.ok) {
-            const data = await response.json();
-            console.log('data', data);
-            // Handle different response formats
-            if (Array.isArray(data)) {
-              // API returns array directly (like Postman response)
-              messagesData = data;
-              console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
-              break;
-            } else if (data.success && Array.isArray(data.data)) {
-              // API returns object with success and data array
-              messagesData = data.data;
-              console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
-              break;
-            } else if (data.data && Array.isArray(data.data)) {
-              // API returns object with data array
-              messagesData = data.data;
-              console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
-              break;
-            }
-          }
-        } catch (err) {
-          console.log(`Endpoint ${endpoint} failed:`, err);
-          continue;
-        }
-      }
+//           if (response.ok) {
+//             const data = await response.json();
+//             console.log('data', data);
+//             // Handle different response formats
+//             if (Array.isArray(data)) {
+//               // API returns array directly (like Postman response)
+//               messagesData = data;
+//               console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
+//               break;
+//             } else if (data.success && Array.isArray(data.data)) {
+//               // API returns object with success and data array
+//               messagesData = data.data;
+//               console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
+//               break;
+//             } else if (data.data && Array.isArray(data.data)) {
+//               // API returns object with data array
+//               messagesData = data.data;
+//               console.log(`✅ Loaded ${messagesData.length} messages from ${endpoint}`);
+//               break;
+//             }
+//           }
+//         } catch (err) {
+//           console.log(`Endpoint ${endpoint} failed:`, err);
+//           continue;
+//         }
+//       }
       
-      if (messagesData.length === 0 && response && !response.ok) {
-        // Try to get error message from response
-        let errorMessage = `Failed to fetch messages: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorData.error || errorMessage;
-          console.error('❌ API Error:', errorData);
-        } catch {
-          // If response is not JSON, use default message
-        }
-        throw new Error(errorMessage);
-      }
+//       if (messagesData.length === 0 && response && !response.ok) {
+//         // Try to get error message from response
+//         let errorMessage = `Failed to fetch messages: ${response.status}`;
+//         try {
+//           const errorData = await response.json();
+//           errorMessage = errorData.message || errorData.error || errorMessage;
+//           console.error('❌ API Error:', errorData);
+//         } catch {
+//           // If response is not JSON, use default message
+//         }
+//         throw new Error(errorMessage);
+//       }
       
-      // Filter messages: only show messages between this user and admin
-      const filteredMessages = messagesData.filter(msg => 
-        // Messages where user sent to admin OR admin sent to this user
-        (msg.senderId === currentUserId && msg.receiverType === 'admin') ||
-        (msg.receiverId === currentUserId && msg.senderId?.includes('admin')) ||
-        (msg.chatType === 'user_admin' || msg.chatType === 'admin_user')
-      );
+//       // Filter messages: only show messages between this user and admin
+//       const filteredMessages = messagesData.filter(msg => 
+//         // Messages where user sent to admin OR admin sent to this user
+//         (msg.senderId === currentUserId && msg.receiverType === 'admin') ||
+//         (msg.receiverId === currentUserId && msg.senderId?.includes('admin')) ||
+//         (msg.chatType === 'user_admin' || msg.chatType === 'admin_user')
+//       );
       
-      setMessages(filteredMessages);
+//       setMessages(filteredMessages);
       
-      // Mark messages as seen
-      if (filteredMessages.length > 0) {
-        await markMessagesAsSeen(filteredMessages);
-      }
+//       // Mark messages as seen
+//       if (filteredMessages.length > 0) {
+//         await markMessagesAsSeen(filteredMessages);
+//       }
       
-    } catch (error: any) {
-      console.error('❌ Error fetching messages:', error);
-      setError(error.message || 'Failed to load messages');
-      setMessages([]);
+//     } catch (error: any) {
+//       console.error('❌ Error fetching messages:', error);
+//       setError(error.message || 'Failed to load messages');
+//       setMessages([]);
       
-      // Don't show error if it's just "no messages" - show empty state instead
-      if (error.message.includes('404') || error.message.includes('no messages')) {
-        setError(null);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentUser]);
+//       // Don't show error if it's just "no messages" - show empty state instead
+//       if (error.message.includes('404') || error.message.includes('no messages')) {
+//         setError(null);
+//       }
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   }, [currentUser]);
   
+
+const fetchMessages = useCallback(async (targetId: string) => {
+  console.log('📥 Fetching messages, mode:', isAdminMode ? 'Admin' : 'Patient', 'targetId:', targetId);
+  if (!currentUser) {
+    console.warn('⚠️ Missing currentUser');
+    return;
+  }
+  
+  try {
+    setIsLoading(true);
+    setError(null);
+    
+    const token = Cookies.get('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    
+    const currentUserId = currentUser._id || currentUser.id;
+    console.log('currentUserId', currentUserId);
+    
+    // Use new API endpoint that returns all messages for current user
+    const apiUrl = `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/history`;
+    
+    console.log('🔗 Fetching from:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log('📡 Response status:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        // No messages yet - show empty state instead of error
+        console.log('ℹ️ No messages found (404) - showing empty state');
+        setMessages([]);
+        setError(null);
+        return;
+      }
+      
+      // Try to get error message from response
+      let errorMessage = `Failed to fetch messages: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // If response is not JSON, use default message
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const messagesData: Message[] = await response.json();
+    console.log('📦 Response data:', messagesData);
+    console.log(`✅ Loaded ${messagesData.length} messages`);
+    
+    // Filter messages based on mode
+    let filteredMessages: Message[];
+    if (isAdminMode) {
+      // Admin mode: filter messages between clinic and admin
+      // All messages from API are already for current user, just filter by chatType
+      filteredMessages = messagesData.filter((msg: Message) => 
+        msg.chatType === 'user_admin' || msg.chatType === 'admin_to_user'
+      );
+    } else {
+      // Patient mode: filter messages between clinic and selected patient
+      const patientId = selectedPatientId;
+      if (patientId) {
+        filteredMessages = messagesData.filter((msg: Message) => 
+          // Clinic sent to patient OR patient sent to clinic
+          (msg.senderId === currentUserId && msg.receiverId === patientId) ||
+          (msg.senderId === patientId && msg.receiverId === currentUserId) ||
+          // Fallback: match by chatType
+          (msg.chatType === 'user_admin' || msg.chatType === 'admin_to_user')
+        );
+      } else {
+        filteredMessages = [];
+      }
+    }
+    
+    console.log(`🔍 Filtered to ${filteredMessages.length} relevant messages`);
+    setMessages(filteredMessages);
+    setError(null); // Clear any previous errors
+    
+    // Mark messages as seen (don't let errors here break the flow)
+    if (filteredMessages.length > 0) {
+      try {
+        await markMessagesAsSeen(filteredMessages);
+      } catch (markError) {
+        console.warn('⚠️ Error marking messages as seen:', markError);
+        // Don't throw - this is not critical
+      }
+    }
+  } catch (error: any) {
+    console.error('❌ Error fetching messages:', error);
+    const errorMessage = error.message || 'Failed to load messages';
+    setError(errorMessage);
+    setMessages([]);
+    
+    // Don't show error if it's just "no messages" - show empty state instead
+    if (errorMessage.includes('404') || errorMessage.includes('no messages') || errorMessage.includes('not found')) {
+      setError(null);
+    }
+  } finally {
+    setIsLoading(false);
+  }
+}, [currentUser, isAdminMode, selectedPatientId]);
+
+
+
+
+
   // Handle admin selection
   const handleAdminSelect = useCallback((adminId: string) => {
     setSelectedAdminId(adminId);
+    setSelectedPatientId(null); // Clear patient selection
     setIsSidebarOpen(false);
     setError(null);
     fetchMessages(adminId);
+    
+    setTimeout(() => {
+      messageInputRef.current?.focus();
+    }, 100);
+  }, [fetchMessages]);
+
+  // Handle patient selection
+  const handlePatientSelect = useCallback((patientId: string) => {
+    setSelectedPatientId(patientId);
+    setSelectedAdminId(null); // Clear admin selection
+    setIsSidebarOpen(false);
+    setError(null);
+    fetchMessages(patientId);
     
     setTimeout(() => {
       messageInputRef.current?.focus();
@@ -324,27 +541,36 @@ const PatientMessage = () => {
 
   // Send message - FIXED
   const sendMessage = useCallback(() => {
-    if (!messageInput.trim() || !socket || !isConnected || !currentUser || !selectedAdminId) {
+    const hasSelectedContact = isAdminMode ? selectedAdminId : selectedPatientId;
+    if (!messageInput.trim() || !socket || !isConnected || !currentUser || !hasSelectedContact) {
       console.error('❌ Cannot send message:', {
         hasMessage: !!messageInput.trim(),
         hasSocket: !!socket,
         isConnected,
         currentUserId: currentUser?._id || currentUser?.id,
         selectedAdminId,
+        selectedPatientId,
+        isAdminMode,
         currentUser
       });
       return;
     }
 
-    console.log('📤 Sending message to admin:', messageInput);
+    const targetId = isAdminMode ? selectedAdminId : selectedPatientId;
+    console.log('📤 Sending message:', isAdminMode ? 'to admin' : 'to patient', messageInput);
 
     // FIXED: Backend expects only { message } - userId comes from socket auth
     const messageData = {
       message: messageInput
     };
 
-    // Send via socket
-    socket.emit('send_message_to_admin', messageData);
+    // Send via socket - use appropriate event based on mode
+    if (isAdminMode) {
+      socket.emit('send_message_to_admin', messageData);
+    } else {
+      // For patient mode, use the same event or appropriate patient message event
+      socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
+    }
 
     // Create optimistic message
     const optimisticMessage: Message = {
@@ -352,8 +578,9 @@ const PatientMessage = () => {
       message: messageInput,
       senderId: currentUser._id || currentUser.id,
       senderName: currentUser.name,
-      receiverType: 'admin',
-      chatType: 'user_admin',
+      receiverId: targetId || undefined,
+      receiverType: isAdminMode ? 'admin' : 'user',
+      chatType: isAdminMode ? 'user_admin' : 'user_admin',
       seen: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -369,7 +596,7 @@ const PatientMessage = () => {
     setTimeout(() => {
       messageInputRef.current?.focus();
     }, 100);
-  }, [messageInput, socket, isConnected, currentUser]);
+  }, [messageInput, socket, isConnected, currentUser, isAdminMode, selectedAdminId, selectedPatientId]);
 
   // Handle typing indicator
   const handleTyping = useCallback(() => {
@@ -406,10 +633,14 @@ const PatientMessage = () => {
 
   // Refresh messages
   const handleRefresh = useCallback(() => {
-    if (selectedAdminId) {
+    if (isAdminMode && selectedAdminId) {
       fetchMessages(selectedAdminId);
+    } else if (!isAdminMode && selectedPatientId) {
+      fetchMessages(selectedPatientId);
+    } else if (!isAdminMode) {
+      fetchClinicPatients();
     }
-  }, [fetchMessages, selectedAdminId]);
+  }, [fetchMessages, fetchClinicPatients, isAdminMode, selectedAdminId, selectedPatientId]);
 
   // Admin contact (static for user)
   
@@ -419,17 +650,30 @@ const PatientMessage = () => {
 
   // Admin contact is now fetched from API (see fetchAdmin function above)
 
-  // Fetch admin data on component mount
+  // Fetch data based on mode
   useEffect(() => {
-    fetchAdmin();
-  }, [fetchAdmin]);
+    if (isAdminMode) {
+      // Admin mode: fetch admin and auto-select
+      fetchAdmin();
+    } else {
+      // Patient list mode: fetch patients list
+      fetchClinicPatients();
+    }
+  }, [isAdminMode, fetchAdmin, fetchClinicPatients]);
 
-  // Auto-fetch messages when admin is selected
+  // Auto-fetch messages when admin is selected (admin mode only)
   useEffect(() => {
-    if (selectedAdminId && adminContact._id === selectedAdminId) {
+    if (isAdminMode && selectedAdminId && adminContact._id === selectedAdminId) {
       fetchMessages(selectedAdminId);
     }
-  }, [selectedAdminId, adminContact._id]); // Fetch when admin is selected
+  }, [isAdminMode, selectedAdminId, adminContact._id]); // Fetch when admin is selected
+
+  // Auto-fetch messages when patient is selected (patient mode only)
+  useEffect(() => {
+    if (!isAdminMode && selectedPatientId) {
+      fetchMessages(selectedPatientId);
+    }
+  }, [isAdminMode, selectedPatientId]); // Fetch when patient is selected
 
   return (
     <div className="bg-gray-50 flex justify-center">
@@ -465,7 +709,7 @@ const PatientMessage = () => {
         `}>
           {/* Mobile Close Button */}
           <div className="lg:hidden px-4 pt-4 pb-3 flex justify-between items-center border-b">
-            <h2 className="text-base font-semibold text-gray-900 mb-1">Support</h2>
+            <h2 className="text-base font-semibold text-gray-900 mb-1">{isAdminMode ? 'Support' : 'Patients'}</h2>
             <div className="flex items-center gap-2">
               <button 
                 onClick={handleRefresh}
@@ -481,43 +725,96 @@ const PatientMessage = () => {
             </div>
           </div>
 
-          {/* Contact */}
+          {/* Contact List */}
           <div className="flex-1 overflow-y-auto">
-            {(() => {
-              // Safety check: ensure adminContact exists before rendering
-              const adminToRender = adminContact?._id ? adminContact : null;
-              
-              if (!adminToRender) {
+            {isAdminMode ? (
+              // Admin Mode: Show admin contact
+              (() => {
+                const adminToRender = adminContact?._id ? adminContact : null;
+                
+                if (!adminToRender) {
+                  return (
+                    <div className="p-6 text-center">
+                      <p className="text-gray-500">No admin available</p>
+                    </div>
+                  );
+                }
+                
                 return (
-                  <div className="p-6 text-center">
-                    <p className="text-gray-500">No admin available</p>
-                  </div>
-                );
-              }
-              
-              return (
-                <div 
-                  onClick={() => adminToRender._id && handleAdminSelect(adminToRender._id)}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedAdminId === adminToRender._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
-                >
-                  <div className="relative flex-shrink-0">
-                    <img src={adminToRender.avatar} alt={adminToRender.name} className="w-11 h-11 rounded-full object-cover" />
-                    {adminToRender.online && <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{adminToRender.name}</h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-gray-500 truncate">Support Team</p>
-                      {isAdminTyping && (
-                        <span className="text-xs text-blue-500 animate-pulse">
-                          typing...
-                        </span>
-                      )}
+                  <div 
+                    onClick={() => adminToRender._id && handleAdminSelect(adminToRender._id)}
+                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedAdminId === adminToRender._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                  >
+                    <div className="relative flex-shrink-0">
+                      <img src={adminToRender.avatar} alt={adminToRender.name} className="w-11 h-11 rounded-full object-cover" />
+                      {adminToRender.online && <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{adminToRender.name}</h3>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-500 truncate">Support Team</p>
+                        {isAdminTyping && (
+                          <span className="text-xs text-blue-500 animate-pulse">
+                            typing...
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                );
+              })()
+            ) : (
+              // Patient Mode: Show patient list
+              error ? (
+                <div className="p-4 text-center">
+                  <p className="text-red-500 text-sm">{error}</p>
+                  <button 
+                    onClick={() => fetchClinicPatients()}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Retry
+                  </button>
                 </div>
-              );
-            })()}
+              ) : isLoading && patients.length === 0 ? (
+                <div className="p-6 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                  <p className="mt-2 text-gray-500">Loading patients...</p>
+                </div>
+              ) : patients.length === 0 ? (
+                <div className="p-6 text-center">
+                  <p className="text-gray-500">No patients found</p>
+                  <button 
+                    onClick={() => fetchClinicPatients()}
+                    className="mt-2 text-blue-500 hover:text-blue-600"
+                  >
+                    Refresh
+                  </button>
+                </div>
+              ) : (
+                patients.map((patient) => (
+                  <div
+                    key={patient._id}
+                    onClick={() => handlePatientSelect(patient._id)}
+                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedPatientId === patient._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                  >
+                    <div className="relative flex-shrink-0">
+                      <img 
+                        src={patient.avatar} 
+                        alt={patient.name} 
+                        className="w-11 h-11 rounded-full object-cover" 
+                      />
+                      {patient.online && (
+                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{patient.name}</h3>
+                      <p className="text-xs text-gray-500 truncate">{patient.role || 'Patient'}</p>
+                    </div>
+                  </div>
+                ))
+              )
+            )}
           </div>
 
           {/* Connection Status */}
@@ -548,19 +845,44 @@ const PatientMessage = () => {
               <button className="lg:hidden text-gray-500 hover:text-gray-700" onClick={() => setIsSidebarOpen(true)}>
                 <Menu size={20} />
               </button>
-              <img src={adminContact.avatar} alt={adminContact.name} className="w-11 h-11 rounded-full object-cover" />
-              <div>
-                <h2 className="text-base font-semibold text-gray-900">{adminContact.name}</h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">Support Team</span>
-                  <span className="text-xs text-green-600">• Online</span>
-                  {isAdminTyping && (
-                    <span className="text-xs text-blue-500 animate-pulse">
-                      typing...
-                    </span>
-                  )}
+              {isAdminMode ? (
+                <>
+                  <img src={adminContact.avatar} alt={adminContact.name} className="w-11 h-11 rounded-full object-cover" />
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900">{adminContact.name}</h2>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Support Team</span>
+                      <span className="text-xs text-green-600">• Online</span>
+                      {isAdminTyping && (
+                        <span className="text-xs text-blue-500 animate-pulse">
+                          typing...
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : selectedPatientId ? (
+                (() => {
+                  const selectedPatient = patients.find(p => p._id === selectedPatientId);
+                  return selectedPatient ? (
+                    <>
+                      <img src={selectedPatient.avatar} alt={selectedPatient.name} className="w-11 h-11 rounded-full object-cover" />
+                      <div>
+                        <h2 className="text-base font-semibold text-gray-900">{selectedPatient.name}</h2>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">{selectedPatient.role || 'Patient'}</span>
+                          {selectedPatient.online && <span className="text-xs text-green-600">• Online</span>}
+                        </div>
+                      </div>
+                    </>
+                  ) : null;
+                })()
+              ) : (
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">Select a patient</h2>
+                  <span className="text-xs text-gray-500">Choose a patient to start chatting</span>
                 </div>
-              </div>
+              )}
             </div>
             
             <button
@@ -575,14 +897,16 @@ const PatientMessage = () => {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-white">
-            {!selectedAdminId ? (
+            {((isAdminMode && !selectedAdminId) || (!isAdminMode && !selectedPatientId)) ? (
               <div className="h-full flex flex-col items-center justify-center">
                 <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Send size={24} className="text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
                 <p className="text-gray-500 text-center max-w-md">
-                  Select an admin from the sidebar to start chatting.
+                  {isAdminMode 
+                    ? 'Select an admin from the sidebar to start chatting.'
+                    : 'Select a patient from the sidebar to start chatting.'}
                 </p>
               </div>
             ) : isLoading ? (
@@ -622,25 +946,34 @@ const PatientMessage = () => {
             ) : (
               <>
                 {messages.map((message) => {
-                  // Determine if message is from current user (own message) - same logic as SupportMessage
+                  /**
+                   * MESSAGE ALIGNMENT LOGIC (Following SupportMessage.tsx pattern exactly)
+                   * 
+                   * SupportMessage.tsx (Admin perspective):
+                   * - Admin's own messages → RIGHT side (blue)
+                   * - User's messages → LEFT side (white)
+                   * Logic: message.senderId === adminId || message.chatType === 'admin_to_user' || (message.receiverId === selectedUserId && message.senderId === adminId)
+                   * 
+                   * PertientMessage.tsx (Patient/Clinic perspective):
+                   * - Patient/Clinic's own messages → RIGHT side (blue)
+                   * - Admin's messages → LEFT side (white)
+                   * 
+                   * API Response Structure:
+                   * - User messages: senderId = user ID, receiverType = "admin", chatType = "user_admin"
+                   * - Admin messages: senderId = admin ID, receiverId = user ID, receiverType = "user", chatType = "user_admin"
+                   */
+                  // Determine if message is from current user (patient/clinic) - same pattern as SupportMessage.tsx
                   const currentUserId = currentUser?._id || currentUser?.id;
-                  const adminId = selectedAdminId || adminContact._id;
                   
-                  const isOwnMessage = 
-                    message.senderId === currentUserId ||
-                    (message.chatType === 'user_admin' && message.senderId === currentUserId) ||
-                    (message.receiverId === adminId && message.senderId === currentUserId);
-                  
-                  // Debug logging
-                  console.log('Message alignment check:', {
-                    messageId: message._id,
-                    senderId: message.senderId,
-                    receiverId: message.receiverId,
-                    currentUserId,
-                    adminId,
-                    isOwnMessage,
-                    chatType: message.chatType
-                  });
+                  // Based on API response analysis:
+                  // User messages: senderId = currentUserId (e.g., "6944f4a64c9c8aacef7b254d"), receiverType = "admin"
+                  // Admin messages: senderId = adminId (e.g., "69450cc070ff2e62166d9a93"), receiverId = currentUserId, receiverType = "user"
+                  //
+                  // User's own message (RIGHT side) if senderId matches current user
+                  // Admin's message (LEFT side) if senderId does NOT match current user
+                  // Same exact logic as SupportMessage.tsx: message.senderId === adminId (for admin)
+                  // For user: message.senderId === currentUserId
+                  const isOwnMessage = String(message.senderId) === String(currentUserId);
                   
                   const messageTime = new Date(message.createdAt).toLocaleTimeString([], { 
                     hour: '2-digit', 
@@ -663,7 +996,7 @@ const PatientMessage = () => {
                         </div>
                         <div className={`flex items-center gap-1.5 mt-1.5 px-1 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
                           <span className="text-xs text-gray-500">
-                            {isOwnMessage ? 'You' : 'Admin'} • {messageTime}
+                            {isOwnMessage ? 'You' : (isAdminMode ? 'Admin' : 'Patient')} • {messageTime}
                           </span>
                           {isOwnMessage && (
                             <div className="flex items-center gap-0.5">
@@ -691,9 +1024,13 @@ const PatientMessage = () => {
                 ref={messageInputRef}
                 type="text"
                 placeholder={
-                  !selectedAdminId ? "Select an admin to message..." :
-                  !isConnected ? "Connecting to server..." : 
-                  `Message ${adminContact.name}...`
+                  isAdminMode 
+                    ? (!selectedAdminId ? "Select an admin to message..." :
+                       !isConnected ? "Connecting to server..." : 
+                       `Message ${adminContact.name}...`)
+                    : (!selectedPatientId ? "Select a patient to message..." :
+                       !isConnected ? "Connecting to server..." : 
+                       "Type a message...")
                 }
                 value={messageInput}
                 onChange={(e) => {
@@ -701,14 +1038,14 @@ const PatientMessage = () => {
                   handleTyping();
                 }}
                 onKeyDown={handleKeyDown}
-                disabled={!isConnected || !selectedAdminId}
+                disabled={!isConnected || (isAdminMode ? !selectedAdminId : !selectedPatientId)}
                 className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-full 
                          focus:outline-none focus:border-blue-400 bg-white placeholder:text-gray-400 
                          disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 onClick={sendMessage}
-                disabled={!isConnected || !selectedAdminId || !messageInput.trim()}
+                disabled={!isConnected || (isAdminMode ? !selectedAdminId : !selectedPatientId) || !messageInput.trim()}
                 className="w-11 h-11 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 
                          disabled:cursor-not-allowed rounded-full flex items-center justify-center 
                          text-white flex-shrink-0"

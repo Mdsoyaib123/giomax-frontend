@@ -5,6 +5,7 @@ import AvailabilitySettings from "@/components/ClinicDashboard/ClinicSettings/Av
 import NotificationPreferences from "@/components/ClinicDashboard/ClinicSettings/NotificationPreferences";
 
 import ClinicProfileSettings from "@/components/ClinicDashboard/ClinicSettings/ClinicProfileSettings";
+import { Link } from "react-router-dom";
 
 
 interface ClinicSettingsProps {
@@ -51,11 +52,16 @@ const renderHelp = () => (
  <p className="text-sm text-gray-600">Browse our comprehensive guides</p>
  </div>
  
- <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
+<Link to="/clinic-dashboard/message" state={{ showAdmin: true }}>
+<div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
  <div className="text-3xl mb-3">💬</div>
  <h3 className="font-semibold text-gray-800 mb-2">Live Chat</h3>
  <p className="text-sm text-gray-600">Chat with our support team</p>
  </div>
+</Link>
+
+
+
  <div className="p-6 border border-gray-200 rounded-lg hover:border-blue-400 transition cursor-pointer">
  <div className="text-3xl mb-3">📧</div>
  <h3 className="font-semibold text-gray-800 mb-2">Email Support</h3>
