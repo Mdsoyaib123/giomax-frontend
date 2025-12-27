@@ -173,7 +173,7 @@ const PaymentTable: React.FC = () => {
         <div className="w-full">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-              Withdraw Requests
+              Withdraw History
             </h2>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">

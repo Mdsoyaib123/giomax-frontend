@@ -648,89 +648,94 @@ const PatientManagement: React.FC = () => {
         </div>
 
         {/* Table Container */}
-        <div className="p-4 md:p-5 border border-[#E4E4E4] rounded-lg">
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="min-w-full text-sm">
-              <thead className="bg-gray-100 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                    Patient Name
-                  </th>
-                  <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                    Email Address
-                  </th>
-                  <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                    Phone Number
-                  </th>
-                  <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                    Age / Gender
-                  </th>
-                  <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                    Blood Group
-                  </th>
-                  <th className="px-4 md:px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {paginatedData.length > 0 ? (
-                  paginatedData.map((patient) => (
-                    <tr
-                      key={patient.id}
-                      className="border-b border-gray-100 hover:bg-gray-50 transition"
-                    >
-                      <td className="px-4 md:px-6 whitespace-nowrap py-3 font-semibold text-gray-900">
-                        {patient.name}
-                      </td>
-                      <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
-                        {patient.email}
-                      </td>
-                      <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
-                        {patient.phone}
-                      </td>
-                      <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
-                        {patient.age} / {patient.gender}
-                      </td>
-                      <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
-                        {patient.bloodGroup}
-                      </td>
-                      <td className="px-4 md:px-6 py-3">
-                        <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() => handleView(patient)}
-                            disabled={isDeleting}
-                            className="flex cursor-pointer items-center gap-1 text-sm bg-[#2E6FF3] hover:bg-[#034ee6] text-white font-medium px-3 py-1.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <FaEye className="text-white" /> View
-                          </button>
-                          <button
-                            onClick={() => handleDelete(patient.id)}
-                            disabled={isDeleting}
-                            className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <RiDeleteBinLine className="text-white" />
-                            {isDeleting ? "Deleting..." : "Remove"}
-                          </button>
-                        </div>
-                      </td>
+        <div className="p-5 border border-[#E4E4E4] rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
+            <div className="xl:col-span-4 w-full">
+              {/* Table */}
+              <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-[800px] w-full text-sm">
+                  <thead className="bg-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Patient Name
+                      </th>
+                      <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Email Address
+                      </th>
+                      <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Phone Number
+                      </th>
+                      <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Age / Gender
+                      </th>
+                      <th className="px-4 md:px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                        Blood Group
+                      </th>
+                      <th className="px-4 md:px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
+                        Actions
+                      </th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="px-6 py-8 text-center text-gray-500"
-                    >
-                      {searchTerm
-                        ? "No patients found matching your search"
-                        : "No patients available"}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  </thead>
+
+                  <tbody>
+                    {paginatedData.length > 0 ? (
+                      paginatedData.map((patient) => (
+                        <tr
+                          key={patient.id}
+                          className="border-b border-gray-100 hover:bg-gray-50 transition"
+                        >
+                          <td className="px-4 md:px-6 whitespace-nowrap py-3 font-semibold text-gray-900">
+                            {patient.name}
+                          </td>
+                          <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
+                            {patient.email}
+                          </td>
+                          <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
+                            {patient.phone}
+                          </td>
+                          <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
+                            {patient.age} / {patient.gender}
+                          </td>
+                          <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
+                            {patient.bloodGroup}
+                          </td>
+                          <td className="px-4 md:px-6 py-3">
+                            <div className="flex justify-center gap-2">
+                              <button
+                                onClick={() => handleView(patient)}
+                                disabled={isDeleting}
+                                className="flex cursor-pointer items-center gap-1 text-sm bg-[#2E6FF3] hover:bg-[#034ee6] text-white font-medium px-3 py-1.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <FaEye className="text-white" /> View
+                              </button>
+                              <button
+                                onClick={() => handleDelete(patient.id)}
+                                disabled={isDeleting}
+                                className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <RiDeleteBinLine className="text-white" />
+                                {isDeleting ? "Deleting..." : "Remove"}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="px-6 py-8 text-center text-gray-500"
+                        >
+                          {searchTerm
+                            ? "No patients found matching your search"
+                            : "No patients available"}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 

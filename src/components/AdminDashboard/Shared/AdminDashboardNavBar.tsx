@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  IoIosSearch,
+  // IoIosSearch,
   IoMdArrowDropdownCircle,
   IoMdNotificationsOutline,
 } from "react-icons/io";
@@ -12,12 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logo1 from "@/assets/Logo/userLogout.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
 import { useAppDispatch } from "@/redux/hooks/redux-hook";
 import { logOut } from "@/redux/features/auth/authSlice";
 import { baseApi } from "@/redux/hooks/baseApi";
+
+import { useGetAdminQuery } from "@/redux/features/auth/authApi";
+import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { Link } from "react-router-dom";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -31,11 +35,19 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   isSidebarOpen,
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+
+  console.log(setActiveItem);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const { data, isLoading } = useGetAdminQuery();
+
+  console.log(data);
+
+  const admin = useAppSelector((state) => state.auth.admin);
 
   const handleLogout = () => {
     dispatch(logOut());
@@ -64,9 +76,9 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
           </Button>
 
           {/* Search Box */}
-          <div className="flex items-center pl-0 md:pl-2 lg:pl-70">
+          {/* <div className="flex items-center pl-0 md:pl-2 lg:pl-70">
             <div className="relative w-full flex justify-end md:justify-start">
-              {/* Mobile Search */}
+             
               <div className="block md:hidden">
                 {isSearchOpen ? (
                   <div className="relative w-[220px] sm:w-[260px]">
@@ -89,7 +101,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                 )}
               </div>
 
-              {/* Desktop Search */}
+            
               <div className="hidden md:block relative w-full min-w-lg lg:max-w-3xl">
                 <input
                   type="text"
@@ -99,7 +111,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                 <IoIosSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Section */}
@@ -126,10 +138,16 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                     className="h-12 w-12 rounded-full object-cover"
                   />
                   <div>
-                    <h2 className="text-xl font-semibold whitespace-nowrap">
+                    {/* <h2 className="text-xl font-semibold whitespace-nowrap">
                       Giorgi M.
                     </h2>
-                    <p>Admin</p>
+                    <p>Admin</p> */}
+                    <h2 className="text-xl font-semibold whitespace-nowrap">
+                      {isLoading ? "Loading..." : admin?.name || "Admin"}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {admin?.role || "admin"}
+                    </p>
                   </div>
                 </div>
                 <IoMdArrowDropdownCircle className="text-sky-500 h-9 w-6" />
@@ -140,6 +158,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
               align="end"
               className="bg-white w-60 shadow-lg rounded-xl border border-gray-200 p-2"
             >
+              {/*
               <Link to="/admin-dashboard/settings">
                 <DropdownMenuItem
                   className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
@@ -152,7 +171,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                   Settings
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem
+               <DropdownMenuItem
                 className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
                   activeItem === "terms"
                     ? "bg-blue-400 text-white"
@@ -162,16 +181,20 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
               >
                 Terms & Conditions
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
-                  activeItem === "privacy"
-                    ? "bg-blue-400 text-white"
-                    : "text-gray-700 hover:bg-blue-400 hover:text-white"
-                }`}
-                onClick={() => setActiveItem("privacy")}
-              >
-                Privacy Policy
-              </DropdownMenuItem>
+              */}
+              <Link to="/admin-dashboard/profile">
+                <DropdownMenuItem
+                  className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
+                    activeItem === "privacy"
+                      ? "bg-blue-400 text-white"
+                      : "text-gray-700 hover:bg-blue-400 hover:text-white"
+                  }`}
+                  onClick={() => setActiveItem("privacy")}
+                >
+                  Profile
+                </DropdownMenuItem>
+              </Link>
+
               <DropdownMenuItem
                 className={`px-4 py-3  cursor-pointer rounded-lg text-base font-medium transition-colors ${
                   activeItem === "signout"
