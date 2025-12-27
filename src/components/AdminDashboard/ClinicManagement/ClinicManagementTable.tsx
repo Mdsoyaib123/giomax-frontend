@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { X,  FileText } from "lucide-react";
+import { X, FileText } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,7 +13,10 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
 import { useGetAllClinicsQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Clinic } from "@/redux/types/admin/clinicManagementTypes";
-import { setFilterStatus, setSearchTerm } from "@/redux/features/admin/clinic/clinicManagementSlice";
+import {
+  setFilterStatus,
+  setSearchTerm,
+} from "@/redux/features/admin/clinic/clinicManagementSlice";
 import { format } from "date-fns";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 
@@ -23,9 +26,8 @@ interface Props {
 
 const ClinicManagementTable: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
-  const { filterStatus, searchTerm, currentPage, itemsPerPage } = useAppSelector(
-    (state) => state.clinicManagement
-  );
+  const { filterStatus, searchTerm, currentPage, itemsPerPage } =
+    useAppSelector((state) => state.clinicManagement);
 
   const { data: clinicsResponse, isLoading, error } = useGetAllClinicsQuery();
   const [openProfile, setOpenProfile] = useState<Clinic | null>(null);
@@ -39,7 +41,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
     const user = typeof clinic.userId === "object" ? clinic.userId : null;
     const clinicName = user?.fullName || "";
     const email = user?.email || "";
-    
+
     // Status filter
     if (filterStatus !== "all") {
       // You'll need to add a status field to your Clinic type
@@ -65,7 +67,10 @@ const ClinicManagementTable: React.FC<Props> = () => {
   // Pagination
   const totalPages = Math.ceil(filteredClinics.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentClinics = filteredClinics.slice(startIndex, startIndex + itemsPerPage);
+  const currentClinics = filteredClinics.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Helper function to determine clinic status (placeholder)
   const getClinicStatus = (clinic: Clinic): string => {
@@ -77,10 +82,10 @@ const ClinicManagementTable: React.FC<Props> = () => {
   };
 
   // Helper function to get total doctors (placeholder - you'll need to fetch this from another endpoint)
-  const getTotalDoctors = (clinicId: string): string => {
-    // Implement actual doctor count logic
-    return "0"; // Placeholder
-  };
+  // const getTotalDoctors = (clinicId: string): string => {
+  //   // Implement actual doctor count logic
+  //   return "0"; // Placeholder
+  // };
 
   const handleClick = () => {
     if (openProfile) {
@@ -108,13 +113,13 @@ const ClinicManagementTable: React.FC<Props> = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
-  };
+  // const formatDate = (dateString: string) => {
+  //   try {
+  //     return format(new Date(dateString), "MMM dd, yyyy");
+  //   } catch {
+  //     return dateString;
+  //   }
+  // };
 
   const getClinicName = (clinic: Clinic): string => {
     if (typeof clinic.userId === "object") {
@@ -233,7 +238,9 @@ const ClinicManagementTable: React.FC<Props> = () => {
                         className="hover:bg-gray-50 transition-colors duration-200"
                       >
                         <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          <div className="font-medium">{getClinicName(clinic)}</div>
+                          <div className="font-medium">
+                            {getClinicName(clinic)}
+                          </div>
                           <div className="text-xs text-gray-500">
                             ID: {clinic._id.slice(-6)}
                           </div>
@@ -285,7 +292,8 @@ const ClinicManagementTable: React.FC<Props> = () => {
                               <MdCheckCircle className="text-white" /> Approve
                             </button>
                             <button className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition">
-                              <MdOutlineDoNotDisturb className="text-white" /> Suspend
+                              <MdOutlineDoNotDisturb className="text-white" />{" "}
+                              Suspend
                             </button>
                           </div>
                         </td>
@@ -302,8 +310,10 @@ const ClinicManagementTable: React.FC<Props> = () => {
         {filteredClinics.length > 0 && (
           <div className="mt-6 flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Showing <span className="font-medium">{currentClinics.length}</span>{" "}
-              of <span className="font-medium">{filteredClinics.length}</span> clinics
+              Showing{" "}
+              <span className="font-medium">{currentClinics.length}</span> of{" "}
+              <span className="font-medium">{filteredClinics.length}</span>{" "}
+              clinics
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -363,7 +373,8 @@ const ClinicManagementTable: React.FC<Props> = () => {
               Clinic Details
             </h2>
             <p className="text-gray-600 text-sm mb-6">
-              View clinic information, affiliated doctors, and verification status
+              View clinic information, affiliated doctors, and verification
+              status
             </p>
 
             {/* Input Grid */}
@@ -458,7 +469,9 @@ const ClinicManagementTable: React.FC<Props> = () => {
                 </label>
                 <input
                   type="text"
-                  value={`${openProfile.avarageRating.toFixed(1)}/5 (${openProfile.reviews.length} reviews)`}
+                  value={`${openProfile.avarageRating.toFixed(1)}/5 (${
+                    openProfile.reviews.length
+                  } reviews)`}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
                 />
@@ -471,7 +484,9 @@ const ClinicManagementTable: React.FC<Props> = () => {
                 Clinic Description
               </label>
               <textarea
-                value={openProfile.clinicDescription || "No description provided"}
+                value={
+                  openProfile.clinicDescription || "No description provided"
+                }
                 readOnly
                 rows={3}
                 className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 resize-none"
@@ -491,9 +506,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                   >
                     {service}
                   </span>
-                )) || (
-                  <span className="text-gray-500">No services listed</span>
-                )}
+                )) || <span className="text-gray-500">No services listed</span>}
               </div>
             </div>
 
@@ -507,7 +520,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                   <h1 className="text-xl md:text-2xl font-semibold text-gray-900 pb-2">
                     Availability
                   </h1>
-                  
+
                   <div className="space-y-3">
                     <div className="p-4 bg-gray-50 rounded-lg">
                       <div className="grid grid-cols-2 gap-4">
@@ -534,7 +547,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="mt-3">
                         <label className="block text-sm text-gray-600 mb-1">
                           Appointment Type
@@ -598,14 +611,20 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
             {/* Earnings Info */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-700 mb-2">Earnings Information</h3>
+              <h3 className="font-medium text-gray-700 mb-2">
+                Earnings Information
+              </h3>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm text-gray-600 mb-1">
                     This Month
                   </label>
                   <div className="text-lg font-semibold">
-                    ${openProfile.paymentAndEarnings.totalEarnings.totalThisMonth}
+                    $
+                    {
+                      openProfile.paymentAndEarnings.totalEarnings
+                        .totalThisMonth
+                    }
                   </div>
                 </div>
                 <div>
@@ -621,7 +640,11 @@ const ClinicManagementTable: React.FC<Props> = () => {
                     Available
                   </label>
                   <div className="text-lg font-semibold">
-                    ${openProfile.paymentAndEarnings.totalEarnings.availbleForWithdrawal}
+                    $
+                    {
+                      openProfile.paymentAndEarnings.totalEarnings
+                        .availbleForWithdrawal
+                    }
                   </div>
                 </div>
               </div>
@@ -651,8 +674,8 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
 // Add missing dispatch function
 const setCurrentPage = (page: number) => ({
-  type: 'clinicManagement/setCurrentPage',
-  payload: page
+  type: "clinicManagement/setCurrentPage",
+  payload: page,
 });
 
 export default ClinicManagementTable;

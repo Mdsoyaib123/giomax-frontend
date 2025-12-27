@@ -1,5 +1,5 @@
 import React from "react";
-import { X, FileText, Edit } from "lucide-react";
+import { X, FileText } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
 import { useGetSingleDoctorAppointmentByIdQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { skipToken } from "@reduxjs/toolkit/query";
@@ -75,10 +75,10 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
     </div>
   );
   console.log(doctor);
-  const handleEdit = () => {
-    console.log("Edit clicked for doctor:", doctor.userId);
-    // This would typically open the edit modal
-  };
+  // const handleEdit = () => {
+  //   console.log("Edit clicked for doctor:", doctor.userId);
+  //   // This would typically open the edit modal
+  // };
   const { data: appointments, isLoading } =
     useGetSingleDoctorAppointmentByIdQuery(doctor._id ?? skipToken);
 
@@ -262,14 +262,14 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
           </button>
 
           {/* Edit Button */}
-          <button
+          {/* <button
             type="button"
             onClick={handleEdit}
             className="px-3 py-2 cursor-pointer text-sm font-semibold w-full sm:w-[493px] h-[56px] rounded-[6px] text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/30 flex items-center justify-center gap-2 transition-colors"
           >
             <Edit className="w-4 h-4 text-white" />
             Edit Doctor Profile
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

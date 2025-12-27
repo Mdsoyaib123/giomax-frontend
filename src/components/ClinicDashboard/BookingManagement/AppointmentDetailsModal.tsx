@@ -100,9 +100,9 @@ export function AppointmentDetailsModal({
               </label>
               <input
                 readOnly
-                // value={appointment.serviceName ?? "N/A"}
+                value={appointment.reasonForVisit ?? "N/A"}
                 type="text"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm focus:outline-none capitalize"
               />
             </div>
 

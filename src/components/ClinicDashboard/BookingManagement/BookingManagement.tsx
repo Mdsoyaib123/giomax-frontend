@@ -8,7 +8,18 @@ import sitescope from "../../../assets/icons/sitescope.svg";
 import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
-import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import {
+  useClinicDoctorAllAppointmentsQuery,
+  useCreateDoctorAppointmentMutation,
+} from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
+import {
+  useGetAllDoctorsQuery,
+  useGetSignalClinicQuery,
+} from "@/redux/features/doctors/doctorsApi";
+import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { toast } from "sonner";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
@@ -28,18 +39,32 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const userId = useAppSelector((state) => state.auth.user?.id);
+
+  const { data: clinicData } = useGetSignalClinicQuery(userId!, {
+    skip: !userId,
+  });
+  const { clinicId } = useSingleClinicId();
+  console.log(clinicId);
+
+  const { data: patientsData, isLoading: isLoadingPatient } =
+    useGetAllPatientsQuery();
+  const { data: doctorsData, isLoading: isLoadingDoctors } =
+    useGetAllDoctorsQuery();
+  console.log("object", patientsData, doctorsData);
   const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
+  const [createDoctorAppointment, { isLoading: isCreating }] =
+    useCreateDoctorAppointmentMutation();
   const [formData, setFormData] = useState({
-    patientName: "",
-    age: "",
-    phoneNumber: "",
-    selectDate: "",
-    service: "",
-    selectTime: "",
+    patientId: "",
+    doctorId: "",
+    prefarenceDate: "",
+    reasonForVisit: "",
+    prefarenceTime: "",
+    visitingType: "",
     serviceType: "",
-    selectDoctor: "",
   });
 
   // Updated Tabs
@@ -82,22 +107,49 @@ const BookingManagement = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateBooking = () => {
-    setShowAppointmentDialog(false);
-    setShowSuccessDialog(true);
+  const handleCreateBooking = async () => {
+    if (
+      !formData.patientId ||
+      !formData.doctorId ||
+      !formData.prefarenceDate ||
+      !formData.reasonForVisit ||
+      !formData.prefarenceTime ||
+      !formData.visitingType ||
+      !formData.serviceType
+    ) {
+      toast.error("Please fill in all the required fields.");
+      return;
+    }
+    try {
+      await createDoctorAppointment({
+        patientId: formData.patientId,
+        doctorId: formData.doctorId,
+        clinicId: clinicId,
+        prefarenceDate: formData.prefarenceDate,
+        reasonForVisit: formData.reasonForVisit,
+        prefarenceTime: formData.prefarenceTime,
+        visitingType: formData.visitingType,
+        serviceType: formData.serviceType,
+      }).unwrap();
+      setShowAppointmentDialog(false);
+      setShowSuccessDialog(true);
+      setShowAppointmentDialog(true);
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   const handleCloseSuccess = () => {
     setShowSuccessDialog(false);
+    console.log("formDAta", formData);
     setFormData({
-      patientName: "",
-      age: "",
-      phoneNumber: "",
-      selectDate: "",
-      service: "",
-      selectTime: "",
+      patientId: "",
+      prefarenceDate: "",
+      reasonForVisit: "",
+      prefarenceTime: "",
       serviceType: "",
-      selectDoctor: "",
+      doctorId: "",
+      visitingType: "",
     });
   };
 
@@ -403,45 +455,48 @@ const BookingManagement = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Patient Name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="patientName"
-                    value={formData.patientName}
+                  <select
+                    name="patientId"
+                    value={formData.patientId}
                     onChange={handleInputChange}
-                    placeholder="Enter Patient Name"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                    disabled={isLoading}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg
+             focus:outline-none focus:ring-2 focus:ring-blue-500
+             disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {isLoadingPatient ? (
+                      <option>Loading patients...</option>
+                    ) : (
+                      <>
+                        <option value="">Select patient</option>
+                        {patientsData?.data?.map((patient) => (
+                          <option key={patient._id} value={patient?._id ?? ""}>
+                            {patient?.userId?.fullName}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
                 </div>
 
                 {/* Age */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Age <span className="text-red-500">*</span>
+                    Visiting Type <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="age"
-                    value={formData.age}
-                    onChange={handleInputChange}
-                    placeholder="Enter Age"
+
+                  <select
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                    name="visitingType"
+                    value={formData.visitingType}
+                    onChange={handleInputChange}
+                  >
+                    <option value="fristVisit">First Visit</option>
+                    <option value="followUp">Walk-in</option>
+                  </select>
                 </div>
 
                 {/* Phone Number */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleInputChange}
-                    placeholder="+880 596 123 456"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
 
                 {/* Select Date */}
                 <div>
@@ -450,8 +505,8 @@ const BookingManagement = () => {
                   </label>
                   <input
                     type="date"
-                    name="selectDate"
-                    value={formData.selectDate}
+                    name="prefarenceDate"
+                    value={formData.prefarenceDate}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   />
@@ -460,19 +515,17 @@ const BookingManagement = () => {
                 {/* Service */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Service <span className="text-red-500">*</span>
+                    Reason For Visit <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="service"
-                    value={formData.service}
+
+                  <input
+                    name="reasonForVisit"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter Reason For Visit"
+                    value={formData.reasonForVisit}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
-                  >
-                    <option value="">Select Service Name</option>
-                    <option value="consultation">Consultation</option>
-                    <option value="checkup">Health Checkup</option>
-                    <option value="vaccination">Vaccination</option>
-                  </select>
+                    type="text"
+                  />
                 </div>
 
                 {/* Select Time */}
@@ -482,8 +535,8 @@ const BookingManagement = () => {
                   </label>
                   <input
                     type="time"
-                    name="selectTime"
-                    value={formData.selectTime}
+                    name="prefarenceTime"
+                    value={formData.prefarenceTime}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   />
@@ -501,9 +554,8 @@ const BookingManagement = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
                   >
                     <option value="">Select Service Type</option>
-                    <option value="online">Online Consultation</option>
-                    <option value="clinic">Clinic Visit</option>
-                    <option value="home">Home Visit</option>
+                    <option value="inClinic">Clinic Visit</option>
+                    <option value="online">Online</option>
                   </select>
                 </div>
 
@@ -513,15 +565,23 @@ const BookingManagement = () => {
                     Select Doctor <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="selectDoctor"
-                    value={formData.selectDoctor}
+                    name="doctorId"
+                    value={formData.doctorId}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
                   >
-                    <option value="">Select your Clinic Doctor</option>
-                    <option value="dr-smith">Dr. John Smith</option>
-                    <option value="dr-johnson">Dr. Sarah Johnson</option>
-                    <option value="dr-williams">Dr. Michael Williams</option>
+                    {isLoadingDoctors ? (
+                      <option>Loading doctors...</option>
+                    ) : (
+                      <>
+                        <option value="">Select Doctor</option>
+                        {doctorsData?.data.map((doctor) => (
+                          <option key={doctor._id} value={doctor._id}>
+                            {doctor?.userId?.fullName || "unknown"}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
@@ -538,7 +598,7 @@ const BookingManagement = () => {
                   onClick={handleCreateBooking}
                   className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium cursor-pointer transition"
                 >
-                  Create New Booking
+                  {isCreating ? "Creating..." : "Create Appointment"}
                 </button>
               </div>
             </div>

@@ -9,9 +9,7 @@ import ViewDoctorDetails from "./ViewDocterDetails";
 import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 import { DoctorData } from "@/redux/types/doctorType";
 
-// Update the Doctor interface to include all required properties
-
-const ITEMS_PER_PAGE = 10; // You can adjust this
+const ITEMS_PER_PAGE = 10;
 
 const DoctorManagement: React.FC = () => {
   const [openProfile, setOpenProfile] = useState<DoctorData | null>(null);
