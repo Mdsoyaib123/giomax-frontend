@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 import {
   Select,
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import { useDoctorAppointmentStatusUpdateMutation } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 
 interface Appointment {
   _id: string;
@@ -63,6 +65,7 @@ interface Booking {
   gender?: string;
   age?: number;
   reasonForVisit: string;
+  appointmentId: string; // Add original appointment ID
 }
 
 const ClinicBookingManagementTable: React.FC = () => {
@@ -75,7 +78,10 @@ const ClinicBookingManagementTable: React.FC = () => {
     data: apiData,
     isLoading,
     isFetching,
+    refetch,
   } = useClinicDoctorAllAppointmentsQuery("");
+  const [doctorAppointmentStatusUpdate, { isLoading: isUpdating }] =
+    useDoctorAppointmentStatusUpdateMutation();
 
   // Transform API data to Booking format
   const transformAppointmentsToBookings = (
@@ -110,6 +116,7 @@ const ClinicBookingManagementTable: React.FC = () => {
       gender: appointment.patientId?.gender,
       age: appointment.patientId?.age,
       reasonForVisit: appointment.reasonForVisit,
+      appointmentId: appointment._id, // Store the original appointment ID
     }));
   };
 
@@ -149,8 +156,43 @@ const ClinicBookingManagementTable: React.FC = () => {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: string
+  ) => {
+    try {
+      const result = await doctorAppointmentStatusUpdate({
+        id: appointmentId,
+        status: newStatus,
+      }).unwrap();
+      toast.success(`Appointment ${newStatus} successfully!`);
+      console.log("Status updated successfully:", result);
+
+      // Close the modal
+      setOpenProfile(null);
+
+      // Refresh the appointments list
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update status!");
+      console.error("Failed to update status:", error);
+    }
+  };
+
+  const handleAccept = () => {
+    if (openProfile) {
+      handleStatusChange(openProfile.appointmentId, "confirmed");
+    }
+  };
+
+  const handleReject = () => {
+    if (openProfile) {
+      handleStatusChange(openProfile.appointmentId, "rejected");
+    }
+  };
+
   // Loading state
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
         <div className="flex justify-center items-center h-64">
@@ -369,6 +411,7 @@ const ClinicBookingManagementTable: React.FC = () => {
             <button
               onClick={() => setOpenProfile(null)}
               className="absolute cursor-pointer top-4 right-4 text-gray-600 hover:text-gray-800 hover:scale-110 transition-transform"
+              disabled={isUpdating}
             >
               <X className="w-5 h-5" />
             </button>
@@ -504,7 +547,17 @@ const ClinicBookingManagementTable: React.FC = () => {
                   type="text"
                   value={openProfile.status}
                   readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
+                  className={`w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54] ${
+                    openProfile.status === "Confirmed"
+                      ? "text-green-600"
+                      : openProfile.status === "Pending"
+                      ? "text-yellow-600"
+                      : openProfile.status === "Completed"
+                      ? "text-blue-600"
+                      : openProfile.status === "Rejected"
+                      ? "text-red-600"
+                      : "text-red-600"
+                  }`}
                 />
               </div>
               <div>
@@ -525,13 +578,44 @@ const ClinicBookingManagementTable: React.FC = () => {
             {/* Action Buttons - Only show for pending appointments */}
             {openProfile.status === "Pending" && (
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 mx-auto mt-4">
-                <button className="w-full md:w-[492px] cursor-pointer h-[40px] rounded-md bg-[#FFEAEB] text-red-500 font-medium hover:bg-red-500 hover:text-white transition-colors">
-                  Reject
+                <button
+                  onClick={handleReject}
+                  disabled={isUpdating}
+                  className={`w-full md:w-[492px] cursor-pointer h-[40px] rounded-md bg-[#FFEAEB] text-red-500 font-medium hover:bg-red-500 hover:text-white transition-colors ${
+                    isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isUpdating ? "Processing..." : "Reject"}
                 </button>
 
-                <button className="w-full md:w-[492px] h-[40px] cursor-pointer rounded-md bg-[#1B9268] text-white font-medium hover:bg-green-600 transition-colors">
-                  Accept
+                <button
+                  onClick={handleAccept}
+                  disabled={isUpdating}
+                  className={`w-full md:w-[492px] h-[40px] cursor-pointer rounded-md bg-[#1B9268] text-white font-medium hover:bg-green-600 transition-colors ${
+                    isUpdating ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isUpdating ? "Processing..." : "Accept"}
                 </button>
+              </div>
+            )}
+
+            {/* Show completed/cancelled status message */}
+            {openProfile.status !== "Pending" && (
+              <div className="mt-4 text-center">
+                <p
+                  className={`text-sm font-medium ${
+                    openProfile.status === "Confirmed"
+                      ? "text-green-600"
+                      : openProfile.status === "Completed"
+                      ? "text-blue-600"
+                      : openProfile.status === "Rejected"
+                      ? "text-red-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  This appointment is already {openProfile.status.toLowerCase()}
+                </p>
               </div>
             )}
           </div>
