@@ -131,7 +131,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
                     <h2 className="text-xl font-semibold whitespace-nowrap">
                       Giorgi M.
                     </h2>
-                    <p>Admin</p>
+                    <p>Clinic</p>
                   </div>
                 </div>
                 <IoMdArrowDropdownCircle className="text-sky-500 h-9 w-6" />
