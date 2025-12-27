@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
@@ -498,7 +499,7 @@ const PatientManagement: React.FC = () => {
   } = useGetAllPatientsQuery();
 
   const { data: singlePatientResponse } = useGetSinglePatientQuery(
-    selectedPatient?.id!,
+    selectedPatient?.id,
     {
       skip: !selectedPatient?.id || !isViewModalOpen,
     }

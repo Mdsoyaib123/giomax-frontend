@@ -11,6 +11,9 @@ export interface DoctorData {
     phoneNumber: string;
     dateOfBirth?: string;
     gender?: string;
+    onlineConsultationFee?: number;
+    clinicVisitFee?: number;
+    age?: number;
     bloodGroup?: string;
     medicalHistory?: MedicalHistory;
     address?: Address[];

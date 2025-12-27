@@ -60,6 +60,8 @@ export const baseApi = createApi({
     "NURSE_MANAGEMENT",
     "WITHDRAW_REQUEST",
     "PAYMENT_STATS",
+    "CLINIC_BASIC",
+    "CLINIC_PATIENT",
     "AdminProfile",
   ],
   endpoints: () => ({}),

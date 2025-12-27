@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, ArrowLeft, UploadCloud, Clock } from "lucide-react";
 import { DoctorData } from "@/redux/types/doctorType";
 import { useUpdateDoctorMutation } from "@/redux/features/doctors/doctorsApi";
+import { toast } from "sonner";
 
 interface EditDoctorDetailsProps {
   doctor: DoctorData;
@@ -51,8 +52,8 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       dateOfBirth: doctor?.dateOfBirth?.split("T")[0] || "1980-05-15",
       gender: doctor?.gender || "male",
       appointmentType: doctor?.appointmentType || "online",
-      // onlineConsultationFee: doctor?.onlineConsultationFee || 50,
-      // clinicVisitFee: doctor?.clinicVisitFee || 100,
+      onlineConsultationFee: doctor?.onlineConsultationFee || 50,
+      clinicVisitFee: doctor?.clinicVisitFee || 100,
       experienceYears: doctor?.professionalInformation?.experienceYears || 10,
       qualifications:
         doctor?.professionalInformation?.qualifications || "MBBS, MD",
@@ -125,18 +126,16 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       const response = await updateDoctor({
         id: doctor._id,
         data: updatedData,
-      });
+      }).unwrap();
 
       if ("error" in response) {
         throw new Error("Failed to update doctor");
       }
-
-      console.log("Save successful!");
-      alert("Doctor details saved successfully!");
+      toast.success("Doctor details saved successfully!");
       onClose();
     } catch (error) {
       console.error("Error updating doctor:", error);
-      alert("Failed to save doctor details. Please try again.");
+      toast.error("Failed to save doctor details. Please try again.");
     } finally {
       setLoading(false);
     }
