@@ -1,6 +1,7 @@
 // src/redux/features/auth/authApi.ts
 import { baseApi } from "@/redux/hooks/baseApi";
 import {
+  GetAdminResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -24,11 +25,21 @@ export const authApi = baseApi.injectEndpoints({
         body: userData,
       }),
     }),
+
+    // 🔥 GET ADMIN DATA
+    getAdmin: builder.query<GetAdminResponse, void>({
+      query: () => ({
+        url: "/user/get-admin",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation, useGetAdminQuery } =
+  authApi;
 
 // import { baseApi } from "@/redux/hooks/baseApi";
 // import {

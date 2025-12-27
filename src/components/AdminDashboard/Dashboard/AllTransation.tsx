@@ -71,7 +71,7 @@ const AllTransactions: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 font-semibold">
-                        ৳ {transaction.amount}
+                        $ {transaction.amount}
                       </td>
 
                       <td className="px-6 py-4 text-gray-600">
@@ -113,7 +113,7 @@ const AllTransactions: React.FC = () => {
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className="px-4 py-1.5 border border-[#E4E4E4]  rounded-lg disabled:opacity-50"
+              className="px-4 py-1.5 border cursor-pointer border-[#E4E4E4]  rounded-lg disabled:opacity-50"
             >
               Prev
             </button>
@@ -125,7 +125,7 @@ const AllTransactions: React.FC = () => {
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className="px-4 py-1.5 border border-[#E4E4E4] rounded-lg disabled:opacity-50"
+              className="px-4 py-1.5 border cursor-pointer border-[#E4E4E4] rounded-lg disabled:opacity-50"
             >
               Next
             </button>
