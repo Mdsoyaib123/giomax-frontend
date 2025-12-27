@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import logo1 from "@/assets/Logo/userLogout.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AdvancedFilter from "./AdvancedFilter";
-import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 import { logOut } from "@/redux/features/auth/authSlice";
+import { useGetAClinicQuery } from "@/redux/features/admin/clinic/clinicBasicApi";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -27,16 +28,29 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
   onMobileMenuToggle,
   isSidebarOpen,
 }) => {
+  const userId = useAppSelector((state) => state.auth.user?.id);
   // const [isNotifOpen, setIsNotifOpen] = useState(false);
   // const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [clinicName, setClinicName] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const handleLogout = () => {
     dispatch(logOut());
     navigate("/");
   };
+  const { data: clinicResponse } = useGetAClinicQuery(userId!, {
+    skip: !userId,
+  });
+  const clinic = clinicResponse?.data;
+  useEffect(() => {
+    if (!clinic?.userId) return;
+
+    setProfileImage(clinic.userId.profileImage ?? null);
+    setClinicName(clinic.userId.fullName ?? "");
+  }, [clinic]);
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -120,13 +134,13 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
               <div className="p-2 flex justify-between items-center gap-5 m-4 rounded-2xl cursor-pointer hover:bg-gray-50 transition-colors">
                 <div className="flex items-center gap-3">
                   <img
-                    src={logo1}
+                    src={profileImage || logo1}
                     alt="User"
                     className="h-12 w-12 rounded-full object-cover"
                   />
                   <div>
                     <h2 className="text-xl font-semibold whitespace-nowrap">
-                      Giorgi M.
+                      {clinicName}
                     </h2>
                     <p>Clinic</p>
                   </div>
