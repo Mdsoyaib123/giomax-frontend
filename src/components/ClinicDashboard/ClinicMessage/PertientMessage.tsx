@@ -81,7 +81,7 @@ const PatientMessage = () => {
   const getToken = () => {
     return localStorage.getItem('token') || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
   };
-
+console.log(getToken());
   // Detect mode from location state
   useEffect(() => {
     const showAdmin = (location.state as any)?.showAdmin === true;
