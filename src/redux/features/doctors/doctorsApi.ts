@@ -25,7 +25,10 @@ export const doctorsApi = baseApi.injectEndpoints({
                 body: data
             }),
             invalidatesTags: ["DOCTOR"]
+        }),
+        getClinicDashboard: builder.query({
+            query: (id) => `/doctor/getDoctorDashboardOverview/${id}`
         })
     })
 })
-export const { useGetAllDoctorsQuery, useAddNewDoctorMutation, useGetSignalClinicQuery, useUpdateDoctorMutation } = doctorsApi;
+export const { useGetAllDoctorsQuery, useAddNewDoctorMutation, useGetSignalClinicQuery, useUpdateDoctorMutation, useGetClinicDashboardQuery } = doctorsApi;

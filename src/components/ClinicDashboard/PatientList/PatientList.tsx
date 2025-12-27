@@ -300,7 +300,7 @@ const PatientList = () => {
                             <TableRowSkeleton columns={5} rows={9} />
                           </>
                         ) : currentPatients.length > 0 ? (
-                          currentPatients.map((patient) => (
+                          currentPatients.map((patient: any) => (
                             <tr
                               key={patient._id}
                               className="hover:bg-gray-50 transition-colors duration-150"

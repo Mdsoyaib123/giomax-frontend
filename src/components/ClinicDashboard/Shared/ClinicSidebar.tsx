@@ -1,18 +1,21 @@
 import logo from "@/assets/Pic.png";
 import { Badge } from "@/components/ui/badge";
 import { BiMessageRoundedDetail } from "react-icons/bi";
-import { RiShareBoxLine } from "react-icons/ri";
+
 import {
   Calendar,
   ChartPie,
   ChevronDown,
   CreditCard,
+  LogOut,
   Settings,
   Stethoscope,
   Users,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ReactNode, useState } from "react";
+import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { logOut } from "@/redux/features/auth/authSlice";
 
 // Types
 export interface SidebarItem {
@@ -69,7 +72,12 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/");
+  };
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
@@ -202,21 +210,23 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Help & Support */}
-      <div className="border-t border-[#C9C6C3]">
-        <div className="flex justify-center">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-16 w-full max-w-[300px] object-contain"
-          />
+      <div className="border border-[#CED4DA] bg-[#F8F9FA] p-4">
+        <div className="flex   justify-between">
+          <div className="flex gap-6">
+            <img src={logo} alt="Logo" className=" size-11 object-contain" />
+            <div className="flex flex-col">
+              Giorigi M.
+              <span>Clinic</span>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            type="button"
+            className="text-red-600 cursor-pointer"
+          >
+            <LogOut />
+          </button>
         </div>
-        <Link
-          to="/client-dashboard/help-support"
-          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-sky-500 transition-colors px-3 py-2 rounded-lg"
-        >
-          <span className="text-sm font-medium">Help & Support</span>
-          <RiShareBoxLine className="w-5 h-5" />
-        </Link>
       </div>
     </div>
   );

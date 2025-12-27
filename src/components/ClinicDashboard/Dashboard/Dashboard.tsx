@@ -1,6 +1,5 @@
 import DashboardCard from "./DashboardCard";
-import ClinicRevenueOverview from "./ClinicRevenueOverview";
-import ClinicAppointmentStatistics from "./ClinicAppointmentStatistics";
+
 import ClinicBookingManagementTable from "./ClinicBookingManagementTable";
 import SectionTitle from "@/common/SectionTitle";
 

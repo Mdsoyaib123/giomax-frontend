@@ -472,7 +472,7 @@ const BookingManagement = () => {
                     ) : (
                       <>
                         <option value="">Select patient</option>
-                        {patientsData?.data?.map((patient) => (
+                        {patientsData?.data?.map((patient: any) => (
                           <option key={patient._id} value={patient?._id ?? ""}>
                             {patient?.userId?.fullName}
                           </option>

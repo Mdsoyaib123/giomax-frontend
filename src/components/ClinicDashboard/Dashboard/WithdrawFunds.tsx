@@ -1,5 +1,7 @@
 import React from "react";
 import { X, Info, CheckCircle } from "lucide-react";
+import { useCreateWithdrawRequestMutation } from "@/redux/features/admin/payment/clinicPaymentsApi";
+import { useAppSelector } from "@/redux/hooks/redux-hook";
 
 interface WithdrawFundsProps {
   isOpen: boolean;
@@ -7,20 +9,106 @@ interface WithdrawFundsProps {
 }
 
 const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
+  const [createWithdrawRequest, { isLoading }] =
+    useCreateWithdrawRequestMutation();
   const [amount, setAmount] = React.useState("1200.00");
-  const [payoutMethod, setPayoutMethod] = React.useState(
-    "Bank transfer - ****4212"
-  );
+  const [cardNumber, setCardNumber] = React.useState("");
   const [showConfirmation, setShowConfirmation] = React.useState(false);
+  const useId = useAppSelector((state) => state.auth.user?.id);
+  const [errors, setErrors] = React.useState({
+    amount: "",
+    cardNumber: "",
+  });
 
-  const handleRequestWithdrawal = () => {
-    setShowConfirmation(true);
+  const validateForm = () => {
+    const newErrors = { amount: "", cardNumber: "" };
+    let isValid = true;
+
+    if (!amount.trim()) {
+      newErrors.amount = "Amount is required";
+      isValid = false;
+    } else {
+      const amountValue = parseFloat(amount);
+      if (isNaN(amountValue)) {
+        newErrors.amount = "Please enter a valid number";
+        isValid = false;
+      } else if (amountValue <= 0) {
+        newErrors.amount = "Amount must be greater than 0";
+        isValid = false;
+      } else if (amountValue > 1600) {
+        // Assuming 1600 is max available
+        newErrors.amount = "Amount exceeds available balance";
+        isValid = false;
+      }
+    }
+
+    if (!cardNumber.trim()) {
+      newErrors.cardNumber = "Card number is required";
+      isValid = false;
+    } else if (!/^\d+$/.test(cardNumber.replace(/\s/g, ""))) {
+      newErrors.cardNumber = "Card number must contain only digits";
+      isValid = false;
+    } else if (cardNumber.replace(/\s/g, "").length < 12) {
+      newErrors.cardNumber = "Card number must be at least 12 digits";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleRequestWithdrawal = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const withdrawData = {
+        amount: parseFloat(amount),
+        cardNumber: cardNumber.replace(/\s/g, ""),
+        ownerId: useId,
+      };
+
+      const response = await createWithdrawRequest(withdrawData).unwrap();
+
+      setShowConfirmation(true);
+    } catch (error) {
+      console.error("Withdrawal failed:", error);
+      // You can show an error message here
+      alert("Withdrawal request failed. Please try again.");
+    }
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers and one decimal point
+    if (/^\d*\.?\d*$/.test(value) || value === "") {
+      setAmount(value);
+      if (errors.amount) {
+        setErrors({ ...errors, amount: "" });
+      }
+    }
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+
+    // Add space every 4 digits for better readability (optional)
+    if (value.length > 0) {
+      value = value.match(/.{1,4}/g)?.join(" ") || value;
+    }
+
+    setCardNumber(value);
+    if (errors.cardNumber) {
+      setErrors({ ...errors, cardNumber: "" });
+    }
   };
 
   const handleBack = () => {
     setShowConfirmation(false);
     setAmount("1200.00");
-    setPayoutMethod("Bank transfer - ****4212");
+    setCardNumber("");
+    setErrors({ amount: "", cardNumber: "" });
     onClose();
   };
 
@@ -71,24 +159,40 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
                   <input
                     type="text"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={handleAmountChange}
+                    className={`w-full pl-7 pr-4 py-2 border ${
+                      errors.amount ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    placeholder="Enter amount"
                   />
                 </div>
+                {errors.amount && (
+                  <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Pay-out Method <span className="text-red-500">*</span>
+                  Card Number <span className="text-red-500">*</span>
                 </label>
-                <select
-                  value={payoutMethod}
-                  onChange={(e) => setPayoutMethod(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                >
-                  <option>Bank transfer - ****4212</option>
-                  <option>Bank transfer - ****5678</option>
-                </select>
+                <input
+                  value={cardNumber}
+                  onChange={handleCardNumberChange}
+                  className={`w-full px-4 py-2 border ${
+                    errors.cardNumber ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white`}
+                  type="text"
+                  placeholder="Enter card number (digits only)"
+                  maxLength={19} // 16 digits + 3 spaces
+                />
+                {errors.cardNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.cardNumber}
+                  </p>
+                )}
+                <p className="text-gray-500 text-xs mt-1">
+                  Enter your bank account number or card number
+                </p>
               </div>
 
               <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -107,16 +211,44 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <button
                 onClick={onClose}
-                className="flex-1 cursor-pointer px-4 py-3 border border-gray-300 rounded-lg text-blue-600 font-medium hover:bg-gray-50 transition-colors"
+                disabled={isLoading}
+                className="flex-1 cursor-pointer px-4 py-3 border border-gray-300 rounded-lg text-blue-600 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleRequestWithdrawal}
-                className="flex-1 cursor-pointer px-4 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-colors"
+                disabled={isLoading}
+                className="flex-1 cursor-pointer px-4 py-3 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Request Withdrawal
+                {isLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  "Request Withdrawal"
+                )}
               </button>
             </div>
           </div>
@@ -125,7 +257,7 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
 
       {/* Withdrawal Confirmation Modal */}
       {showConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2D3C5266]  bg-opacity-40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2D3C5266] bg-opacity-40 p-4">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-[1140px] text-center h-[375px]">
             {/* Close Button */}
             <div className="flex justify-end mb-4">
@@ -152,7 +284,9 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
             {/* Message */}
             <p className="text-gray-600 text-sm leading-relaxed mb-8">
               Your withdrawal of{" "}
-              <span className="font-semibold text-gray-900">${amount}</span> has
+              <span className="font-semibold text-gray-900">${amount}</span> to
+              card ending in{" "}
+              <span className="font-semibold">{cardNumber.slice(-4)}</span> has
               been initiated. You should see it in your bank account within{" "}
               <span className="font-semibold">1-3 business days</span>.
             </p>

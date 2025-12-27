@@ -12,6 +12,7 @@ export interface Appointment {
     visitingType: "fristVisit" | "followUp";
     reasonForVisit: string;
     followUpDetails: string;
+
     status: "pending" | "confirmed" | "cancelled";
     prefarenceDate: string; // ISO date string
     prefarenceTime: string;
@@ -23,6 +24,7 @@ export interface Appointment {
 export interface Patient {
     _id: string;
     userId: User;
+    phoneNumber: string;
 }
 export interface Doctor {
     _id: string;
@@ -31,5 +33,6 @@ export interface Doctor {
 export interface User {
     _id: string;
     fullName: string;
+    email: string;
     role: "patient" | "doctor" | "admin";
 }
