@@ -1,9 +1,6 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  IoMdArrowDropdownCircle,
-  IoMdNotificationsOutline,
-} from "react-icons/io";
+import { IoMdArrowDropdownCircle } from "react-icons/io";
 
 import {
   DropdownMenu,
@@ -14,7 +11,7 @@ import {
 import logo1 from "@/assets/Logo/userLogout.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import NotificationPanel from "@/components/AdminDashboard/Shared/NotificationPanel";
+
 import AdvancedFilter from "./AdvancedFilter";
 import { useAppDispatch } from "@/redux/hooks/redux-hook";
 import { logOut } from "@/redux/features/auth/authSlice";
@@ -30,7 +27,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
   onMobileMenuToggle,
   isSidebarOpen,
 }) => {
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  // const [isNotifOpen, setIsNotifOpen] = useState(false);
   // const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
