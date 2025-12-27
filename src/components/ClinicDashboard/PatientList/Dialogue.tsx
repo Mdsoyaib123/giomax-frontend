@@ -20,11 +20,8 @@ const Dialogue: React.FC<DialogueProps> = ({
 }) => {
   const { data: appointmentData, isLoading } =
     useGetSinglePenitentAppointmentByIdQuery(patient?._id ?? skipToken);
-
-  console.log(patient?._id);
   console.log("h", appointmentData?.data);
   const allAppointment = appointmentData?.data;
-  console.log(allAppointment);
   if (!patient) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ">

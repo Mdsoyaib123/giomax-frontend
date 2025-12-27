@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-// Removed: import PaymentEarningCard from "./PaymentEarningCard";
 import PaymentEarningCard from "@/components/ClinicDashboard/Dashboard/PaymentEarningCard";
 import {
   Select,
@@ -10,15 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetWithdrawRequestsQuery } from "@/redux/features/admin/payment/clinicPaymentsApi";
+import { useAppSelector } from "@/redux/hooks/redux-hook";
 
-// Transaction type-ti define kora holo
+// Transaction type definition based on API response
 interface Transaction {
-  transactionId: string;
-  receiver: string;
+  id: string;
+  transactionId?: string;
+  receiver?: string;
   service: string;
   amount: number;
   date: string;
-  status: "Pending" | "Completed" | "Cancelled";
+  status: "Pending" | "Completed" | "Cancelled" | "PAID" | "PENDING";
+  ownerType: string;
 }
 
 // Status Badge Component
@@ -26,121 +30,129 @@ const StatusBadge: React.FC<{ status: Transaction["status"] }> = ({
   status,
 }) => {
   let colorClasses = "";
+  let displayStatus = status;
 
-  switch (status) {
-    case "Completed":
-      colorClasses = "bg-[#D9F7E1] text-[#28A745]";
-      break;
-    case "Pending":
-      colorClasses = "bg-[#FFF8E6] text-[#FFC107]";
-      break;
-    case "Cancelled":
-      colorClasses = "bg-gray-200 text-gray-700";
-      break;
-    default:
-      colorClasses = "bg-gray-100 text-gray-600";
+  // Map API status values to display values
+  if (status === "PAID") {
+    displayStatus = "Completed";
+    colorClasses = "bg-[#D9F7E1] text-[#28A745]";
+  } else if (status === "PENDING") {
+    displayStatus = "Pending";
+    colorClasses = "bg-[#FFF8E6] text-[#FFC107]";
+  } else if (status === "Cancelled") {
+    displayStatus = "Cancelled";
+    colorClasses = "bg-gray-200 text-gray-700";
+  } else if (status === "Completed") {
+    colorClasses = "bg-[#D9F7E1] text-[#28A745]";
+  } else if (status === "Pending") {
+    colorClasses = "bg-[#FFF8E6] text-[#FFC107]";
+  } else {
+    colorClasses = "bg-gray-100 text-gray-600";
   }
 
   return (
     <span
       className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${colorClasses}`}
     >
-      {status}
+      {displayStatus}
     </span>
   );
 };
 
-// Component-er naam TransactionHistory deoya holo
+// Helper function to format date
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-GB"); // Format: DD/MM/YYYY
+};
+
+// Helper function to format amount
+const formatAmount = (amount: number) => {
+  return `$${amount.toFixed(2)}`;
+};
+
+// Helper function to get service name based on ownerType
+const getServiceName = (ownerType: string) => {
+  switch (ownerType) {
+    case "SOLO_NURSE":
+      return "Nursing Services";
+    case "CLINIC":
+      return "Clinic Services";
+    case "SOLO_DOCTOR":
+      return "Medical Consultation";
+    case "HOSPITAL":
+      return "Hospital Services";
+    default:
+      return "Healthcare Services";
+  }
+};
+
 const TransactionHistory: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const userId = useAppSelector((state) => state.auth.user?.id);
+  const {
+    data: withdrawRequests,
+    isLoading,
+    error,
+  } = useGetWithdrawRequestsQuery(userId);
 
-  // Items Per Page-ke 5 kora holo
   const itemsPerPage = 5;
 
-  // Mukhya data-ti 9-ti transactions niye
-  const mockTransactions: Transaction[] = [
-    {
-      transactionId: "TRX001",
-      receiver: "Dr. Michael Brown",
-      service: "Cardiology Consultation",
-      amount: 2500.0,
-      date: "25/10/2025",
-      status: "Pending",
-    },
-    {
-      transactionId: "TRX002",
-      receiver: "Dr. Sarah Johnson",
-      service: "Pediatric Checkup",
-      amount: 2500.0,
-      date: "25/10/2025",
-      status: "Completed",
-    },
-    {
-      transactionId: "TRX003",
-      receiver: "Dr. Emily Rodriguez",
-      service: "Dermatology Consultation",
-      amount: 2500.0,
-      date: "25/10/2025",
-      status: "Completed",
-    },
-    {
-      transactionId: "TRX004",
-      receiver: "Dr. Lisa Anderson",
-      service: "Neurology Consultation",
-      amount: 2500.0,
-      date: "25/10/2025",
-      status: "Completed",
-    },
-    {
-      transactionId: "TRX005",
-      receiver: "Dr. Lisa Anderson",
-      service: "General Checkup",
-      amount: 2500.0,
-      date: "25/10/2025",
-      status: "Completed",
-    },
-    // Baki 4-ti entry
-    {
-      transactionId: "TRX006",
-      receiver: "Dr. Jane Smith",
-      service: "Orthopedic Checkup",
-      amount: 1800.0,
-      date: "24/10/2025",
-      status: "Completed",
-    },
-    {
-      transactionId: "TRX007",
-      receiver: "Dr. Alex Lee",
-      service: "Ophthalmology Exam",
-      amount: 1200.0,
-      date: "24/10/2025",
-      status: "Completed",
-    },
-    {
-      transactionId: "TRX008",
-      receiver: "Dr. Ben Carter",
-      service: "Physical Therapy",
-      amount: 800.0,
-      date: "23/10/2025",
-      status: "Pending",
-    },
-    {
-      transactionId: "TRX009",
-      receiver: "Dr. Chloe Green",
-      service: "General Consultation",
-      amount: 1500.0,
-      date: "23/10/2025",
-      status: "Completed",
-    },
-  ];
+  // Transform API data to match Transaction interface
+  const transformApiData = (): Transaction[] => {
+    if (!withdrawRequests?.data || !Array.isArray(withdrawRequests.data)) {
+      return [];
+    }
+
+    return withdrawRequests.data.map((item: any, index: number) => ({
+      id: item._id || `trx-${index}`,
+      transactionId:
+        item._id?.slice(-6) || `TRX${String(index + 1).padStart(3, "0")}`, // Use last 6 chars of _id
+      receiver: item.ownerType || "System",
+      service: getServiceName(item.ownerType),
+      amount: item.amount || 0,
+      date: formatDate(item.createdAt || new Date().toISOString()),
+      status:
+        item.status === "PAID"
+          ? "PAID"
+          : item.status === "PENDING"
+          ? "PENDING"
+          : ("Pending" as Transaction["status"]),
+      ownerType: item.ownerType || "UNKNOWN",
+    }));
+  };
+
+  // Get all transactions
+  const allTransactions = transformApiData();
+
+  // Filter transactions based on status
+  const filteredTransactions =
+    statusFilter === "all"
+      ? allTransactions
+      : allTransactions.filter((transaction) => {
+          if (statusFilter === "Active" || statusFilter === "Completed") {
+            return (
+              transaction.status === "Completed" ||
+              transaction.status === "PAID"
+            );
+          }
+          if (statusFilter === "Pending") {
+            return (
+              transaction.status === "Pending" ||
+              transaction.status === "PENDING"
+            );
+          }
+          if (statusFilter === "Suspended") {
+            return transaction.status === "Cancelled";
+          }
+          return true;
+        });
 
   // PAGINATION LOGIC
-  const transactionList = mockTransactions;
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
-  const totalPages = Math.ceil(transactionList.length / itemsPerPage);
-
-  // Bortoman page-er data
-  const currentTransactions = transactionList.slice(
+  // Current page data
+  const currentTransactions = filteredTransactions.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -153,66 +165,120 @@ const TransactionHistory: React.FC = () => {
 
   const getPageNumbers = () => {
     const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      const startPage = Math.max(1, currentPage - 2);
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
     }
+
     return pageNumbers;
   };
 
-  // Showing X to Y of Z entries er jonno hishab
+  // Showing X to Y of Z entries calculation
   const firstEntry = (currentPage - 1) * itemsPerPage + 1;
   const lastEntry = Math.min(
     currentPage * itemsPerPage,
-    transactionList.length
+    filteredTransactions.length
   );
-  const totalEntries = transactionList.length;
+  const totalEntries = filteredTransactions.length;
+
+  // Handle filter change
+  const handleFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="mb-4 sm:mb-5">
+          <PaymentEarningCard />
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+          <div className="text-center py-10">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-2 text-gray-600">Loading transactions...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="mb-4 sm:mb-5">
+          <PaymentEarningCard />
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+          <div className="text-center py-10 text-red-600">
+            <p>Error loading transactions. Please try again later.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="  font-sans">
-        <div className="mt-5">
-          {/* Payment Earning Card */}
-          <div className="mb-4 sm:mb-5">
-            <PaymentEarningCard></PaymentEarningCard>
-          </div>
+    <div className="font-sans">
+      <div className="mt-5">
+        {/* Payment Earning Card */}
+        <div className="mb-4 sm:mb-5">
+          <PaymentEarningCard />
+        </div>
 
-          {/* Main Table Card */}
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 sm:p-6 border-1px">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-              <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-                Transaction History
-              </h2>
+        {/* Main Table Card */}
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 sm:p-6 border-1px">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
+              Transaction History
+            </h2>
 
-              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <div className="w-full sm:w-[250px] md:w-[220px]">
-                  <Select defaultValue="all">
-                    <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
-                      <SelectGroup>
-                        <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
-                          All Status Data
-                        </SelectLabel>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Pending">Pending</SelectItem>
-                        <SelectItem value="Suspended">Suspended</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <div className="w-full sm:w-[250px] md:w-[220px]">
+                <Select value={statusFilter} onValueChange={handleFilterChange}>
+                  <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
+                    <SelectGroup>
+                      <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
+                        All Status Data
+                      </SelectLabel>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="Active">Active</SelectItem>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Suspended">Suspended</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+          </div>
 
-            {/* Table Container - Responsive Horizontal Scroll */}
-            <div className="p-5 border border-[#E4E4E4] rounded-lg">
-              <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
-                <div className="xl:col-span-4 w-full">
-                  {/* Table */}
-
-                  <div className="overflow-x-auto rounded-lg border border-gray-200 w-full">
+          {/* Table Container */}
+          <div className="p-5 border border-[#E4E4E4] rounded-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
+              <div className="xl:col-span-4 w-full">
+                {/* Table */}
+                <div className="overflow-x-auto rounded-lg border border-gray-200 w-full">
+                  {filteredTransactions.length === 0 ? (
+                    <div className="text-center py-10 text-gray-500">
+                      No transactions found
+                    </div>
+                  ) : (
                     <table className="w-full text-xs sm:text-sm">
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
@@ -238,42 +304,44 @@ const TransactionHistory: React.FC = () => {
                       </thead>
 
                       <tbody className="divide-y divide-gray-200">
-                        {currentTransactions.map((u) => (
+                        {currentTransactions.map((transaction) => (
                           <tr
-                            key={u.transactionId}
+                            key={transaction.id}
                             className="hover:bg-gray-50 transition"
                           >
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-medium text-gray-900 whitespace-nowrap text-xs sm:text-sm">
                               <div className="truncate max-w-[120px] sm:max-w-none">
-                                {u.transactionId}
+                                {transaction.transactionId}
                               </div>
                             </td>
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden sm:table-cell text-xs sm:text-sm">
-                              {u.receiver}
+                              {transaction.receiver}
                             </td>
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-700 whitespace-nowrap hidden md:table-cell text-xs sm:text-sm">
-                              {u.service}
+                              {transaction.service}
                             </td>
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-semibold text-blue-600 whitespace-nowrap text-xs sm:text-sm">
-                              ${u.amount.toFixed(2)}
+                              {formatAmount(transaction.amount)}
                             </td>
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 whitespace-nowrap hidden lg:table-cell text-xs sm:text-sm">
-                              {u.date}
+                              {transaction.date}
                             </td>
                             <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                              <StatusBadge status={u.status} />
+                              <StatusBadge status={transaction.status} />
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Pagination */}
-            <div className="mt-4 sm:mt-6 flex items-center justify-between gap-4">
+          {/* Pagination - Only show if there are transactions */}
+          {filteredTransactions.length > 0 && (
+            <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Entries Info */}
               <p className="text-xs sm:text-sm text-gray-600">
                 Showing <span className="font-medium">{firstEntry}</span> to{" "}
@@ -325,7 +393,7 @@ const TransactionHistory: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
