@@ -14,20 +14,19 @@ const Payout = () => {
     {
       id: 1,
       type: "Visa",
-      number: "Visa •••• 4242",
-      cardHolder: "Expires 12/26 • Stripe",
+      number: "Bank of Georgia",
+      cardHolder: "****1234",
       isDefault: true,
     },
     {
       id: 2,
       type: "Mastercard",
-      number: "Mastercard •••• 8888",
-      cardHolder: "Expires 09/25 • Stripe",
+      number: "Liberty Bank",
+      cardHolder: "****1234",
       isDefault: false,
     },
   ]);
 
-  // States to control modal visibility
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -40,26 +39,22 @@ const Payout = () => {
     );
   };
 
-  // Handler to add payment method - connects Component 1 to Component 2
   const handleAddPaymentMethod = (data: PaymentFormData) => {
     console.log("Payment method added:", data);
-    setShowAddModal(false); // Close Add Modal
-    setShowSuccessModal(true); // Open Success Modal
+    setShowAddModal(false);
+    setShowSuccessModal(true);
   };
 
-  // Handler to go back from success to add form
   const handleBackToForm = () => {
-    setShowSuccessModal(false); // Close Success Modal
-    setShowAddModal(true); // Open Add Modal again
+    setShowSuccessModal(false);
+    setShowAddModal(true);
   };
 
-  // Handler to close all modals
   const handleCloseAll = () => {
     setShowAddModal(false);
     setShowSuccessModal(false);
   };
 
-  // Helper function to render a card icon
   const CardIcon = ({ type }: { type: string }) => {
     if (type === "Visa") {
       return (
@@ -85,21 +80,16 @@ const Payout = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl  mt-5">
+    <div className="bg-white rounded-xl mt-5">
       <div className="text-xl font-semibold text-gray-800 mb-6">
         <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 mt-6">
-          {/* Header (Responsive) */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">
                 Payout Method
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Manage your payment methods and billing information
-              </p>
             </div>
 
-            {/* Button (Responsive) */}
             <button
               onClick={() => setShowAddModal(true)}
               className="mt-4 sm:mt-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer flex items-center gap-2 text-sm whitespace-nowrap"
@@ -117,11 +107,10 @@ const Payout = () => {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Add New Payment Method
+              Add New Bank Account
             </button>
           </div>
 
-          {/* Payment Methods List (Responsive Grid) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {paymentMethods.map((method) => (
               <div
@@ -137,9 +126,7 @@ const Payout = () => {
                 <div className="flex items-center gap-4">
                   <div
                     className={`w-10 h-10 rounded-lg flex items-center justify-center
-                    ${
-                      method.type === "Visa" ? "bg-blue-100" : "bg-orange-100"
-                    }`}
+                    ${method.type === "Visa" ? "bg-blue-100" : "bg-orange-100"}`}
                   >
                     <CardIcon type={method.type} />
                   </div>
@@ -172,20 +159,18 @@ const Payout = () => {
             ))}
           </div>
 
-          {/* Bottom Buttons (Responsive Flex) */}
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3  pt-4 sm:pt-6">
-            <button className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 sm:pt-6">
+            <button className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium cursor-pointer">
               Cancel
             </button>
 
-            <button className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+            <button className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium cursor-pointer">
               Save Changes
             </button>
           </div>
         </div>
       </div>
 
-      {/* Modals */}
       {showAddModal && (
         <AddNewpayment
           onClose={handleCloseAll}

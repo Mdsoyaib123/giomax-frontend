@@ -3,18 +3,22 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes/Routes.tsx";
-import { Provider } from "react-redux";
-import { store } from "./store/store.ts";
+// import { Provider } from "react-redux";
+// import { store } from "./store/store.ts";
 import ReduxProviderWrapper from "./redux/readux-provider/reduxProviderWrapper.tsx";
 import { DashboardToaster } from "./components/ui/Toaster.tsx";
-
+import { SocketProvider } from "./hooks/contexts/SocketContext.tsx";
+ 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Provider store={store}>
-      <ReduxProviderWrapper>
-        <RouterProvider router={routes} />
-        <DashboardToaster />
-      </ReduxProviderWrapper>
-    </Provider>
+    {/* <Provider store={store}> */}
+    <ReduxProviderWrapper>
+      <SocketProvider>
+
+      <RouterProvider router={routes} />
+      <DashboardToaster />
+      </SocketProvider>
+    </ReduxProviderWrapper>
+    {/* </Provider> */}
   </StrictMode>
 );

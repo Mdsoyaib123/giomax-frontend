@@ -1,158 +1,216 @@
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { X } from "lucide-react";
-
+import { X, CheckCircle, XCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Booking {
-  id: string;
-  recever: string;
-  role: string;
-  amount: string;
-  status: "Pending" | "Confirmed" | "Cancelled";
-  dateTime: string;
-  payment: "Pending" | "Confirmed" | "Refused";
-}
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  useGetAllWithdrawRequestsQuery,
+  useMarkAsPaidMutation,
+  useRejectWithdrawRequestMutation,
+} from "@/redux/features/admin/payment/adminPaymentApi";
+import {
+  setSelectedRequest,
+  setFilterStatus,
+  setCurrentPage,
+} from "@/redux/features/admin/payment/adminPaymentSlice";
+import { WithdrawRequest } from "@/redux/types/admin/adminPaymentTypes";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 
 const PaymentTable: React.FC = () => {
-  const [openProfile, setOpenProfile] = useState<Booking | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const dispatch = useAppDispatch();
+  const { filters, currentPage, itemsPerPage, selectedRequest } =
+    useAppSelector((state) => state.adminPayment);
 
-  const bookings: Booking[] = [
-    {
-      id: "BK-001",
+  // API Queries
+  const {
+    data: withdrawRequests,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetAllWithdrawRequestsQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+    status: filters.status === "ALL" ? undefined : filters.status,
+    ownerType: filters.ownerType === "ALL" ? undefined : filters.ownerType,
+    search: filters.search || undefined,
+  });
 
-      recever: "Dr. Michael Brown",
-      role: "Clinic",
-      amount: "2500.00",
-      status: "Confirmed",
-      dateTime: "2025-11-06",
-      payment: "Confirmed",
-    },
-    {
-      id: "BK-002",
+  // const { data: statsData } = useGetPaymentStatsQuery();
+  const [markAsPaid] = useMarkAsPaidMutation();
+  const [rejectWithdrawRequest] = useRejectWithdrawRequestMutation();
 
-      recever: "Dr. Sarah Lee",
-      role: "Solo recever",
-      amount: "2500.00",
-      status: "Pending",
-      dateTime: "2025-11-08",
-      payment: "Pending",
-    },
-    {
-      id: "BK-003",
+  const [isProcessing, setIsProcessing] = useState(false);
 
-      recever: "Clinic Medico",
-      role: "Nurse",
-      amount: "2500.00",
-      status: "Cancelled",
-      dateTime: "2025-11-05",
-      payment: "Refused",
-    },
-    {
-      id: "BK-004",
+  // Calculate total pages
+  const totalRequests = withdrawRequests?.data.length || 0;
+  const totalPages = Math.ceil(totalRequests / itemsPerPage);
 
-      recever: "Dr. Daniel Smith",
-      role: "Clinic",
-      amount: "2500.00",
-      status: "Confirmed",
-      dateTime: "2025-11-10",
-      payment: "Confirmed",
-    },
-    {
-      id: "BK-005",
-
-      recever: "Wellness Clinic",
-      role: "Solo recever",
-      amount: "2500.00",
-      status: "Pending",
-      dateTime: "2025-11-11",
-      payment: "Pending",
-    },
-    {
-      id: "BK-006",
-
-      recever: "Dr. Rachel Adams",
-      role: "Nurse",
-      amount: "2500.00",
-      status: "Cancelled",
-      dateTime: "2025-11-04",
-      payment: "Refused",
-    },
-  ];
-  const totalPages = Math.ceil(bookings.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentUsers = bookings.slice(startIndex, startIndex + itemsPerPage);
-
-  const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNext = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-
-  const handleView = (patient: Booking) => {
-    setOpenProfile(patient);
+  // Get owner type display name
+  const getOwnerTypeDisplay = (type: string) => {
+    switch (type) {
+      case "SOLO_NURSE":
+        return "Solo Nurse";
+      case "CLINIC":
+        return "Clinic";
+      case "SOLO_DOCTOR":
+        return "Solo Doctor";
+      default:
+        return type;
+    }
   };
 
+  // Get status badge
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+            Pending
+          </Badge>
+        );
+      case "PAID":
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            Paid
+          </Badge>
+        );
+      case "REJECTED":
+        return (
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+            Rejected
+          </Badge>
+        );
+      default:
+        return <Badge>{status}</Badge>;
+    }
+  };
+
+  // Handle status update
+  const handleStatusUpdate = async (
+    id: string,
+    action: "PAID" | "REJECTED"
+  ) => {
+    try {
+      setIsProcessing(true);
+      if (action === "PAID") {
+        await markAsPaid(id).unwrap();
+      } else {
+        await rejectWithdrawRequest(id).unwrap();
+      }
+      // Close modal after successful update
+      dispatch(setSelectedRequest(null));
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    dispatch(setCurrentPage(page));
+  };
+
+  // Handle filter changes
+  const handleStatusFilterChange = (value: string) => {
+    dispatch(setFilterStatus(value as any));
+  };
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  // Format amount
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
+
+  // Get wallet balance from request
+  const getWalletBalance = (request: WithdrawRequest) => {
+    if (typeof request.walletId === "object" && request.walletId !== null) {
+      return request.walletId.balance;
+    }
+    return "N/A";
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-red-600">Failed to load withdraw requests</p>
+        <Button onClick={refetch} className="mt-4">
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="">
+    <div>
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
         <div className="w-full">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            {/* Left Section - Title */}
             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
-              Transaction History
+              Withdraw History
             </h2>
 
-            {/* Right Section - Filters */}
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              {/* Filter 1 - Status */}
-              <div className="w-full sm:w-[250px] md:w-[220px]">
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm flex items-center justify-between hover:border-gray-400 transition-all duration-200 cursor-pointer">
+              {/* Status Filter */}
+              <div className="w-full sm:w-[180px]">
+                <Select
+                  value={filters.status}
+                  onValueChange={handleStatusFilterChange}
+                >
+                  <SelectTrigger className="w-full h-10 cursor-pointer border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-[#B3B3B3] rounded-md shadow-md">
                     <SelectGroup>
-                      <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
-                        All Status Data
-                      </SelectLabel>
                       <SelectItem
-                        value="all"
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                        value="ALL"
                       >
                         All Status
                       </SelectItem>
                       <SelectItem
-                        value="confirmed"
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
-                      >
-                        Confirmed
-                      </SelectItem>
-                      <SelectItem
-                        value="pending"
-                        className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                        value="PENDING"
                       >
                         Pending
                       </SelectItem>
                       <SelectItem
-                        value="completed"
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                        value="PAID"
                       >
-                        Completed
+                        Paid
                       </SelectItem>
                       <SelectItem
-                        value="Cancelled"
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 transition-colors rounded"
+                        value="REJECTED"
                       >
-                        Cancelled
+                        Rejected
                       </SelectItem>
                     </SelectGroup>
                   </SelectContent>
@@ -162,223 +220,303 @@ const PaymentTable: React.FC = () => {
           </div>
         </div>
 
-        {/* Table */}
+        {/* TABLE */}
         <div className="p-5 border border-[#E4E4E4] rounded-lg">
           <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
             <div className="xl:col-span-4 w-full">
-              {/* Table */}
-              <div className="w-full overflow-x-auto rounded-lg border border-gray-200">
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
                 <table className="min-w-[800px] w-full text-sm">
                   <thead className="bg-gray-100 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Transaction ID
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700 whitespace-nowrap">
+                        Request ID
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
-                        Receiver
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Owner
                       </th>
-
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
                         Role
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
                         Amount
                       </th>
-
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
                         Date
                       </th>
-                      <th className="px-6 py-4 text-left font-medium text-gray-700 whitespace-nowrap">
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
                         Status
                       </th>
-
-                      <th className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap">
-                        Action
+                      <th className="px-6 py-4 text-center font-semibold text-gray-700">
+                        Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {bookings.map((booking) => (
-                      <tr
-                        key={booking.id}
-                        className="hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
-                          {booking.id}
+
+                  <tbody className="bg-white divide-y divide-gray-300">
+                    {withdrawRequests?.data.map((request) => (
+                      <tr key={request._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-700 font-mono text-sm">
+                          {request._id.slice(-8)}
                         </td>
 
-                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.recever}
-                        </td>
-                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.role}
-                        </td>
-                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.amount}
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+                          {request.ownerId.slice(-8)}
                         </td>
 
-                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {booking.dateTime}
-                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-3 py-1 text-xs font-medium rounded-full ${
-                              booking.status === "Confirmed"
-                                ? "bg-green-100 text-green-700"
-                                : booking.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
-                            }`}
-                          >
-                            {booking.status}
+                          <span className="text-blue-600 font-medium">
+                            {getOwnerTypeDisplay(request.ownerType)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-center whitespace-nowrap">
-                          <button
-                            onClick={() => handleView(booking)}
-                            className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
+
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                          {formatAmount(request.amount)}
+                        </td>
+
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                          {formatDate(request.createdAt)}
+                        </td>
+
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(request.status)}
+                        </td>
+
+                        <td className="px-6 py-4 text-center space-x-2">
+                          <Button
+                            onClick={() =>
+                              dispatch(setSelectedRequest(request))
+                            }
+                            variant="outline"
+                            size="sm"
+                            className="px-4 py-2 rounded-lg bg-[#1A73E8] whitespace-nowrap text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2 cursor-pointer"
                           >
-                            <FaEye className="text-sm" /> View Details
-                          </button>
+                            <FaEye className="text-sm" /> View
+                          </Button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+
+              {/* Empty State */}
+              {(!withdrawRequests?.data ||
+                withdrawRequests.data.length === 0) && (
+                <div className="text-center py-10 text-gray-500">
+                  No withdraw requests found
+                </div>
+              )}
             </div>
           </div>
         </div>
-
         {/* Pagination */}
-        <div className="mt-6 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Showing <span className="font-medium">{currentUsers.length}</span>{" "}
-            of <span className="font-medium">{bookings.length}</span> patients
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrev}
-              disabled={currentPage === 1}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
-                currentPage === 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              Prev
-            </button>
-            <div className="min-w-[50px] text-center border px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 bg-gray-50">
-              {currentPage} / {totalPages}
-            </div>
-            <button
-              onClick={handleNext}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
-                currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Transaction Details Dialog */}
-      {openProfile && (
-        <div className="fixed px-3 sm:px-4 inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.9">
-          <div className="bg-white rounded-lg w-full max-w-4xl shadow-2xl p-8 relative border border-gray-300 transform scale-100 transition-transform duration-200">
-            {/* Close Icon */}
-            <button
-              onClick={() => setOpenProfile(null)}
-              className="absolute cursor-pointer top-4 right-4 text-gray-600 hover:text-gray-800 hover:scale-110 transition-transform"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Title */}
-            <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Transaction Details
-            </h2>
-            <p className="text-gray-600 text-sm mb-6">
-              Complete information about this transaction
+        {totalRequests > 0 && (
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-sm text-gray-600">
+              Showing{" "}
+              <span className="font-semibold">
+                {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, totalRequests)}
+              </span>{" "}
+              of <span className="font-semibold">{totalRequests} entries</span>
             </p>
 
-            {/* Input Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Transaction ID
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.id}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </Button>
+
+              {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(pageNum)}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+
+              {totalPages > 3 && currentPage < totalPages - 1 && (
+                <span className="px-2">...</span>
+              )}
+
+              {totalPages > 3 && currentPage < totalPages && (
+                <Button
+                  className=" border border-[#cacdd4]"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(totalPages)}
+                >
+                  {totalPages}
+                </Button>
+              )}
+
+              <Button
+                className=" border border-[#cacdd4]"
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* VIEW DETAILS MODAL */}
+      {selectedRequest && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Withdraw Request Details
+                  </h2>
+                  <p className="text-gray-500 text-sm">
+                    Complete information about this transaction
+                  </p>
+                </div>
+                <button
+                  onClick={() => dispatch(setSelectedRequest(null))}
+                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X className="w-6 h-6" />
+                </button>
               </div>
 
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Recever
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.recever}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Request ID
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono">
+                    {selectedRequest._id}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Owner ID
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono">
+                    {selectedRequest.ownerId}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Role
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                    {getOwnerTypeDisplay(selectedRequest.ownerType)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Amount
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-semibold">
+                    {formatAmount(selectedRequest.amount)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Created Date
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                    {new Date(selectedRequest.createdAt).toLocaleString()}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Status
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                    {getStatusBadge(selectedRequest.status)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Wallet Balance
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                    {formatAmount(getWalletBalance(selectedRequest) as number)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Last Updated
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
+                    {new Date(selectedRequest.updatedAt).toLocaleString()}
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Role
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.role}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
+              {/* Action Buttons for Pending Requests */}
+              {selectedRequest.status === "PENDING" && (
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleStatusUpdate(selectedRequest._id, "REJECTED")
+                      }
+                      disabled={isProcessing}
+                      className="flex items-center gap-2"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      Reject Request
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        handleStatusUpdate(selectedRequest._id, "PAID")
+                      }
+                      disabled={isProcessing}
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      {isProcessing ? "Processing..." : "Approve & Pay"}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-4 text-center">
+                    Approving will mark this request as paid and process the
+                    payment
+                  </p>
+                </div>
+              )}
 
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Amount
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.amount}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Date
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.dateTime}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Status
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.status}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
-                />
-              </div>
+              {/* Info for non-pending requests */}
+              {selectedRequest.status !== "PENDING" && (
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">
+                    This request has already been{" "}
+                    <span className="font-semibold">
+                      {selectedRequest.status.toLowerCase()}
+                    </span>
+                    {selectedRequest.status === "PAID" && " on "}
+                    {selectedRequest.status === "PAID" &&
+                      new Date(selectedRequest.updatedAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -388,3 +526,313 @@ const PaymentTable: React.FC = () => {
 };
 
 export default PaymentTable;
+
+// /* eslint-disable @typescript-eslint/no-unused-vars */
+// import React, { useState } from "react";
+// import { FaEye } from "react-icons/fa";
+// import { X } from "lucide-react";
+// import aap from "@/assets/aap.png";
+
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectLabel,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+
+// interface Booking {
+//   id: string;
+//   receiver: string;
+//   role: string;
+//   amount: string;
+//   status: "Pending" | "Completed" | "Processing";
+//   dateTime: string;
+//   payment: "Pending" | "Completed" | "Refused";
+// }
+
+// const PaymentTable: React.FC = () => {
+//   const [openProfile, setOpenProfile] = useState<Booking | null>(null);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   console.log(currentPage);
+//   const itemsPerPage = 9;
+
+//   const bookings: Booking[] = [
+//     {
+//       id: "TRX001",
+//       receiver: "Dr. Michael Brown",
+//       role: "Solo Doctor",
+//       amount: "$2500.00",
+//       status: "Pending",
+//       dateTime: "25/10/2025",
+//       payment: "Completed",
+//     },
+//     {
+//       id: "TRX002",
+//       receiver: "City Medical Center",
+//       role: "Clinic",
+//       amount: "$2500.00",
+//       status: "Completed",
+//       dateTime: "25/10/2025",
+//       payment: "Completed",
+//     },
+//     {
+//       id: "TRX003",
+//       receiver: "Nurse Emily Davis",
+//       role: "Nurse",
+//       amount: "$2500.00",
+//       status: "Completed",
+//       dateTime: "25/10/2025",
+//       payment: "Completed",
+//     },
+//     {
+//       id: "TRX004",
+//       receiver: "Downtown Health Hub",
+//       role: "Clinic",
+//       amount: "$2500.00",
+//       status: "Processing",
+//       dateTime: "25/10/2025",
+//       payment: "Pending",
+//     },
+//     {
+//       id: "TRX005",
+//       receiver: "Dr. Sarah Wilson",
+//       role: "Solo Doctor",
+//       amount: "$2500.00",
+//       status: "Completed",
+//       dateTime: "25/10/2025",
+//       payment: "Completed",
+//     },
+//   ];
+
+//   const totalPages = Math.ceil(bookings.length / itemsPerPage);
+
+//   const handlePrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
+//   const handleNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+
+//   const handleView = (patient: Booking) => setOpenProfile(patient);
+
+//   return (
+//     <div>
+//       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
+//         <div className="w-full">
+//           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+//             <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
+//               Transaction History
+//             </h2>
+
+//             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+//               <div className="w-full sm:w-[250px] md:w-[220px]">
+//                 <Select defaultValue="all">
+//                   <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
+//                     <SelectValue placeholder="Select Status" />
+//                   </SelectTrigger>
+//                   <SelectContent>
+//                     <SelectGroup>
+//                       <SelectLabel className="px-4 pt-2 text-gray-500 text-sm">
+//                         All Status Data
+//                       </SelectLabel>
+//                       <SelectItem value="all">All Status</SelectItem>
+//                       <SelectItem value="completed">Completed</SelectItem>
+//                       <SelectItem value="pending">Pending</SelectItem>
+//                       <SelectItem value="processing">Processing</SelectItem>
+//                     </SelectGroup>
+//                   </SelectContent>
+//                 </Select>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* TABLE */}
+
+// <div className="p-5 border border-[#E4E4E4] rounded-lg">
+//   <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4  gap-5">
+//     <div className="xl:col-span-4 w-full">
+//       <div className="overflow-x-auto rounded-lg border border-gray-200">
+//         <table className="min-w-[800px] w-full text-sm">
+//           <thead className="bg-gray-100 border-b border-gray-200">
+//                     <tr>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Transaction ID
+//                       </th>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Receiver
+//                       </th>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Role
+//                       </th>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Amount
+//                       </th>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Date
+//                       </th>
+//                       <th className="px-6 py-4 text-left font-semibold text-gray-700">
+//                         Status
+//                       </th>
+//                       <th className="px-6 py-4 text-center font-semibold text-gray-700">
+//                         Actions
+//                       </th>
+//                     </tr>
+//                   </thead>
+
+//                   <tbody className="bg-white divide-y divide-gray-300">
+//                     {bookings.map((booking) => (
+//                       <tr key={booking.id} className="hover:bg-gray-50">
+//                         <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+//                           {booking.id}
+//                         </td>
+
+//                         <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+//                           {booking.receiver}
+//                         </td>
+
+//                         <td className="px-6 py-4 whitespace-nowrap">
+//                           <span className="text-blue-600 font-medium">
+//                             {booking.role}
+//                           </span>
+//                         </td>
+
+//                         <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+//                           {booking.amount}
+//                         </td>
+
+//                         <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+//                           {booking.dateTime}
+//                         </td>
+
+//                         <td className="px-6 py-4 whitespace-nowrap">
+//                           <span
+//                             className={`px-3 py-1.5 text-xs font-semibold rounded-xl
+//                           ${
+//                             booking.status === "Completed"
+//                               ? "bg-[#E7F8EE] text-[#1E9E46]"
+//                               : booking.status === "Pending"
+//                               ? "bg-[#FEF7E8] text-[#C07F00]"
+//                               : "bg-[#E8F1FF] text-[#1A73E8]"
+//                           }`}
+//                           >
+//                             {booking.status}
+//                           </span>
+//                         </td>
+
+//                         <td className="px-6 py-4 text-center">
+//                           {booking.status === "Pending" ? (
+//                             <button
+//                               onClick={() => handleView(booking)}
+//                               className="px-4 py-2 rounded-lg bg-[#1E9E46] whitespace-nowrap text-white text-sm font-medium hover:bg-[#18843B] inline-flex items-center gap-2 cursor-pointer"
+//                             >
+//                               <img
+//                                 src={aap}
+//                                 alt="Approve"
+//                                 className="w-4 h-4"
+//                               />
+//                               Approve Payout
+//                             </button>
+//                           ) : (
+//                             <button
+//                               onClick={() => handleView(booking)}
+//                               className="px-4 py-2 rounded-lg bg-[#1A73E8] whitespace-nowrap text-white text-sm font-medium hover:bg-[#165FC2] inline-flex items-center gap-2 cursor-pointer"
+//                             >
+//                               <FaEye className="text-sm" /> View Details
+//                             </button>
+//                           )}
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Pagination */}
+//         <div className="mt-6 flex items-center justify-between">
+//           <p className="text-sm text-gray-600">
+//             Showing <span className="font-semibold">1 to 9</span> of{" "}
+//             <span className="font-semibold">9 entries</span>
+//           </p>
+
+//           <div className="flex items-center gap-2">
+//             <button
+//               onClick={handlePrev}
+//               className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700 cursor-pointer"
+//             >
+//               Prev
+//             </button>
+
+//             <button className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white cursor-pointer">
+//               1
+//             </button>
+
+//             <button className="px-4 py-2 rounded-lg border text-gray-700 cursor-pointer">
+//               2
+//             </button>
+
+//             <button className="px-4 py-2 rounded-lg border text-gray-700 cursor-pointer">
+//               3
+//             </button>
+
+//             <span className="px-2 text-gray-500">...</span>
+
+//             <button
+//               onClick={handleNext}
+//               className="px-4 py-2 rounded-lg border bg-gray-50 text-gray-700 cursor-pointer"
+//             >
+//               Next
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* VIEW DETAILS MODAL */}
+//       {openProfile && (
+//         <div className="fixed inset-0 z-40 bg-gray-400/40 flex items-center justify-center">
+//           <div className="bg-gray-100 rounded-xl w-full max-w-4xl p-8 relative border border-gray-300 shadow-xl">
+//             <button
+//               onClick={() => setOpenProfile(null)}
+//               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer"
+//             >
+//               <X className="w-6 h-6" />
+//             </button>
+
+//             <h2 className="text-2xl font-bold text-gray-900 mb-1">
+//               Transaction Details
+//             </h2>
+//             <p className="text-gray-500 text-sm mb-6">
+//               Complete information about this transaction
+//             </p>
+
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+//               {[
+//                 { label: "Transaction ID", value: openProfile.id },
+//                 { label: "Receiver", value: openProfile.receiver },
+//                 { label: "Role", value: openProfile.role },
+//                 { label: "Amount", value: openProfile.amount },
+//                 { label: "Date", value: openProfile.dateTime },
+//                 { label: "Status", value: openProfile.status },
+//               ].map((item) => (
+//                 <div key={item.label}>
+//                   <label className="block text-gray-700 text-sm font-medium mb-2">
+//                     {item.label}
+//                   </label>
+//                   <input
+//                     value={item.value}
+//                     readOnly
+//                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white"
+//                   />
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default PaymentTable;

@@ -13,7 +13,7 @@ const rawBaseQuery = fetchBaseQuery({
   prepareHeaders: (headers) => {
     const token = Cookies.get("token");
     if (token) {
-      headers.set("Authorization", `${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
     headers.set("Content-Type", "application/json");
     return headers;
@@ -50,6 +50,19 @@ const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithErrorHandler,
-  tagTypes: ["User"],
+  tagTypes: [
+    "User",
+    "PATIENT",
+    "DOCTOR",
+    "DOCTOR_APPOINTMENT",
+    "CLINIC_MANAGEMENT",
+    "NURSE_APPOINTMENT",
+    "NURSE_MANAGEMENT",
+    "WITHDRAW_REQUEST",
+    "PAYMENT_STATS",
+    "CLINIC_BASIC",
+    "CLINIC_PATIENT",
+    "AdminProfile",
+  ],
   endpoints: () => ({}),
 });

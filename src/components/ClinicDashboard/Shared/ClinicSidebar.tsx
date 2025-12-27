@@ -1,27 +1,25 @@
 import logo from "@/assets/Pic.png";
 import { Badge } from "@/components/ui/badge";
+import { BiMessageRoundedDetail } from "react-icons/bi";
 
-import { RiShareBoxLine } from "react-icons/ri";
-import { ChevronDown } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-
-// import { RxDashboard } from "react-icons/rx";
-// import { FaUserPlus } from "react-icons/fa";
-// import { HiOutlineUserMinus } from "react-icons/hi2";
-import img1 from "@/assets/side1.png";
-import img2 from "@/assets/side2.png";
-import img3 from "@/assets/side3.png";
-import img4 from "@/assets/side4.png";
-import img5 from "@/assets/side5.png";
-import img6 from "@/assets/side6.png";
-import img7 from "@/assets/side7.png";
-
-// import { IconType } from "react-icons";
+import {
+  Calendar,
+  ChartPie,
+  ChevronDown,
+  CreditCard,
+  LogOut,
+  Settings,
+  Stethoscope,
+  Users,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ReactNode, useState } from "react";
+import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { logOut } from "@/redux/features/auth/authSlice";
 
 // Types
 export interface SidebarItem {
-  icon: string; // This is now the image path
+  icon: ReactNode;
   label: string;
   href?: string;
   badge?: string;
@@ -35,21 +33,37 @@ export interface SidebarProps {
 
 // Sidebar Items
 const defaultSidebarItems: SidebarItem[] = [
-  { icon: img1, label: "Dashboard", href: "/clinic-dashboard/dashboard" },
-  { icon: img2, label: "Parient List", href: "/clinic-dashboard/patient-list" },
   {
-    icon: img3,
+    icon: <ChartPie />,
+    label: "Dashboard",
+    href: "/clinic-dashboard/dashboard",
+  },
+  {
+    icon: <Users />,
+    label: "Parient List",
+    href: "/clinic-dashboard/patient-list",
+  },
+  {
+    icon: <Stethoscope />,
     label: "Doctor Management",
     href: "/clinic-dashboard/doctor-management",
   },
   {
-    icon: img4,
+    icon: <Calendar />,
     label: "Book Management",
     href: "/clinic-dashboard/booking-management",
   },
-  { icon: img5, label: "Payment & Earning", href: "/clinic-dashboard/payment" },
-  { icon: img6, label: "Messages", href: "/clinic-dashboard/message" },
-  { icon: img7, label: "Setting", href: "/clinic-dashboard/settings" },
+  {
+    icon: <CreditCard />,
+    label: "Payment & Earning",
+    href: "/clinic-dashboard/payment",
+  },
+  {
+    icon: <BiMessageRoundedDetail />,
+    label: "Messages",
+    href: "/clinic-dashboard/message",
+  },
+  { icon: <Settings />, label: "Setting", href: "/clinic-dashboard/settings" },
 ];
 
 const ClinicSidebar: React.FC<SidebarProps> = ({
@@ -58,10 +72,23 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/");
+  };
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
+
+  // FIXED ICON RENDER
+  const renderIcon = (icon: ReactNode, alt: string) =>
+    typeof icon === "string" ? (
+      <img src={icon} alt={alt} className="w-5 h-5" />
+    ) : (
+      icon
+    );
 
   return (
     <div
@@ -69,7 +96,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
     >
       {/* Logo */}
-      <Link to="/admin-dashboard/dashboard">
+      <Link to="/clinic-dashboard/dashboard">
         <div className="flex items-center border-b border-gray-200 mt-1 p-2">
           <div className="flex-shrink-0 w-12 h-12 mr-3">
             <img
@@ -96,10 +123,12 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
             const isActive =
               location.pathname === item.href ||
               item.children?.some((child) => location.pathname === child.href);
+
             const isOpen = openMenu === item.label;
 
             return (
               <div key={item.label}>
+                {/* Link Without Children */}
                 {item.href && !item.children ? (
                   <Link
                     to={item.href}
@@ -111,19 +140,12 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <img
-                        src={item.icon}
-                        alt={item.label}
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isActive
-                            ? "text-white"
-                            : "text-[#343A40] group-hover:text-white"
-                        }`}
-                      />
+                      {renderIcon(item.icon, item.label)}
                       <span>{item.label}</span>
                     </div>
                   </Link>
                 ) : (
+                  // Dropdown Parent Button
                   <button
                     onClick={() => toggleMenu(item.label)}
                     className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out rounded-xl cursor-pointer ${
@@ -133,15 +155,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <img
-                        src={item.icon}
-                        alt={item.label}
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isActive
-                            ? "text-white"
-                            : "text-[#343A40] group-hover:text-white"
-                        }`}
-                      />
+                      {renderIcon(item.icon, item.label)}
                       <span>{item.label}</span>
                     </div>
 
@@ -166,10 +180,12 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
                   </button>
                 )}
 
+                {/* Dropdown Items */}
                 {item.children && isOpen && (
                   <div className="ml-6 mt-2 space-y-2">
                     {item.children.map((child) => {
                       const childActive = location.pathname === child.href;
+
                       return (
                         <Link
                           key={child.label}
@@ -194,21 +210,23 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Help & Support */}
-      <div className="border-t border-[#C9C6C3]">
-        <div className="flex justify-center">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-16 w-full max-w-[300px] object-contain"
-          />
+      <div className="border border-[#CED4DA] bg-[#F8F9FA] p-4">
+        <div className="flex   justify-between">
+          <div className="flex gap-6">
+            <img src={logo} alt="Logo" className=" size-11 object-contain" />
+            <div className="flex flex-col">
+              Giorigi M.
+              <span>Clinic</span>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            type="button"
+            className="text-red-600 cursor-pointer"
+          >
+            <LogOut />
+          </button>
         </div>
-        <Link
-          to="/client-dashboard/help-support"
-          className="flex items-center justify-center space-x-3 text-[#343A40] hover:text-sky-500 transition-colors px-3 py-2 rounded-lg"
-        >
-          <span className="text-sm font-medium">Help & Support</span>
-          <RiShareBoxLine className="w-5 h-5" />
-        </Link>
       </div>
     </div>
   );

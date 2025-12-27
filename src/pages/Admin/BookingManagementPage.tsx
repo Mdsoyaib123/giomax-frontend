@@ -1,4 +1,4 @@
-import BookingManagement from "@/components/AdminDashboard/BookingManagement/BookingManagement";
+import BookingManagement from "@/components/AdminDashboard/AllAppointment/AllAppointment";
 
 const BookingManagementPage = () => {
   return (

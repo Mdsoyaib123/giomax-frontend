@@ -2,6 +2,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./hooks/baseApi";
 import authReducer from "@/redux/features/auth/authSlice";
+import adminPatientReducer from "@/redux/features/admin/patient/adminPatientSlice";
+import doctorAppointmentReducer from "@/redux/features/admin/doctorAppoinment/doctorAppointmentSlice";
+import clinicManagementReducer from "@/redux/features/admin/clinic/clinicManagementSlice";
+import nurseAppointmentReducer from "@/redux/features/admin/nurseAppointment/nurseAppointmentSlice";
+import nurseManagementReducer from "@/redux/features/admin/nurse/adminNurseManagementSlice";
+import adminPaymentReducer from "@/redux/features/admin/payment/adminPaymentSlice";
+import adminProfileReducer from "@/redux/features/admin/profile/adminProfileSlice";
 
 import {
   persistReducer,
@@ -28,6 +35,13 @@ export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     auth: persistedReducer,
+    adminPatient: adminPatientReducer,
+    doctorAppointment: doctorAppointmentReducer,
+    clinicManagement: clinicManagementReducer,
+    nurseAppointment: nurseAppointmentReducer,
+    nurseManagement: nurseManagementReducer,
+    adminPayment: adminPaymentReducer,
+    adminProfile: adminProfileReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

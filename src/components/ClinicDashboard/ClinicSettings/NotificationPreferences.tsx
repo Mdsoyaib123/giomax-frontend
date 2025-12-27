@@ -74,7 +74,7 @@ const NotificationPreferences: React.FC = () => {
   };
 
   return (
-    <div className="bg-white w-full  mx-auto mt-5">
+    <div className="bg-white w-full mx-auto mt-5">
       <h3 className="text-xl font-semibold text-gray-700 mb-6">
         Notification Preferences
       </h3>
@@ -157,7 +157,7 @@ const NotificationPreferences: React.FC = () => {
           type="button"
           onClick={handleCancel}
           className="w-full sm:w-auto px-5 py-2 border border-gray-300 rounded-lg text-gray-700 
-    hover:bg-gray-50 transition"
+    hover:bg-gray-50 transition cursor-pointer"
         >
           Cancel
         </button>
@@ -166,7 +166,7 @@ const NotificationPreferences: React.FC = () => {
           type="button"
           onClick={handleSave}
           className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg 
-    hover:bg-blue-700 transition font-medium"
+    hover:bg-blue-700 transition font-medium cursor-pointer"
         >
           Save Changes
         </button>

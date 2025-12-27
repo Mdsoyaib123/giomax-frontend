@@ -1,99 +1,111 @@
-import { FaArrowUp } from "react-icons/fa";
-import Patients from "@/assets/Logo/patientss.svg";
-import Doctors from "@/assets/Logo/doctors.svg";
-import Clinics from "@/assets/Logo/clinics.svg";
-import Bookings from "@/assets/Logo/bookings.svg";
-import Earnings from "@/assets/Logo/earnings.svg";
+import { FaUserInjured, FaCalendarCheck } from "react-icons/fa";
+import { MdPendingActions, MdCheckCircle } from "react-icons/md";
+import { useSingleClinicId } from "@/hooks/userClinicId";
+import { useGetClinicDashboardQuery } from "@/redux/features/doctors/doctorsApi";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardCard = () => {
+  const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
+  const { data, isLoading, isError } = useGetClinicDashboardQuery(
+    clinicId as string,
+    { skip: !clinicId }
+  );
+
+  // Extract data from API response
+  const dashboardData = data?.data || {};
+
+  // Only show the data we actually have from the API
   const statusData = [
     {
       title: "Total Patients",
-      amount: "120",
-      change: "12.5",
-      unit: "vs last month",
-      icon: Patients,
+      amount: dashboardData.totalPatients?.toString() || "0",
+      change: "0",
+      unit: "in clinic",
+      icon: <FaUserInjured className="w-6 h-6 text-blue-500" />,
+      bgColor: "bg-blue-50",
     },
     {
-      title: "Total Doctors",
-      amount: "156",
-      change: "8.2",
-      unit: "vs last month",
-      icon: Doctors,
+      title: "Total Appointments",
+      amount: dashboardData.totalAppointments?.toString() || "0",
+      change: "0",
+      unit: "all time",
+      icon: <FaCalendarCheck className="w-6 h-6 text-green-500" />,
+      bgColor: "bg-green-50",
     },
     {
-      title: "Total Clinics",
-      amount: "42",
-      change: "3.1",
-      unit: "vs last month",
-      icon: Clinics,
+      title: "Pending Appointments",
+      amount: dashboardData.totalPendingAppointments?.toString() || "0",
+      change: "0",
+      unit: "awaiting confirmation",
+      icon: <MdPendingActions className="w-6 h-6 text-yellow-500" />,
+      bgColor: "bg-yellow-50",
     },
     {
-      title: "Total Bookings",
-      amount: "1,234",
-      change: "18.7",
-      unit: "vs last month",
-      icon: Bookings,
-    },
-    {
-      title: "Total Earnings",
-      amount: "$85,450",
-      change: "24.3",
-      unit: "vs last month",
-      icon: Earnings,
+      title: "Completed Appointments",
+      amount: dashboardData.totalCompletedAppointments?.toString() || "0",
+      change: "0",
+      unit: "successfully served",
+      icon: <MdCheckCircle className="w-6 h-6 text-purple-500" />,
+      bgColor: "bg-purple-50",
     },
   ];
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full">
-      {statusData.map((single) => {
-        const isNegative = single.change.startsWith("-");
-        const changeColor = isNegative ? "#E35A5F" : "#12CC1E";
+  if (isLoading || isClinicIdLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+        {[...Array(4)].map((_, index) => (
+          <div
+            key={index}
+            className="bg-white shadow-sm rounded-2xl border border-[#E5E7EB] p-6 flex flex-col"
+          >
+            <Skeleton className="w-12 h-12 rounded-xl mb-4" />
+            <Skeleton className="h-4 w-24 mb-2" />
+            <Skeleton className="h-8 w-32 mb-3" />
+            <Skeleton className="h-3 w-full" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
+  if (isError) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center col-span-4">
+        <p className="text-red-600 font-medium">
+          Failed to load dashboard data. Please try again.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+      {statusData.map((single) => {
         return (
           <div
             key={single.title}
-            className="w-full h-48 p-6 bg-white rounded-2xl flex flex-col justify-between shadow-sm space-y-4 transition-all hover:shadow-md"
+            className="bg-white shadow-sm hover:shadow-md transition-all rounded-2xl border border-[#E5E7EB] p-6 flex flex-col"
           >
-            {/* Top Section */}
-            <div className="space-y-2">
-              <div className="bg-[#F9F8F6] border border-[#F6F4F2] w-12 h-12 rounded-xl p-3 flex items-center justify-center">
-                <img
-                  src={single.icon}
-                  alt={single.title}
-                  className="w-6 h-6 object-contain"
-                />
-              </div>
-
-              <h1
-                className="text-lg leading-[160%] font-medium"
-                style={{ color: "#343A40" }}
-              >
-                {single.title}
-              </h1>
+            {/* Icon */}
+            <div
+              className={`${single.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}
+            >
+              {single.icon}
             </div>
 
-            {/* Bottom Section */}
-            <div className="space-y-1">
-              <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-black">
-                {single.amount}
-              </h2>
+            {/* Title */}
+            <h3 className="text-[#6B7280] text-sm font-normal mb-2">
+              {single.title}
+            </h3>
 
-              <div className="flex items-center gap-1 text-sm">
-                {single.change && (
-                  <>
-                    <FaArrowUp
-                      className="transition-transform"
-                      style={{
-                        color: changeColor,
-                        transform: isNegative ? "rotate(180deg)" : "none",
-                      }}
-                    />
-                    <span style={{ color: changeColor }}>{single.change}%</span>
-                  </>
-                )}
-                <span className="text-gray-500 ml-1">{single.unit}</span>
-              </div>
+            {/* Amount */}
+            <h2 className="text-[#111827] text-3xl font-semibold mb-3">
+              {single.amount}
+            </h2>
+
+            {/* Description */}
+            <div className="flex items-center gap-1 mt-2 pb-2">
+              <span className="text-xs text-[#6B7280]">{single.unit}</span>
             </div>
           </div>
         );
@@ -101,6 +113,5 @@ const DashboardCard = () => {
     </div>
   );
 };
-
 
 export default DashboardCard;
