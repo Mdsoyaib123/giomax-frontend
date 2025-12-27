@@ -19,7 +19,6 @@ import { useState } from "react";
 import NotificationPanel from "@/components/AdminDashboard/Shared/NotificationPanel";
 import AdvancedFilter from "./AdvancedFilter";
 
-
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
   notificationCount?: number;
@@ -379,5 +378,3 @@ export default ClinicDashboardNavbar;
 // };
 
 // export default ClinicDashboardNavbar;
-
-
