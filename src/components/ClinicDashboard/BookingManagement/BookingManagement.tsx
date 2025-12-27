@@ -8,10 +8,14 @@ import sitescope from "../../../assets/icons/sitescope.svg";
 import { AppointmentSkeleton } from "@/components/Skeleton/AppointmentSkliton";
 import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Appointment } from "@/redux/features/doctorAppoinment/getAllAppointmet.type";
-import { useClinicDoctorAllAppointmentsQuery } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
+import {
+  useClinicDoctorAllAppointmentsQuery,
+  useCreateDoctorAppointmentMutation,
+} from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
 
@@ -41,6 +45,8 @@ const BookingManagement = () => {
   const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
     activeTab === "All" ? "" : activeTab
   );
+  const [createDoctorAppointment, { isLoading: isCreating }] =
+    useCreateDoctorAppointmentMutation();
   const [formData, setFormData] = useState({
     patientId: "",
     doctorId: "",
@@ -91,9 +97,36 @@ const BookingManagement = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateBooking = () => {
-    setShowAppointmentDialog(false);
-    setShowSuccessDialog(true);
+  const handleCreateBooking = async () => {
+    if (
+      !formData.patientId ||
+      !formData.doctorId ||
+      !formData.prefarenceDate ||
+      !formData.reasonForVisit ||
+      !formData.prefarenceTime ||
+      !formData.visitingType ||
+      !formData.serviceType
+    ) {
+      toast.error("Please fill in all the required fields.");
+      return;
+    }
+    try {
+      await createDoctorAppointment({
+        patientId: formData.patientId,
+        doctorId: formData.doctorId,
+        clinicId: userId,
+        prefarenceDate: formData.prefarenceDate,
+        reasonForVisit: formData.reasonForVisit,
+        prefarenceTime: formData.prefarenceTime,
+        visitingType: formData.visitingType,
+        serviceType: formData.serviceType,
+      }).unwrap();
+      setShowAppointmentDialog(false);
+      setShowSuccessDialog(true);
+      setShowAppointmentDialog(true);
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   const handleCloseSuccess = () => {
@@ -413,7 +446,7 @@ const BookingManagement = () => {
                     Patient Name <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="patientName"
+                    name="patientId"
                     value={formData.patientId}
                     onChange={handleInputChange}
                     disabled={isLoading}
@@ -441,14 +474,16 @@ const BookingManagement = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Visiting Type <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+
+                  <select
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     name="visitingType"
                     value={formData.visitingType}
                     onChange={handleInputChange}
-                    placeholder=""
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  >
+                    <option value="fristVisit">First Visit</option>
+                    <option value="followUp">Walk-in</option>
+                  </select>
                 </div>
 
                 {/* Phone Number */}
@@ -520,7 +555,7 @@ const BookingManagement = () => {
                     Select Doctor <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="selectDoctor"
+                    name="doctorId"
                     value={formData.doctorId}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer appearance-none bg-white"
