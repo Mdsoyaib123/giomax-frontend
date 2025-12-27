@@ -497,10 +497,12 @@ const PatientManagement: React.FC = () => {
     refetch,
   } = useGetAllPatientsQuery();
 
-  const { data: singlePatientResponse, isLoading: isLoadingSinglePatient } =
-    useGetSinglePatientQuery(selectedPatient?.id!, {
+  const { data: singlePatientResponse } = useGetSinglePatientQuery(
+    selectedPatient?.id!,
+    {
       skip: !selectedPatient?.id || !isViewModalOpen,
-    });
+    }
+  );
 
   const [deletePatient, { isLoading: isDeleting }] = useDeletePatientMutation();
 

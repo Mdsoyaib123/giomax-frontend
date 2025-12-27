@@ -58,7 +58,7 @@ const adminNurseManagementSlice = createSlice({
       state,
       action: PayloadAction<{ nurseId: string; status: string }>
     ) => {
-      const { nurseId, status } = action.payload;
+      const { nurseId } = action.payload;
       const nurseIndex = state.nurses.findIndex((n) => n._id === nurseId);
       if (nurseIndex !== -1) {
         // Update status in nurses array
