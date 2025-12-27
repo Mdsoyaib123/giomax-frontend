@@ -51,7 +51,6 @@ const PatientMessage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingPatients, setIsLoadingPatients] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showDebug, setShowDebug] = useState(false);
   const [isAdminTyping, setIsAdminTyping] = useState(false);
@@ -100,7 +99,7 @@ console.log(getToken());
     if (!currentUser) return;
 
     try {
-      setIsLoadingPatients(true);
+      setIsLoading(true);
       setError(null);
       const token = Cookies.get('token');
       if (!token) {
@@ -154,7 +153,7 @@ console.log(getToken());
       setError(error.message);
       setPatients([]);
     } finally {
-      setIsLoadingPatients(false);
+      setIsLoading(false);
     }
   }, [currentUser]);
 
@@ -221,7 +220,6 @@ const fetchMessages = useCallback(async (targetId: string) => {
   console.log('📥 Fetching messages, mode:', isAdminMode ? 'Admin' : 'Patient', 'targetId:', targetId);
   if (!currentUser) {
     console.warn('⚠️ Missing currentUser');
-    setIsLoading(false); // Clear loading state
     return;
   }
   
@@ -257,7 +255,6 @@ const fetchMessages = useCallback(async (targetId: string) => {
         console.log('ℹ️ No messages found (404) - showing empty state');
         setMessages([]);
         setError(null);
-        setIsLoading(false); // Clear loading state
         return;
       }
       
@@ -318,14 +315,13 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const errorMessage = error.message || 'Failed to load messages';
     setError(errorMessage);
     setMessages([]);
-    setIsLoading(false); // Clear loading on error
     
     // Don't show error if it's just "no messages" - show empty state instead
     if (errorMessage.includes('404') || errorMessage.includes('no messages') || errorMessage.includes('not found')) {
       setError(null);
     }
   } finally {
-    setIsLoading(false); // Ensure loading is always cleared
+    setIsLoading(false);
   }
 }, [currentUser, isAdminMode, selectedPatientId]);
 
@@ -333,37 +329,32 @@ const fetchMessages = useCallback(async (targetId: string) => {
 
 
 
-  // Handle admin selection - don't auto-fetch messages
+  // Handle admin selection
   const handleAdminSelect = useCallback((adminId: string) => {
     setSelectedAdminId(adminId);
     setSelectedPatientId(null); // Clear patient selection
     setIsSidebarOpen(false);
     setError(null);
-    setMessages([]); // Clear previous messages
-    setIsLoading(false); // Ensure loading is cleared
-    // Don't auto-fetch - user will click refresh button to load messages
+    fetchMessages(adminId);
     
     setTimeout(() => {
       messageInputRef.current?.focus();
     }, 100);
-  }, []);
+  }, [fetchMessages]);
 
-  // Handle patient selection - don't auto-fetch messages
+  // Handle patient selection
   const handlePatientSelect = useCallback((patientId: string) => {
-    console.log('👤 Patient selected:', patientId);
+    console.log('patientId', patientId);
     setSelectedPatientId(patientId);
     setSelectedAdminId(null); // Clear admin selection
     setIsSidebarOpen(false);
     setError(null);
-    setMessages([]); // Clear previous messages
-    setIsLoading(false); // Ensure loading is cleared - no auto-fetch
-    console.log('✅ Patient selected, loading cleared. Click refresh to load messages.');
-    // Don't auto-fetch - user will click refresh button to load messages
+    fetchMessages(patientId);
     
     setTimeout(() => {
       messageInputRef.current?.focus();
     }, 100);
-  }, []);
+  }, [fetchMessages]);
 
   // Mark messages as seen
   const markMessagesAsSeen = useCallback(async (messagesToMark: Message[]) => {
@@ -472,21 +463,17 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const targetId = isAdminMode ? selectedAdminId : selectedPatientId;
     console.log('📤 Sending message:', isAdminMode ? 'to admin' : 'to patient', messageInput);
 
+    // FIXED: Backend expects only { message } - userId comes from socket auth
+    const messageData = {
+      message: messageInput
+    };
+
     // Send via socket - use appropriate event based on mode
-    if (isAdminMode && selectedAdminId) {
-      // Admin mode: send to admin
-      socket.emit('send_message_to_admin', {
-        message: messageInput.trim()
-      });
-    } else if (!isAdminMode && selectedPatientId) {
-      // Patient mode: send to selected patient - include receiverId
-      socket.emit('send_message_to_admin', {
-        message: messageInput.trim(),
-        receiverId: selectedPatientId  // This tells backend to send to patient, not admin
-      });
+    if (isAdminMode) {
+      socket.emit('send_message_to_admin', messageData);
     } else {
-      console.error('❌ Cannot send: missing recipient');
-      return;
+      // For patient mode, use the same event or appropriate patient message event
+      socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
     }
 
     // Create optimistic message
@@ -578,8 +565,19 @@ const fetchMessages = useCallback(async (targetId: string) => {
     }
   }, [isAdminMode, fetchAdmin, fetchClinicPatients]);
 
-  // Removed auto-fetch useEffects - messages are fetched manually via handleAdminSelect/handlePatientSelect
-  // This prevents infinite loading loops and allows user to control when to load messages
+  // Auto-fetch messages when admin is selected (admin mode only)
+  useEffect(() => {
+    if (isAdminMode && selectedAdminId && adminContact._id === selectedAdminId) {
+      fetchMessages(selectedAdminId);
+    }
+  }, [isAdminMode, selectedAdminId, adminContact._id]); // Fetch when admin is selected
+
+  // Auto-fetch messages when patient is selected (patient mode only)
+  useEffect(() => {
+    if (!isAdminMode && selectedPatientId) {
+      fetchMessages(selectedPatientId);
+    }
+  }, [isAdminMode, selectedPatientId]); // Fetch when patient is selected
 
   return (
     <div className="bg-gray-50 flex justify-center">
@@ -681,7 +679,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
                     Retry
                   </button>
                 </div>
-              ) : isLoadingPatients && patients.length === 0 ? (
+              ) : isLoading && patients.length === 0 ? (
                 <div className="p-6 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
                   <p className="mt-2 text-gray-500">Loading patients...</p>
