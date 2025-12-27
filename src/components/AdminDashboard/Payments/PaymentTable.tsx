@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { X, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { X, CheckCircle, XCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -150,8 +150,8 @@ const PaymentTable: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
