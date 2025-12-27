@@ -20,6 +20,7 @@ import { Loader2, User, Camera, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks/redux-hook";
 import ChangePasswordDialog from "./ChangePasswordDialog";
+import SectionTitle from "@/common/SectionTitle";
 
 const AdminProfile = () => {
   const { data, isLoading, error, refetch } = useGetAdminProfileQuery();
@@ -120,11 +121,8 @@ const AdminProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <p className="mt-4 text-muted-foreground">Loading profile...</p>
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -155,10 +153,10 @@ const AdminProfile = () => {
       <div className="mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Admin Profile</h1>
-            <p className="text-muted-foreground">
-              Manage your account settings
-            </p>
+            <SectionTitle
+              title="Admin Profile"
+              description="Manage your account settings"
+            />
           </div>
           <Button
             variant="outline"
