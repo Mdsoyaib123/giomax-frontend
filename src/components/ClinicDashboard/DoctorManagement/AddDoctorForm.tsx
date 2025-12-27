@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { X, ArrowLeft, UploadCloud, Edit, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 interface DoctorData {
   doctorName: string;
@@ -37,13 +39,14 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState(false);
-
+  const [addNewDoctor] = useAddNewDoctorMutation();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -57,8 +60,9 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isClinicIdLoading) return;
 
     // Validate required fields
     if (!formData.uploadCertificates) {
@@ -78,6 +82,16 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     setLoading(true);
     console.log("Adding new doctor:", formData);
+    const payload = { ...formData, clinicId: clinicId };
+    try {
+      await addNewDoctor(payload).unwrap();
+      toast.success("New doctor added successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error adding new doctor:", error);
+      toast.error("Failed to add new doctor. Please try again.");
+      setLoading(false);
+    }
 
     // Simulate API call
     setTimeout(() => {
