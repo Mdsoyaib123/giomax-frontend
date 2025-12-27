@@ -75,7 +75,7 @@ const ClinicBookingManagementTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("all");
   const itemsPerPage = 6;
-  const { clinicId } = useSingleClinicId();
+  const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
   const {
     data: apiData,
     isLoading,
@@ -196,7 +196,7 @@ const ClinicBookingManagementTable: React.FC = () => {
   };
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || isClinicIdLoading) {
     return (
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
         <div className="flex justify-center items-center h-64">

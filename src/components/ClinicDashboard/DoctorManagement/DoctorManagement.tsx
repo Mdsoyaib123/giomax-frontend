@@ -8,6 +8,7 @@ import EditDoctorDetails from "@/components/ClinicDashboard/DoctorManagement/Edi
 import ViewDoctorDetails from "./ViewDocterDetails";
 import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 import { DoctorData } from "@/redux/types/doctorType";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,8 +18,11 @@ const DoctorManagement: React.FC = () => {
   const [openEditDoctor, setOpenEditDoctor] = useState<DoctorData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const { data: doctorsData, isLoading } = useGetAllDoctorsQuery();
+  const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
+  const { data: doctorsData, isLoading } = useGetAllDoctorsQuery(
+    { id: clinicId },
+    { skip: !clinicId }
+  );
   // Use API data or fallback to mock data
   const allDoctors =
     doctorsData?.data ||
@@ -98,7 +102,7 @@ const DoctorManagement: React.FC = () => {
     return pageNumbers;
   };
 
-  if (isLoading) {
+  if (isLoading || isClinicIdLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-lg">Loading doctors...</div>

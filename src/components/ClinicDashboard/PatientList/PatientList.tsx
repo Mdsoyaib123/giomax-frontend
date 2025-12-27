@@ -10,11 +10,33 @@ import SectionTitle from "@/common/SectionTitle";
 import text from "@/assets/text.png";
 import {
   useCreatePatientMutation,
-  useGetAllPatientsQuery,
+  useGetClinicAllPatientsQuery,
 } from "@/redux/features/patients/patientsApi";
 import { Patient } from "@/types/patientsType";
 import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 import { toast } from "sonner";
+import { useSingleClinicId } from "@/hooks/userClinicId";
+
+interface Appointment {
+  _id: string;
+  patientId: Patient | null;
+  doctorId: {
+    _id: string;
+    userId: string;
+  };
+  clinicId: string;
+  serviceType: string;
+  visitingType: string;
+  reasonForVisit: string;
+  followUpDetails: string;
+  status: string;
+  prefarenceDate: string;
+  prefarenceTime: string;
+  appoinmentFee: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
 
 const PatientList = () => {
   const navigate = useNavigate();
@@ -37,12 +59,17 @@ const PatientList = () => {
     bloodGroup: "",
     dateOfBirth: "",
   });
-
-  const { data: apiResponse, isLoading } = useGetAllPatientsQuery();
+  const { clinicId: id } = useSingleClinicId();
+  const { data: apiResponse, isLoading } = useGetClinicAllPatientsQuery(
+    { id },
+    {
+      skip: !id,
+    }
+  );
   const [createPatient, { isLoading: isCreating }] = useCreatePatientMutation();
 
   // Navigate to payment history page
-  const handleClick = (patientId: number) => {
+  const handleClick = (patientId: string) => {
     navigate(`/admin-dashboard/payment-history/${patientId}`);
   };
 
@@ -50,14 +77,26 @@ const PatientList = () => {
     navigate("/clinic-dashboard/message");
   };
 
-  // Get patients from API response
-  const allPatients = apiResponse?.data || [];
+  // Get appointments from API response
+  const allAppointments: Appointment[] = apiResponse?.data || [];
+
+  // Extract unique patients from appointments
+  const uniquePatients = allAppointments
+    .map((appointment) => appointment.patientId)
+    .filter((patient) => patient !== null && patient.userId) // Filter out null patientIds and patients without userId
+    .filter(
+      (patient, index, self) =>
+        // Remove duplicates by patient _id
+        index === self.findIndex((p) => p?._id === patient?._id)
+    );
 
   // Filter patients based on search query
-  const filteredPatients = allPatients.filter((patient) => {
-    const fullName = patient?.userId?.fullName?.toLowerCase() || "";
-    const email = patient?.userId?.email?.toLowerCase() || "";
-    const phone = patient?.phoneNumber?.toLowerCase() || "";
+  const filteredPatients = uniquePatients.filter((patient) => {
+    if (!patient || !patient.userId) return false;
+
+    const fullName = patient.userId.fullName?.toLowerCase() || "";
+    const email = patient.userId.email?.toLowerCase() || "";
+    const phone = patient.phoneNumber?.toLowerCase() || "";
     const query = searchQuery.toLowerCase();
 
     return (
@@ -146,7 +185,7 @@ const PatientList = () => {
         fullName: "",
         gender: "",
         email: "",
-        phone: "",
+        phoneNumber: "",
         service: "",
         serviceType: "",
         date: "",
@@ -157,10 +196,10 @@ const PatientList = () => {
         dateOfBirth: "",
       });
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.data?.message || "Failed to create patient");
     }
-    // send to API or Redux
   };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1); // Reset to first page when searching
@@ -175,6 +214,13 @@ const PatientList = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Get appointment count for a patient
+  const getAppointmentCount = (patientId: string) => {
+    return allAppointments.filter(
+      (appointment) => appointment.patientId?._id === patientId
+    ).length;
   };
 
   return (
@@ -204,13 +250,16 @@ const PatientList = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 ">
             <h2 className="text-lg font-semibold text-[#111827]">
               All Patients Information
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                ({totalPatients} patients found)
+              </span>
             </h2>
 
             <div className="flex items-center w-full sm:w-[320px] h-10 bg-[#F9FAFB] rounded-lg px-3 border border-[#E5E7EB]">
               <IoIosSearch className="text-gray-400 text-xl" />
               <input
                 type="search"
-                placeholder="Search patients..."
+                placeholder="Search patients by name, email, or phone..."
                 className="bg-transparent flex-1 pl-2 text-sm text-gray-700 focus:outline-none placeholder:text-gray-400"
                 value={searchQuery}
                 onChange={handleSearchChange}
@@ -227,59 +276,70 @@ const PatientList = () => {
                     <table className="min-w-[800px] w-full text-sm">
                       <thead className="bg-gray-100 border-b border-gray-200">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                             Patient Name
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                             Email Address
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                             Phone Number
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap w-1/4">
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
+                            Appointments
+                          </th>
+                          <th className="px-6 py-3 text-center text-xs font-semibold text-[#6B7280] uppercase tracking-wider whitespace-nowrap">
                             Actions
                           </th>
                         </tr>
                       </thead>
 
-                      <tbody className="divide-y divide-[#E5E7EB] bg-white  ">
+                      <tbody className="divide-y divide-[#E5E7EB] bg-white">
                         {isLoading ? (
                           <>
-                            <TableRowSkeleton columns={4} rows={9} />
+                            <TableRowSkeleton columns={5} rows={9} />
                           </>
                         ) : currentPatients.length > 0 ? (
-                          currentPatients.map((user) => (
+                          currentPatients.map((patient) => (
                             <tr
-                              key={user._id}
-                              className="hover:bg-gray-50 transition-colors duration-150 "
+                              key={patient._id}
+                              className="hover:bg-gray-50 transition-colors duration-150"
                             >
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                                {user?.userId?.fullName || "No Name"}
+                                {patient.userId?.fullName || "No Name"}
+                                <span className="ml-2 text-xs text-gray-500">
+                                  ({patient.userId?.role || "patient"})
+                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                                {user?.userId?.email}
+                                {patient.userId?.email || "No Email"}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
-                                {user?.phoneNumber}
+                                {patient.phoneNumber || "No Phone"}
                               </td>
-                              <td className="px-6 flex items-center justify-center  py-4 whitespace-nowrap text-sm">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  {getAppointmentCount(patient._id)} visits
+                                </span>
+                              </td>
+                              <td className="px-6 flex items-center justify-center py-4 whitespace-nowrap text-sm">
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={handleMessageClick}
-                                    className="flex items-center gap-1.5  px-5 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] justify-center transition-colors cursor-pointer text-sm font-medium"
+                                    className="flex items-center gap-1.5 px-5 py-2 bg-[#E5E7EB] text-[#374151] rounded-md hover:bg-[#D1D5DB] justify-center transition-colors cursor-pointer text-sm font-medium"
                                   >
                                     <img
                                       src={text}
                                       alt="Message"
-                                      className="w-4 h-4 "
+                                      className="w-4 h-4"
                                     />
-                                    <span>Message</span>{" "}
+                                    <span>Message</span>
                                     <span className="hidden md:block">
                                       Patient
                                     </span>
                                   </button>
                                   <button
-                                    onClick={() => setOpenProfile(user)}
+                                    onClick={() => setOpenProfile(patient)}
                                     className="flex items-center gap-1.5 px-4 py-2 bg-[#2E6FF3] text-white rounded-md hover:bg-[#034ee6] transition-colors cursor-pointer text-sm font-medium"
                                   >
                                     <FaEye className="w-4 h-4" />
@@ -292,12 +352,22 @@ const PatientList = () => {
                         ) : (
                           <tr>
                             <td
-                              colSpan={4}
+                              colSpan={5}
                               className="px-6 py-8 text-center text-gray-500"
                             >
-                              {searchQuery
-                                ? "No patients found matching your search"
-                                : "No patients found"}
+                              <div className="flex flex-col items-center justify-center">
+                                <IoIosSearch className="w-12 h-12 text-gray-300 mb-2" />
+                                <p className="text-lg font-medium text-gray-600 mb-1">
+                                  {searchQuery
+                                    ? "No patients found matching your search"
+                                    : "No patients found"}
+                                </p>
+                                {searchQuery && (
+                                  <p className="text-sm text-gray-500">
+                                    Try a different search term
+                                  </p>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         )}
@@ -372,7 +442,7 @@ const PatientList = () => {
           <Dialogue
             patient={openProfile}
             onClose={() => setOpenProfile(null)}
-            onViewPaymentHistory={handleClick}
+            onViewPaymentHistory={() => handleClick(openProfile._id)}
           />
         )}
 
@@ -428,7 +498,6 @@ const PatientList = () => {
                       <option value="">Select Patient Gender</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
-                      {/* <option value="Other">Other</option> */}
                     </select>
                   </div>
                 </div>
@@ -514,6 +583,7 @@ const PatientList = () => {
                     >
                       <option value="">Select Service</option>
                       <option value="inClinic">In Clinic</option>
+                      <option value="online">Online</option>
                       <option value="Consultation">Consultation</option>
                       <option value="Follow-up">Follow-up</option>
                     </select>
@@ -528,9 +598,11 @@ const PatientList = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
                     >
-                      <option>General Checkup</option>
-                      <option>Consultation</option>
-                      <option>Follow-up</option>
+                      <option value="">Select Service Type</option>
+                      <option value="General Checkup">General Checkup</option>
+                      <option value="Consultation">Consultation</option>
+                      <option value="Follow-up">Follow-up</option>
+                      <option value="Emergency">Emergency</option>
                     </select>
                   </div>
                 </div>

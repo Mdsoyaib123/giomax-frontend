@@ -2,8 +2,8 @@ import { baseApi } from "@/redux/hooks/baseApi";
 import { DoctorApiResponse } from "@/redux/types/doctorType";
 export const doctorsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getAllDoctors: builder.query<DoctorApiResponse, void>({
-            query: () => "doctor/getAll",
+        getAllDoctors: builder.query<DoctorApiResponse, { id: string | null }>({
+            query: ({ id }) => `/clinic/getClinicDoctors/${id}`,
             providesTags: ["DOCTOR"]
         }),
         addNewDoctor: builder.mutation({
