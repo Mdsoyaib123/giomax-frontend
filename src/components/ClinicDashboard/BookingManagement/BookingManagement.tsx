@@ -13,11 +13,8 @@ import {
   useCreateDoctorAppointmentMutation,
 } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
 import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
-import {
-  useGetAllDoctorsQuery,
-  useGetSignalClinicQuery,
-} from "@/redux/features/doctors/doctorsApi";
-import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
+
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 
@@ -39,11 +36,6 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const userId = useAppSelector((state) => state.auth.user?.id);
-
-  const { data: clinicData } = useGetSignalClinicQuery(userId!, {
-    skip: !userId,
-  });
   const { clinicId } = useSingleClinicId();
   console.log(clinicId);
 
