@@ -37,6 +37,14 @@ export const clinicBasicApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["CLINIC_BASIC"]
         }),
+        updateAvailability: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `/clinic/availability/${id}`,
+                method: "PUT",
+                body: data
+            }),
+            invalidatesTags: ["CLINIC_BASIC"]
+        }),
     }),
 });
 
@@ -44,6 +52,7 @@ export const {
     useGetAllClinicsQuery,
     useGetClinicByIdQuery,
     useGetAClinicQuery,
-    useUpdateClinicMutation
+    useUpdateClinicMutation,
+    useUpdateAvailabilityMutation
 
 } = clinicBasicApi;
