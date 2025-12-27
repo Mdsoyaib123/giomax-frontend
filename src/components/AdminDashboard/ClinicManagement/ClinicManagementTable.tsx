@@ -17,7 +17,7 @@ import {
   setFilterStatus,
   setSearchTerm,
 } from "@/redux/features/admin/clinic/clinicManagementSlice";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 
 interface Props {
@@ -569,7 +569,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                     Verification Documents
                   </h1>
 
-                  {openProfile.clinicCertificates.map((cert, index) => (
+                  {openProfile.clinicCertificates.map((cert) => (
                     <div
                       key={cert._id}
                       className="p-4 rounded-xl bg-[#F8FAFC] border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all duration-300"
