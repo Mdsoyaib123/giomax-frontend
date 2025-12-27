@@ -14,7 +14,6 @@ import d4 from "@/assets/d4.png";
 import d5 from "@/assets/d5.png";
 import d6 from "@/assets/d6.png";
 import d7 from "@/assets/d7.png";
-import d8 from "@/assets/d8.png";
 
 import { FiLogOut } from "react-icons/fi";
 import { logOut } from "@/redux/features/auth/authSlice";
