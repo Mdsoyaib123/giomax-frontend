@@ -70,6 +70,7 @@ const PatientMessage = () => {
   const getCurrentUser = () => {
     try {
       const userData = localStorage.getItem('user');
+      console.log('userData', userData);
       return userData ? JSON.parse(userData) : null;
     } catch {
       return null;
@@ -77,6 +78,7 @@ const PatientMessage = () => {
   };
 
   const currentUser = getCurrentUser();
+  console.log('currentUser', currentUser);
 const {clinicId: clinicIdFromUseSingleClinicId}=useSingleClinicId();
 console.log('clinicId from useSingleClinicId', clinicIdFromUseSingleClinicId);
   // Get token properly
@@ -155,7 +157,7 @@ console.log(getToken());
     } finally {
       setIsLoading(false);
     }
-  }, [currentUser]);
+  }, [currentUser,clinicIdFromUseSingleClinicId]);
 
   // Fetch admin data from API
   const fetchAdmin = useCallback(async () => {
@@ -695,28 +697,35 @@ const fetchMessages = useCallback(async (targetId: string) => {
                   </button>
                 </div>
               ) : (
-                patients.map((patient) => (
-                  <div
-                    key={patient._id}
-                    onClick={() => handlePatientSelect(patient._id)}
-                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedPatientId === patient._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
-                  >
-                    <div className="relative flex-shrink-0">
-                      <img 
-                        src={patient.avatar} 
-                        alt={patient.name} 
-                        className="w-11 h-11 rounded-full object-cover" 
-                      />
-                      {patient.online && (
-                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{patient.name}</h3>
-                      <p className="text-xs text-gray-500 truncate">{patient.role || 'Patient'}</p>
-                    </div>
-                  </div>
-                ))
+                patients.map((patient) => {
+                  console.log('patient', patient);
+                  return (
+
+                    (
+                      <div
+                        key={patient._id}
+                        onClick={() => handlePatientSelect(patient._id)}
+                        className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedPatientId === patient._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
+                      >
+                        <div className="relative flex-shrink-0">
+                          <img 
+                            src={patient.avatar} 
+                            alt={patient.name} 
+                            className="w-11 h-11 rounded-full object-cover" 
+                          />
+                          {patient.online && (
+                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-gray-900 mb-0.5">{patient.name}</h3>
+                          <p className="text-xs text-gray-500 truncate">{patient.role || 'Patient'}</p>
+                        </div>
+                      </div>
+                    )
+
+                  )
+                })
               )
             )}
           </div>

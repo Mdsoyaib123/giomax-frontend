@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
@@ -498,7 +499,7 @@ const PatientManagement: React.FC = () => {
   } = useGetAllPatientsQuery();
 
   const { data: singlePatientResponse } = useGetSinglePatientQuery(
-    selectedPatient?.id!,
+    selectedPatient?.id,
     {
       skip: !selectedPatient?.id || !isViewModalOpen,
     }
@@ -592,8 +593,8 @@ const PatientManagement: React.FC = () => {
   // Loading state for main table
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <span className="ml-3 text-gray-600">Loading patients...</span>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }

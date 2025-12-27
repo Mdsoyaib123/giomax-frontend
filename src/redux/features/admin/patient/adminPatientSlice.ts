@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PatientTableData } from "@/redux/types/adminPatientTypes";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AdminPatientState {
   searchTerm: string;
-  selectedPatient: PatientTableData | null;
+  selectedPatient: any | null;
   currentPage: number;
   itemsPerPage: number;
   isViewModalOpen: boolean;

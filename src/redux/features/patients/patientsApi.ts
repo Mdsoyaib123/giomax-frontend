@@ -1,16 +1,18 @@
 import { baseApi } from "@/redux/hooks/baseApi";
-import { PatientResponse } from "@/types/patientsType";
+import { ClinicPatientsResponse } from "@/types/patientsType";
 
 export const patientsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getAllPatients: builder.query<PatientResponse, void>({
-            query: () => "patient/getAll",
-            providesTags: ["PATIENT"],
-
+        getClinicAllPatients: builder.query<ClinicPatientsResponse,
+            { id: string | null }
+        >({
+            query: ({ id }) => `/clinic/getClinicPatients/${id}`,
+            providesTags: ["CLINIC_PATIENT"],
         }),
+
         getSinglePatients: builder.query({
             query: ({ id }: { id: string }) => `patient/getSinglePatient/${id}`,
-            providesTags: ["PATIENT"],
+            providesTags: ["CLINIC_PATIENT"],
         }),
         CreatePatient: builder.mutation({
             query: (data) => ({
@@ -18,8 +20,8 @@ export const patientsApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["PATIENT"],
+            invalidatesTags: ["CLINIC_PATIENT"],
         })
     }),
 });
-export const { useGetAllPatientsQuery, useGetSinglePatientsQuery, useCreatePatientMutation } = patientsApi
+export const { useGetClinicAllPatientsQuery, useGetSinglePatientsQuery, useCreatePatientMutation } = patientsApi

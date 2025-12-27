@@ -7,7 +7,11 @@ const PaymentCard = () => {
   const { data: paymentData, isLoading } = useGetPaymentDataQuery({});
 
   if (isLoading) {
-    return <p className="text-center">Loading payment data...</p>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   const data = paymentData?.data;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import License from "@/components/ClinicDashboard/ClinicSettings/license-documents";
 import Payout from "@/components/ClinicDashboard/ClinicSettings/payout-methods";
 import AvailabilitySettings from "@/components/ClinicDashboard/ClinicSettings/AvailabilitySettings";
@@ -14,28 +14,28 @@ interface ClinicSettingsProps {
 
 const ClinicSettings = ({ activeTab }: ClinicSettingsProps) => {
 // STATE variables 
-const [clinicName, setClinicName] = useState("Wardier Medical Clinic");
-const [email, setEmail] = useState("wardier.clinic@gmail.com");
-const [phone, setPhone] = useState("(+995) 126 - 245 -78936"); 
-const [address, setAddress] = useState("12 Rustaveli Street, Vake District, Tbilisi, Georgia");
-const [servicesOffered, setServicesOffered] = useState("General Medicine, Cardiology, Pediatrics, Dermatology, Orthopedics, ENT, Gynecology");
-const [description, setDescription] = useState("Premier healthcare facility providing comprehensive medical services with a team of experienced professionals.");
+// const [clinicName, setClinicName] = useState("Wardier Medical Clinic");
+// const [email, setEmail] = useState("wardier.clinic@gmail.com");
+// const [phone, setPhone] = useState("(+995) 126 - 245 -78936"); 
+// const [address, setAddress] = useState("12 Rustaveli Street, Vake District, Tbilisi, Georgia");
+// const [servicesOffered, setServicesOffered] = useState("General Medicine, Cardiology, Pediatrics, Dermatology, Orthopedics, ENT, Gynecology");
+// const [description, setDescription] = useState("Premier healthcare facility providing comprehensive medical services with a team of experienced professionals.");
 
 
 const renderClinicProfile = () => (
     <ClinicProfileSettings 
-        clinicName={clinicName}
-        setClinicName={setClinicName}
-        email={email}
-        setEmail={setEmail}
-        phone={phone}
-        setPhone={setPhone}
-        address={address}
-        setAddress={setAddress}
-        servicesOffered={servicesOffered}
-        setServicesOffered={setServicesOffered}
-        description={description}
-        setDescription={setDescription}
+        // clinicName={clinicName}
+        // setClinicName={setClinicName}
+        // email={email}
+        // setEmail={setEmail}
+        // phone={phone}
+        // setPhone={setPhone}
+        // address={address}
+        // setAddress={setAddress}
+        // servicesOffered={servicesOffered}
+        // setServicesOffered={setServicesOffered}
+        // description={description}
+        // setDescription={setDescription}
     />
 );
 

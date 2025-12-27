@@ -12,16 +12,14 @@ import {
   useClinicDoctorAllAppointmentsQuery,
   useCreateDoctorAppointmentMutation,
 } from "@/redux/features/doctorAppoinment/doctorAppoinmentApi";
-import { useGetAllPatientsQuery } from "@/redux/features/patients/patientsApi";
-import {
-  useGetAllDoctorsQuery,
-  useGetSignalClinicQuery,
-} from "@/redux/features/doctors/doctorsApi";
-import { useAppSelector } from "@/redux/hooks/redux-hook";
+
+import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
+
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
+import { useGetClinicAllPatientsQuery } from "@/redux/features/patients/patientsApi";
 
-const ITEMS_PER_PAGE = 12; // You can adjust this number based on your needs
+const ITEMS_PER_PAGE = 12;
 
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
@@ -39,21 +37,26 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const userId = useAppSelector((state) => state.auth.user?.id);
-
-  const { data: clinicData } = useGetSignalClinicQuery(userId!, {
-    skip: !userId,
-  });
-  const { clinicId } = useSingleClinicId();
-  console.log(clinicId);
+  const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
 
   const { data: patientsData, isLoading: isLoadingPatient } =
-    useGetAllPatientsQuery();
+    useGetClinicAllPatientsQuery(
+      { id: clinicId },
+      {
+        skip: !clinicId,
+      }
+    );
   const { data: doctorsData, isLoading: isLoadingDoctors } =
-    useGetAllDoctorsQuery();
+    useGetAllDoctorsQuery({ id: clinicId }, { skip: !clinicId });
   console.log("object", patientsData, doctorsData);
-  const { data, isLoading, isFetching } = useClinicDoctorAllAppointmentsQuery(
-    activeTab === "All" ? "" : activeTab
+  const { data, isLoading } = useClinicDoctorAllAppointmentsQuery(
+    {
+      id: clinicId,
+      status: activeTab === "All" ? "" : activeTab,
+    },
+    {
+      skip: !clinicId,
+    }
   );
   const [createDoctorAppointment, { isLoading: isCreating }] =
     useCreateDoctorAppointmentMutation();
@@ -245,7 +248,7 @@ const BookingManagement = () => {
 
         {/* Tab Content */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {isLoading || isFetching ? (
+          {isLoading || isClinicIdLoading ? (
             Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
               <AppointmentSkeleton key={i} />
             ))
@@ -469,9 +472,9 @@ const BookingManagement = () => {
                     ) : (
                       <>
                         <option value="">Select patient</option>
-                        {patientsData?.data?.map((patient) => (
+                        {patientsData?.data?.map((patient: any) => (
                           <option key={patient._id} value={patient?._id ?? ""}>
-                            {patient?.userId?.fullName}
+                            {patient?.patientId?.userId.fullName ?? "unknown"}
                           </option>
                         ))}
                       </>

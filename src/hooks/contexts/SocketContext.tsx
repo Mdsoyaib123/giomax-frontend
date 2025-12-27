@@ -1,5 +1,5 @@
 // src/contexts/SocketContext.tsx
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, ReactNode, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Cookies from 'js-cookie';
 
@@ -38,6 +38,7 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
   const [debugInfo, setDebugInfo] = useState({
     connectionStatus: 'disconnected',
     lastEvent: '',
@@ -89,17 +90,27 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const connect = useCallback(() => {
     const userInfo = getUserInfo();
     if (!userInfo) {
+      console.error('❌ Cannot connect: Missing user data or token');
       addDebugEvent('connect_failed', 'No user info');
+      setIsConnected(false);
+      setDebugInfo(prev => ({ ...prev, connectionStatus: 'disconnected' }));
       return;
     }
 
     const { user, token } = userInfo;
 
-    if (socket) {
-      socket.disconnect();
-      addDebugEvent('disconnect_previous');
-    }
+    // Disconnect existing socket using functional update
+    setSocket(prevSocket => {
+      if (prevSocket) {
+        console.log('🔄 Disconnecting previous socket');
+        prevSocket.disconnect();
+        addDebugEvent('disconnect_previous');
+        socketRef.current = null;
+      }
+      return null;
+    });
 
+    console.log('🔌 Attempting socket connection...', { userId: user._id, role: user.role });
     addDebugEvent('connect_attempt', { userId: user._id, role: user.role });
 
     const newSocket = io('https://giomaxatadxe-backend.onrender.com', {
@@ -108,6 +119,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
       timeout: 20000,
       auth: { 
         token,
@@ -148,13 +160,31 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
 
     newSocket.on('reconnect_attempt', (attempt) => {
+      console.log('🔄 Reconnection attempt:', attempt);
       addDebugEvent('reconnect_attempt', attempt);
     });
 
-    newSocket.on('reconnect', () => {
-      addDebugEvent('reconnected');
+    newSocket.on('reconnect', (attemptNumber) => {
+      console.log('✅ Reconnected after', attemptNumber, 'attempts');
+      addDebugEvent('reconnected', { attemptNumber });
       setIsConnected(true);
       setDebugInfo(prev => ({ ...prev, connectionStatus: 'connected' }));
+      
+      // Rejoin rooms after reconnection
+      newSocket.emit('join_room', user._id);
+      addDebugEvent('rejoined_room', user._id);
+      
+      if (user.role === 'admin') {
+        newSocket.emit('join_room', 'ADMIN_ROOM');
+        addDebugEvent('rejoined_room', 'ADMIN_ROOM');
+      }
+    });
+
+    newSocket.on('reconnect_failed', () => {
+      console.error('❌ Reconnection failed');
+      addDebugEvent('reconnect_failed');
+      setIsConnected(false);
+      setDebugInfo(prev => ({ ...prev, connectionStatus: 'disconnected' }));
     });
 
     const originalEmit = newSocket.emit.bind(newSocket);
@@ -168,22 +198,21 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
 
     setSocket(newSocket);
-    
-    return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-      }
-    };
-  }, [socket, addDebugEvent]);
+    socketRef.current = newSocket;
+  }, [addDebugEvent]);
 
   const disconnect = useCallback(() => {
-    if (socket) {
-      socket.disconnect();
-      setSocket(null);
-      setIsConnected(false);
-      addDebugEvent('manual_disconnect');
-    }
-  }, [socket, addDebugEvent]);
+    setSocket(prevSocket => {
+      if (prevSocket) {
+        prevSocket.disconnect();
+        setIsConnected(false);
+        addDebugEvent('manual_disconnect');
+        socketRef.current = null;
+        return null;
+      }
+      return prevSocket;
+    });
+  }, [addDebugEvent]);
 
   const clearDebug = useCallback(() => {
     setDebugInfo({
@@ -193,15 +222,27 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
   }, [debugInfo.connectionStatus, debugInfo.lastEvent]);
 
+  // Initial connection on mount
   useEffect(() => {
     const userInfo = getUserInfo();
     if (userInfo) {
+      console.log('🚀 Initializing socket connection...');
       connect();
+    } else {
+      console.error('❌ Cannot initialize socket: Missing user data or token');
+      console.log('User data:', localStorage.getItem('user'));
+      console.log('Token:', Cookies.get('token') || localStorage.getItem('token'));
     }
+  }, [connect]);
 
+  // Cleanup socket when component unmounts
+  useEffect(() => {
     return () => {
-      if (socket) {
-        socket.disconnect();
+      // Cleanup on unmount - use ref to get current socket
+      if (socketRef.current) {
+        console.log('🧹 Cleaning up socket connection on unmount');
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
     };
   }, []);
