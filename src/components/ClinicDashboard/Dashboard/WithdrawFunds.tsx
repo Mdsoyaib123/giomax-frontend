@@ -5,7 +5,6 @@ import {
   useCreateWithdrawRequestMutation,
   useGetSingleWithdrawRequestQuery,
 } from "@/redux/features/admin/payment/clinicPaymentsApi";
-import { useAppSelector } from "@/redux/hooks/redux-hook";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 import { toast } from "sonner";
 

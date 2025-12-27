@@ -1,3 +1,5 @@
+import { MedicalHistory } from "@/redux/types/adminPatientTypes";
+
 export interface ClinicPatientsResponse {
     success: boolean;
     message: string;
@@ -25,6 +27,14 @@ export interface Patient {
     _id: string;
     userId: User;
     phoneNumber: string;
+    age: number;
+    gender: string;
+    bloodGroup: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    dateOfBirth?: string;
+    medicalHistory?: MedicalHistory[]
 }
 export interface Doctor {
     _id: string;

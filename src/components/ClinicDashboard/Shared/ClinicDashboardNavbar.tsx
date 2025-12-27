@@ -1,11 +1,9 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  IoIosSearch,
   IoMdArrowDropdownCircle,
   IoMdNotificationsOutline,
 } from "react-icons/io";
-import { FiFilter } from "react-icons/fi";
 
 import {
   DropdownMenu,
@@ -14,10 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logo1 from "@/assets/Logo/userLogout.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotificationPanel from "@/components/AdminDashboard/Shared/NotificationPanel";
 import AdvancedFilter from "./AdvancedFilter";
+import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { logOut } from "@/redux/features/auth/authSlice";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -31,9 +31,15 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
   isSidebarOpen,
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  // const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/");
+  };
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -58,7 +64,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
           <div className="flex items-center pl-0 md:pl-2 lg:pl-70">
             <div className="relative w-full flex justify-end md:justify-start">
               {/* Mobile Search */}
-              <div className="block md:hidden">
+              {/* <div className="block md:hidden">
                 {isSearchOpen ? (
                   <div className="relative w-[220px] sm:w-[260px]">
                     <input
@@ -79,10 +85,10 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
                     className="text-2xl text-gray-500 cursor-pointer"
                   />
                 )}
-              </div>
+              </div> */}
 
               {/* Desktop Search */}
-              <div className="hidden md:block relative w-full min-w-lg lg:max-w-3xl">
+              {/* <div className="hidden md:block relative w-full min-w-lg lg:max-w-3xl">
                 <input
                   type="text"
                   placeholder="Search anything here..."
@@ -93,7 +99,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
                   onClick={() => setIsFilterOpen(true)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -136,7 +142,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
               align="end"
               className="bg-white w-60 shadow-lg rounded-xl border border-gray-200 p-2"
             >
-              <Link to="/admin-dashboard/settings">
+              <Link to="/clinic-dashboard/settings">
                 <DropdownMenuItem
                   className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
                     activeItem === "settings"
@@ -148,33 +154,14 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
                   Settings
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem
-                className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
-                  activeItem === "terms"
-                    ? "bg-blue-400 text-white"
-                    : "text-gray-700 hover:bg-blue-400 hover:text-white"
-                }`}
-                onClick={() => setActiveItem("terms")}
-              >
-                Terms & Conditions
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={`px-4 py-3 mb-1 cursor-pointer rounded-lg text-base font-medium transition-colors ${
-                  activeItem === "privacy"
-                    ? "bg-blue-400 text-white"
-                    : "text-gray-700 hover:bg-blue-400 hover:text-white"
-                }`}
-                onClick={() => setActiveItem("privacy")}
-              >
-                Privacy Policy
-              </DropdownMenuItem>
+
               <DropdownMenuItem
                 className={`px-4 py-3 cursor-pointer rounded-lg text-base font-medium transition-colors ${
                   activeItem === "signout"
                     ? "bg-blue-400 text-white"
                     : "text-gray-700 hover:bg-blue-400 hover:text-white"
                 }`}
-                onClick={() => setActiveItem("signout")}
+                onClick={handleLogout}
               >
                 Sign Out
               </DropdownMenuItem>

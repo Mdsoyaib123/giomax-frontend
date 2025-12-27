@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
@@ -497,10 +498,12 @@ const PatientManagement: React.FC = () => {
     refetch,
   } = useGetAllPatientsQuery();
 
-  const { data: singlePatientResponse, isLoading: isLoadingSinglePatient } =
-    useGetSinglePatientQuery(selectedPatient?.id!, {
+  const { data: singlePatientResponse } = useGetSinglePatientQuery(
+    selectedPatient?.id,
+    {
       skip: !selectedPatient?.id || !isViewModalOpen,
-    });
+    }
+  );
 
   const [deletePatient, { isLoading: isDeleting }] = useDeletePatientMutation();
 
