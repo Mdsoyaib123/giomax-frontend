@@ -8,7 +8,7 @@ import { useSingleClinicId } from '@/hooks/userClinicId';
 
  interface Message {
   _id: string;
-  message: string;
+  message: string | any;
   senderId: string;
   senderName?: string;
   receiverId?: string;
@@ -79,8 +79,7 @@ const PatientMessage = () => {
 
   const currentUser = getCurrentUser();
   console.log('currentUser', currentUser);
-const {clinicId: clinicIdFromUseSingleClinicId}=useSingleClinicId();
-console.log('clinicId from useSingleClinicId', clinicIdFromUseSingleClinicId);
+ 
   // Get token properly
   const getToken = () => {
     return localStorage.getItem('token') || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
@@ -98,7 +97,8 @@ console.log(getToken());
   console.log('clinicId', clinicId);
   // Fetch clinic patients list (for patient list mode)
   const fetchClinicPatients = useCallback(async () => {
-    if (!currentUser) return;
+    const user = getCurrentUser();
+    if (!user) return;
 
     try {
       setIsLoading(true);
@@ -108,11 +108,11 @@ console.log(getToken());
         throw new Error('No authentication token found');
       }
 
-      const currentUserId = currentUser._id || currentUser.id;
+      const currentUserId = user._id || user.id;
       console.log('📥 Fetching clinic patients...',currentUserId);
       
       const response = await fetch(
-        `https://giomaxatadxe-backend.onrender.com/api/v1/doctor-appointment/getSingleClinicChats/${clinicIdFromUseSingleClinicId}`,
+        `https://api.medconnect.com.ge/api/v1/doctor-appointment/getSingleClinicChats/${clinicId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -157,7 +157,7 @@ console.log(getToken());
     } finally {
       setIsLoading(false);
     }
-  }, [currentUser,clinicIdFromUseSingleClinicId]);
+  }, [clinicId]);
 
   // Fetch admin data from API
   const fetchAdmin = useCallback(async () => {
@@ -170,7 +170,7 @@ console.log(getToken());
 
       console.log('📥 Fetching admin data...');
       const response = await fetch(
-        'https://giomaxatadxe-backend.onrender.com/api/v1/user/get-admin',
+        'https://api.medconnect.com.ge/api/v1/user/get-admin',
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -220,7 +220,8 @@ console.log(getToken());
 
 const fetchMessages = useCallback(async (targetId: string) => {
   console.log('📥 Fetching messages, mode:', isAdminMode ? 'Admin' : 'Patient', 'targetId:', targetId);
-  if (!currentUser) {
+  const user = getCurrentUser();
+  if (!user) {
     console.warn('⚠️ Missing currentUser');
     return;
   }
@@ -234,13 +235,20 @@ const fetchMessages = useCallback(async (targetId: string) => {
       throw new Error('No authentication token found');
     }
     
-    const currentUserId = currentUser._id || currentUser.id;
+    const currentUserId = user._id || user.id;
     console.log('currentUserId', currentUserId);
     
-    // Use new API endpoint that returns all messages for current user
-    const apiUrl = `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/history`;
+    // Use different API endpoint based on mode
+    let apiUrl: string;
+    if (isAdminMode) {
+      // Admin mode: fetch admin chat history
+      apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/admin/history`;
+    } else {
+      // Patient mode: fetch patient chat history
+      apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/getChat/${targetId}`;
+    }
     
-    console.log('🔗 Fetching from:', apiUrl);
+    console.log('🔗 Fetching from:', apiUrl, 'Mode:', isAdminMode ? 'Admin' : 'Patient');
     
     const response = await fetch(apiUrl, {
       headers: {
@@ -285,21 +293,18 @@ const fetchMessages = useCallback(async (targetId: string) => {
       );
     } else {
       // Patient mode: filter messages between clinic and selected patient
-      const patientId = selectedPatientId;
-      if (patientId) {
+      if (targetId) {
         filteredMessages = messagesData.filter((msg: Message) => 
           // Clinic sent to patient OR patient sent to clinic
-          (msg.senderId === currentUserId && msg.receiverId === patientId) ||
-          (msg.senderId === patientId && msg.receiverId === currentUserId) ||
-          // Fallback: match by chatType
-          (msg.chatType === 'user_admin' || msg.chatType === 'admin_to_user')
+          (msg.senderId === currentUserId && msg.receiverId === targetId) ||
+          (msg.senderId === targetId && msg.receiverId === currentUserId)
         );
       } else {
         filteredMessages = [];
       }
     }
     
-    console.log(`🔍 Filtered to ${filteredMessages.length} relevant messages`);
+    console.log(`🔍 Filtered to ${filteredMessages.length} relevant messages for targetId: ${targetId}`);
     setMessages(filteredMessages);
     setError(null); // Clear any previous errors
     
@@ -325,7 +330,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   } finally {
     setIsLoading(false);
   }
-}, [currentUser, isAdminMode, selectedPatientId]);
+}, [isAdminMode]);
 
 
 
@@ -334,7 +339,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   // Handle admin selection
   const handleAdminSelect = useCallback((adminId: string) => {
     setSelectedAdminId(adminId);
-    setSelectedPatientId(null); // Clear patient selection
+    // setSelectedPatientId(null); // Clear patient selection
     setIsSidebarOpen(false);
     setError(null);
     fetchMessages(adminId);
@@ -348,7 +353,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   const handlePatientSelect = useCallback((patientId: string) => {
     console.log('patientId', patientId);
     setSelectedPatientId(patientId);
-    setSelectedAdminId(null); // Clear admin selection
+    // setSelectedAdminId(null); // Clear admin selection
     setIsSidebarOpen(false);
     setError(null);
     fetchMessages(patientId);
@@ -360,8 +365,11 @@ const fetchMessages = useCallback(async (targetId: string) => {
 
   // Mark messages as seen
   const markMessagesAsSeen = useCallback(async (messagesToMark: Message[]) => {
+    const user = getCurrentUser();
+    if (!user) return;
+    
     const unseenMessages = messagesToMark.filter(msg => 
-      msg.senderId !== (currentUser?._id || currentUser?.id) && !msg.seen
+      msg.senderId !== (user._id || user.id) && !msg.seen
     );
     
     if (unseenMessages.length === 0 || !socket) return;
@@ -371,7 +379,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
       
       await Promise.all(
         unseenMessages.map(msg =>
-          fetch(`https://giomaxatadxe-backend.onrender.com/api/v1/chat/mark-seen/${msg._id}`, {
+          fetch(`https://api.medconnect.com.ge/api/v1/chat/mark-seen/${msg._id}`, {
             method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -385,11 +393,13 @@ const fetchMessages = useCallback(async (targetId: string) => {
     } catch (error) {
       console.error('❌ Error marking messages as seen:', error);
     }
-  }, [currentUser, socket]);
+  }, [socket]);
 
   // Setup socket listeners
   useEffect(() => {
     if (!socket) return;
+
+    const currentUserId = currentUser?._id || currentUser?.id;
 
     // FIXED: Listen for messages from admin
     const handleAdminMessage = (data: Message) => {
@@ -397,11 +407,31 @@ const fetchMessages = useCallback(async (targetId: string) => {
       
       // Check if this message is for current user
       const isForCurrentUser = 
-        data.receiverId === (currentUser?._id || currentUser?.id) ||
-        (data.receiverType === 'admin' && data.senderId === (currentUser?._id || currentUser?.id)) ||
-        data.chatType === 'admin_user';
+        data.receiverId === currentUserId ||
+        (data.receiverType === 'admin' && data.senderId === currentUserId) ||
+        data.chatType === 'admin_user' ||
+        data.chatType === 'user_admin';
       
-      if (isForCurrentUser) {
+      if (isForCurrentUser && isAdminMode) {
+        setMessages(prev => {
+          // Prevent duplicates
+          const exists = prev.some(msg => msg._id === data._id);
+          if (exists) return prev;
+          return [...prev, data];
+        });
+      }
+    };
+
+    // Handle messages from patients (when clinic receives message from patient)
+    const handlePatientMessage = (data: Message) => {
+      console.log('📩 New message from patient:', data);
+      
+      // Only handle messages FROM patient TO clinic (incoming messages)
+      const isFromPatient = 
+        data.receiverId === currentUserId &&
+        data.senderId === selectedPatientId;
+      
+      if (isFromPatient && !isAdminMode && selectedPatientId) {
         setMessages(prev => {
           // Prevent duplicates
           const exists = prev.some(msg => msg._id === data._id);
@@ -415,36 +445,68 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const handleMessageSent = (data: any) => {
       console.log('✅ Message sent confirmation:', data);
       
-      // Update optimistic message with real ID
-      setMessages(prev => prev.map(msg => 
-        msg._id.includes('temp_') && msg.message === data.message 
-          ? { ...msg, _id: data._id } 
-          : msg
-      ));
+      // Update optimistic message with real ID and full data
+      setMessages(prev => {
+        // Find and replace optimistic message
+        const hasOptimistic = prev.some(msg => 
+          msg._id.includes('temp_') && 
+          msg.message === data.message &&
+          ((isAdminMode && msg.receiverId === selectedAdminId) || 
+           (!isAdminMode && msg.receiverId === selectedPatientId))
+        );
+        
+        if (hasOptimistic) {
+          // Replace optimistic message with real one
+          return prev.map(msg => {
+            if (msg._id.includes('temp_') && 
+                msg.message === data.message &&
+                ((isAdminMode && msg.receiverId === selectedAdminId) || 
+                 (!isAdminMode && msg.receiverId === selectedPatientId))) {
+              return data;
+            }
+            return msg;
+          });
+        } else {
+          // If no optimistic message found, add the real one (in case it wasn't added optimistically)
+          const exists = prev.some(msg => msg._id === data._id);
+          if (!exists) {
+            return [...prev, data];
+          }
+          return prev;
+        }
+      });
     };
 
     // Listen for typing indicator
     const handleTyping = (data: { userId: string; isTyping: boolean }) => {
-      console.log('⌨️ Admin typing indicator:', data);
-      // If typing is from admin (or any user that's not current user)
-      if (data.userId !== (currentUser?._id || currentUser?.id)) {
-        setIsAdminTyping(data.isTyping);
+      console.log('⌨️ Typing indicator:', data);
+      // If typing is from someone that's not current user
+      if (data.userId !== currentUserId) {
+        if (isAdminMode && data.userId === selectedAdminId) {
+          setIsAdminTyping(data.isTyping);
+        } else if (!isAdminMode && data.userId === selectedPatientId) {
+          setIsAdminTyping(data.isTyping);
+        }
       }
     };
 
-    // FIXED: Listen for correct event
+    // FIXED: Listen for correct events
     socket.on('receive_message_from_admin', handleAdminMessage);
+    socket.on('receive_message', handlePatientMessage);
     socket.on('message_sent', handleMessageSent);
     socket.on('user_typing', handleTyping);
 
     // Cleanup
     return () => {
       socket.off('receive_message_from_admin', handleAdminMessage);
+      socket.off('receive_message', handlePatientMessage);
       socket.off('message_sent', handleMessageSent);
       socket.off('user_typing', handleTyping);
     };
-  }, [socket]); // Remove dependencies that cause infinite loop
-
+  }, [socket, currentUser, isAdminMode, selectedAdminId, selectedPatientId]);
+console.log('selectedAdminId', selectedAdminId);
+console.log('selectedPatientId', selectedPatientId);
+console.log('isAdminMode', isAdminMode);
   // Send message - FIXED
   const sendMessage = useCallback(() => {
     const hasSelectedContact = isAdminMode ? selectedAdminId : selectedPatientId;
@@ -465,20 +527,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const targetId = isAdminMode ? selectedAdminId : selectedPatientId;
     console.log('📤 Sending message:', isAdminMode ? 'to admin' : 'to patient', messageInput);
 
-    // FIXED: Backend expects only { message } - userId comes from socket auth
-    const messageData = {
-      message: messageInput
-    };
-
-    // Send via socket - use appropriate event based on mode
-    if (isAdminMode) {
-      socket.emit('send_message_to_admin', messageData);
-    } else {
-      // For patient mode, use the same event or appropriate patient message event
-      socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
-    }
-
-    // Create optimistic message
+    // Create optimistic message first
     const optimisticMessage: Message = {
       _id: `temp_${Date.now()}`,
       message: messageInput,
@@ -486,14 +535,32 @@ const fetchMessages = useCallback(async (targetId: string) => {
       senderName: currentUser.name,
       receiverId: targetId || undefined,
       receiverType: isAdminMode ? 'admin' : 'user',
-      chatType: isAdminMode ? 'user_admin' : 'user_admin',
+      chatType: isAdminMode ? 'user_admin' : 'patient_clinic',
       seen: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    // Add to messages immediately
+-    // Add to messages immediately
     setMessages(prev => [...prev, optimisticMessage]);
+
+    // Send via socket - use appropriate event based on mode
+    if (isAdminMode) {
+      // For admin mode, use existing event
+      socket.emit('send_message_to_admin', { message: messageInput });
+    } else {
+      // For patient mode, use backend's send_message event with proper payload
+      console.log('📤 Emitting send_message to patient:', {
+        receiverId: targetId,
+        message: messageInput,
+        chatType: 'patient_clinic'
+      });
+      socket.emit('send_message', {
+        receiverId: targetId,
+        message: messageInput,
+        chatType: 'patient_clinic'
+      });
+    }
 
     // Clear input
     setMessageInput('');
@@ -579,7 +646,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
     if (!isAdminMode && selectedPatientId) {
       fetchMessages(selectedPatientId);
     }
-  }, [isAdminMode, selectedPatientId]); // Fetch when patient is selected
+  }, [isAdminMode, selectedPatientId, fetchMessages]); // Fetch when patient is selected
 
   return (
     <div className="bg-gray-50 flex justify-center">
@@ -707,6 +774,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
                         onClick={() => handlePatientSelect(patient._id)}
                         className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedPatientId === patient._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                       >
+                      {/* <h1>patient id: {patient._id}</h1> */}
                         <div className="relative flex-shrink-0">
                           <img 
                             src={patient.avatar} 
