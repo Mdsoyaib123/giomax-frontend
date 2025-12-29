@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TiDeleteOutline } from "react-icons/ti";
+// import { TiDeleteOutline } from "react-icons/ti";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
 import { IoWarningOutline } from "react-icons/io5";
@@ -105,9 +105,9 @@ const NurseManagement: React.FC = () => {
     });
   };
 
-  const handleApprovedConfirm = (nurse: any) => {
-    setConfirmApproved(nurse);
-  };
+  // const handleApprovedConfirm = (nurse: any) => {
+  //   setConfirmApproved(nurse);
+  // };
 
   const handleConfirmApproved = async () => {
     if (confirmApproved) {
@@ -131,9 +131,9 @@ const NurseManagement: React.FC = () => {
     }
   };
 
-  const handleSuspendConfirm = (nurse: any) => {
-    setConfirmSuspend(nurse);
-  };
+  // const handleSuspendConfirm = (nurse: any) => {
+  //   setConfirmSuspend(nurse);
+  // };
 
   const handleConfirmSuspend = async () => {
     if (confirmSuspend) {
@@ -328,7 +328,7 @@ const NurseManagement: React.FC = () => {
                               >
                                 <FaEye className="text-sm" /> View
                               </button>
-                              {nurseStatus !== "suspended" ? (
+                              {/* {nurseStatus !== "suspended" ? (
                                 <button
                                   onClick={() => handleSuspendConfirm(nurse)}
                                   className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-[#EFF4FF] text-[#2E6FF3] border border-[#ECEFF1] hover:bg-gray-100 text-xs rounded-md transition"
@@ -343,7 +343,7 @@ const NurseManagement: React.FC = () => {
                                 >
                                   Activate
                                 </button>
-                              )}
+                              )} */}
                               <button
                                 onClick={() => handleDeleteConfirm(nurse)}
                                 className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-md transition"
@@ -411,7 +411,8 @@ const NurseManagement: React.FC = () => {
             </button>
 
             <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Nurse Profile - {openProfile.userId.fullName}
+              Nurse Profile
+              {/* {openProfile.userId.fullName} */}
             </h2>
             <p className="text-gray-600 text-sm mb-3">
               View nurse details, credentials, and verification documents
@@ -629,7 +630,7 @@ const NurseManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-6">
+            {/* <div className="flex flex-col sm:flex-row gap-4 mt-6">
               <button
                 onClick={() => handleApprovedConfirm(openProfile)}
                 className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white border border-[#2E6FF3] hover:bg-[#0b51de] transition"
@@ -642,7 +643,7 @@ const NurseManagement: React.FC = () => {
               >
                 Reject Application
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

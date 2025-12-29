@@ -200,8 +200,9 @@ const PatientProfileModal: React.FC<{
   fullPatient: Patient | undefined;
   onClose: () => void;
   onViewFullDetails: () => void;
-}> = ({ selectedPatient, fullPatient, onClose, onViewFullDetails }) => {
-  // Format date of birth
+}> = ({ selectedPatient, fullPatient, onClose }) => {
+  /* onViewFullDetails */
+
   const formatDateOfBirth = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString("en-US", {
@@ -463,12 +464,12 @@ const PatientProfileModal: React.FC<{
             Close
           </button>
 
-          <button
+          {/* <button
             onClick={onViewFullDetails}
             className="w-full cursor-pointer px-5 py-2.5 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
           >
-            View Payment History
-          </button>
+            View Payment Historydfd
+          </button> */}
         </div>
       </div>
     </div>
