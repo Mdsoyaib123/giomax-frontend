@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X, FileText } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
-import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { useNavigate } from "react-router-dom";
+// import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
 import { useGetAllClinicsQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Clinic } from "@/redux/types/admin/clinicManagementTypes";
 import {
-  setFilterStatus,
+  // setFilterStatus,
   setSearchTerm,
 } from "@/redux/features/admin/clinic/clinicManagementSlice";
 
@@ -31,7 +31,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
   const { data: clinicsResponse, isLoading, error } = useGetAllClinicsQuery();
   const [openProfile, setOpenProfile] = useState<Clinic | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Get clinics from response or empty array
   const clinics = clinicsResponse?.data || [];
@@ -87,19 +87,19 @@ const ClinicManagementTable: React.FC<Props> = () => {
   //   return "0"; // Placeholder
   // };
 
-  const handleClick = () => {
-    if (openProfile) {
-      navigate(`/admin-dashboard/clinic-management/${openProfile._id}`);
-    }
-  };
+  // const handleClick = () => {
+  //   if (openProfile) {
+  //     navigate(`/admin-dashboard/clinic-management/${openProfile._id}`);
+  //   }
+  // };
 
   const handleView = (clinic: Clinic) => {
     setOpenProfile(clinic);
   };
 
-  const handleStatusChange = (value: string) => {
-    dispatch(setFilterStatus(value));
-  };
+  // const handleStatusChange = (value: string) => {
+  //   dispatch(setFilterStatus(value));
+  // };
 
   const handlePrev = () => {
     if (currentPage > 1) {
@@ -179,7 +179,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
               </div>
 
               {/* Filter 1 - Status */}
-              <div className="w-full sm:w-[250px] md:w-[220px]">
+              {/* <div className="w-full sm:w-[250px] md:w-[220px]">
                 <Select value={filterStatus} onValueChange={handleStatusChange}>
                   <SelectTrigger className="w-full h-10 border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
                     <SelectValue placeholder="Select Status" />
@@ -194,7 +194,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -288,13 +288,13 @@ const ClinicManagementTable: React.FC<Props> = () => {
                             >
                               <FaEye className="text-sm" /> View
                             </button>
-                            <button className="flex items-center cursor-pointer gap-1 text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1.5 rounded-md transition">
+                            {/* <button className="flex items-center cursor-pointer gap-1 text-sm bg-green-600 hover:bg-green-700 text-white font-medium px-3 py-1.5 rounded-md transition">
                               <MdCheckCircle className="text-white" /> Approve
                             </button>
                             <button className="flex items-center cursor-pointer gap-1 text-sm bg-[#E9575A] hover:bg-[#b81113] text-white font-medium px-3 py-1.5 rounded-md transition">
                               <MdOutlineDoNotDisturb className="text-white" />{" "}
                               Suspend
-                            </button>
+                            </button> */}
                           </div>
                         </td>
                       </tr>
@@ -658,12 +658,12 @@ const ClinicManagementTable: React.FC<Props> = () => {
                 Close
               </button>
 
-              <button
+              {/* <button
                 onClick={handleClick}
                 className="w-full cursor-pointer px-5 py-2.5 rounded-lg bg-[#2E6FF3] text-white hover:bg-[#0b51de] transition"
               >
                 View Payment History
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

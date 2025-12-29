@@ -256,7 +256,7 @@ const DoctorAppointmentTable: React.FC = () => {
               </div>
 
               {/* Service Type Filter */}
-              <div className="w-full sm:w-[250px] md:w-[220px]">
+              {/* <div className="w-full sm:w-[250px] md:w-[220px]">
                 <Select
                   value={filters.serviceType}
                   onValueChange={(value) =>
@@ -289,7 +289,7 @@ const DoctorAppointmentTable: React.FC = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -491,9 +491,11 @@ const DoctorAppointmentTable: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Doctor</p>
-                  <p className="font-medium">
+                  {/* <p className="font-medium">
                     {selectedAppointment.doctorId.userId.fullName}
-                  </p>
+                  </p> */}
+                  {selectedAppointment.doctorId?.userId?.fullName ||
+                    "Not Assigned"}
                 </div>
               </div>
 
@@ -615,14 +617,14 @@ const DoctorAppointmentTable: React.FC = () => {
               </button>
 
               {/* Status Update Buttons */}
-              {selectedAppointment.status === "pending" && (
+              {/* {selectedAppointment.status === "pending" && (
                 <button
                   onClick={() => handleStatusUpdate("confirmed")}
                   className="flex-1 py-3 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium text-sm transition-colors"
                 >
                   Confirm Appointment
                 </button>
-              )}
+              )} */}
 
               {selectedAppointment.status === "confirmed" && (
                 <button
@@ -645,7 +647,7 @@ const DoctorAppointmentTable: React.FC = () => {
                 )}
 
               {/* Cancel Appointment Button */}
-              {selectedAppointment.status !== "cancelled" &&
+              {/* {selectedAppointment.status !== "cancelled" &&
                 selectedAppointment.status !== "completed" && (
                   <button
                     onClick={() => handleStatusUpdate("cancelled")}
@@ -653,7 +655,7 @@ const DoctorAppointmentTable: React.FC = () => {
                   >
                     Cancel Appointment
                   </button>
-                )}
+                )} */}
             </div>
           </div>
         </div>
