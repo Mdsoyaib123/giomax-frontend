@@ -409,7 +409,7 @@ const NurseAppointmentTable: React.FC = () => {
                           >
                             <FaEye className="text-sm" /> View
                           </button>
-                          {appointment.status === "pending" && (
+                          {/* {appointment.status === "pending" && (
                             <button
                               onClick={() =>
                                 handleConfirmAppointment(appointment._id)
@@ -418,7 +418,7 @@ const NurseAppointmentTable: React.FC = () => {
                             >
                               Confirm
                             </button>
-                          )}
+                          )} */}
                         </td>
                       </tr>
                     ))}
@@ -695,7 +695,7 @@ const NurseAppointmentTable: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   onClick={handleCloseModal}
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
+                  className="flex-1 py-3 cursor-pointer px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors"
                 >
                   Close
                 </button>
@@ -706,7 +706,7 @@ const NurseAppointmentTable: React.FC = () => {
                       onClick={() =>
                         handleConfirmAppointment(selectedAppointment._id)
                       }
-                      className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm transition-colors"
+                      className="flex-1 py-3 px-4 cursor-pointer bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm transition-colors"
                     >
                       Confirm Appointment
                     </button>
@@ -714,7 +714,7 @@ const NurseAppointmentTable: React.FC = () => {
                       onClick={() =>
                         handleCancelAppointment(selectedAppointment._id)
                       }
-                      className="flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition-colors"
+                      className="flex-1 py-3 px-4 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition-colors"
                     >
                       Cancel Appointment
                     </button>
@@ -726,7 +726,7 @@ const NurseAppointmentTable: React.FC = () => {
                     onClick={() =>
                       handleCancelAppointment(selectedAppointment._id)
                     }
-                    className="flex-1 py-3 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition-colors"
+                    className="flex-1 py-3 px-4 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm transition-colors"
                   >
                     Cancel Appointment
                   </button>
