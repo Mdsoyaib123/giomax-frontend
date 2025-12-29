@@ -8,7 +8,7 @@ import { useSingleClinicId } from '@/hooks/userClinicId';
 
  interface Message {
   _id: string;
-  message: string;
+  message: string | any;
   senderId: string;
   senderName?: string;
   receiverId?: string;
@@ -79,8 +79,7 @@ const PatientMessage = () => {
 
   const currentUser = getCurrentUser();
   console.log('currentUser', currentUser);
-const {clinicId: clinicIdFromUseSingleClinicId}=useSingleClinicId();
-console.log('clinicId from useSingleClinicId', clinicIdFromUseSingleClinicId);
+ 
   // Get token properly
   const getToken = () => {
     return localStorage.getItem('token') || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
@@ -98,7 +97,8 @@ console.log(getToken());
   console.log('clinicId', clinicId);
   // Fetch clinic patients list (for patient list mode)
   const fetchClinicPatients = useCallback(async () => {
-    if (!currentUser) return;
+    const user = getCurrentUser();
+    if (!user) return;
 
     try {
       setIsLoading(true);
@@ -108,11 +108,11 @@ console.log(getToken());
         throw new Error('No authentication token found');
       }
 
-      const currentUserId = currentUser._id || currentUser.id;
+      const currentUserId = user._id || user.id;
       console.log('📥 Fetching clinic patients...',currentUserId);
       
       const response = await fetch(
-        `https://giomaxatadxe-backend.onrender.com/api/v1/doctor-appointment/getSingleClinicChats/${clinicIdFromUseSingleClinicId}`,
+        `https://giomaxatadxe-backend.onrender.com/api/v1/doctor-appointment/getSingleClinicChats/${clinicId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -157,7 +157,7 @@ console.log(getToken());
     } finally {
       setIsLoading(false);
     }
-  }, [currentUser,clinicIdFromUseSingleClinicId]);
+  }, [clinicId]);
 
   // Fetch admin data from API
   const fetchAdmin = useCallback(async () => {
@@ -220,7 +220,8 @@ console.log(getToken());
 
 const fetchMessages = useCallback(async (targetId: string) => {
   console.log('📥 Fetching messages, mode:', isAdminMode ? 'Admin' : 'Patient', 'targetId:', targetId);
-  if (!currentUser) {
+  const user = getCurrentUser();
+  if (!user) {
     console.warn('⚠️ Missing currentUser');
     return;
   }
@@ -234,7 +235,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
       throw new Error('No authentication token found');
     }
     
-    const currentUserId = currentUser._id || currentUser.id;
+    const currentUserId = user._id || user.id;
     console.log('currentUserId', currentUserId);
     
     // Use new API endpoint that returns all messages for current user
@@ -285,21 +286,18 @@ const fetchMessages = useCallback(async (targetId: string) => {
       );
     } else {
       // Patient mode: filter messages between clinic and selected patient
-      const patientId = selectedPatientId;
-      if (patientId) {
+      if (targetId) {
         filteredMessages = messagesData.filter((msg: Message) => 
           // Clinic sent to patient OR patient sent to clinic
-          (msg.senderId === currentUserId && msg.receiverId === patientId) ||
-          (msg.senderId === patientId && msg.receiverId === currentUserId) ||
-          // Fallback: match by chatType
-          (msg.chatType === 'user_admin' || msg.chatType === 'admin_to_user')
+          (msg.senderId === currentUserId && msg.receiverId === targetId) ||
+          (msg.senderId === targetId && msg.receiverId === currentUserId)
         );
       } else {
         filteredMessages = [];
       }
     }
     
-    console.log(`🔍 Filtered to ${filteredMessages.length} relevant messages`);
+    console.log(`🔍 Filtered to ${filteredMessages.length} relevant messages for targetId: ${targetId}`);
     setMessages(filteredMessages);
     setError(null); // Clear any previous errors
     
@@ -325,7 +323,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   } finally {
     setIsLoading(false);
   }
-}, [currentUser, isAdminMode, selectedPatientId]);
+}, [isAdminMode]);
 
 
 
@@ -334,7 +332,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   // Handle admin selection
   const handleAdminSelect = useCallback((adminId: string) => {
     setSelectedAdminId(adminId);
-    setSelectedPatientId(null); // Clear patient selection
+    // setSelectedPatientId(null); // Clear patient selection
     setIsSidebarOpen(false);
     setError(null);
     fetchMessages(adminId);
@@ -348,7 +346,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
   const handlePatientSelect = useCallback((patientId: string) => {
     console.log('patientId', patientId);
     setSelectedPatientId(patientId);
-    setSelectedAdminId(null); // Clear admin selection
+    // setSelectedAdminId(null); // Clear admin selection
     setIsSidebarOpen(false);
     setError(null);
     fetchMessages(patientId);
@@ -360,8 +358,11 @@ const fetchMessages = useCallback(async (targetId: string) => {
 
   // Mark messages as seen
   const markMessagesAsSeen = useCallback(async (messagesToMark: Message[]) => {
+    const user = getCurrentUser();
+    if (!user) return;
+    
     const unseenMessages = messagesToMark.filter(msg => 
-      msg.senderId !== (currentUser?._id || currentUser?.id) && !msg.seen
+      msg.senderId !== (user._id || user.id) && !msg.seen
     );
     
     if (unseenMessages.length === 0 || !socket) return;
@@ -385,7 +386,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
     } catch (error) {
       console.error('❌ Error marking messages as seen:', error);
     }
-  }, [currentUser, socket]);
+  }, [socket]);
 
   // Setup socket listeners
   useEffect(() => {
@@ -444,7 +445,9 @@ const fetchMessages = useCallback(async (targetId: string) => {
       socket.off('user_typing', handleTyping);
     };
   }, [socket]); // Remove dependencies that cause infinite loop
-
+console.log('selectedAdminId', selectedAdminId);
+console.log('selectedPatientId', selectedPatientId);
+console.log('isAdminMode', isAdminMode);
   // Send message - FIXED
   const sendMessage = useCallback(() => {
     const hasSelectedContact = isAdminMode ? selectedAdminId : selectedPatientId;
@@ -475,7 +478,8 @@ const fetchMessages = useCallback(async (targetId: string) => {
       socket.emit('send_message_to_admin', messageData);
     } else {
       // For patient mode, use the same event or appropriate patient message event
-      socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
+      // socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
+      socket.emit('receive_from_user', messageData); // TODO: Update if different event needed
     }
 
     // Create optimistic message
@@ -492,6 +496,9 @@ const fetchMessages = useCallback(async (targetId: string) => {
       updatedAt: new Date().toISOString()
     };
 
+    
+// console.log('optimisticMessage', optimisticMessage);
+// console.log('messages', optimisticMessage.messages);
     // Add to messages immediately
     setMessages(prev => [...prev, optimisticMessage]);
 
@@ -579,7 +586,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
     if (!isAdminMode && selectedPatientId) {
       fetchMessages(selectedPatientId);
     }
-  }, [isAdminMode, selectedPatientId]); // Fetch when patient is selected
+  }, [isAdminMode, selectedPatientId, fetchMessages]); // Fetch when patient is selected
 
   return (
     <div className="bg-gray-50 flex justify-center">
@@ -707,6 +714,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
                         onClick={() => handlePatientSelect(patient._id)}
                         className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 ${selectedPatientId === patient._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}
                       >
+                      {/* <h1>patient id: {patient._id}</h1> */}
                         <div className="relative flex-shrink-0">
                           <img 
                             src={patient.avatar} 
