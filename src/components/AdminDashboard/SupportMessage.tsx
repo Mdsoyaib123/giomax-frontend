@@ -84,7 +84,8 @@ console.log(currentAdmin,"currentAdmin")
       }
       console.log('📥 Fetching users...');
       const response = await fetch(
-        'https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/adminChat/getUserLists', 
+        'https://api.medconnect.com.ge/api/v1/chatHistory/adminChat/getUserLists', 
+        // 'https://api.medconnect.com.ge/api/v1/chatHistory/adminChat/getUserLists', 
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -145,10 +146,10 @@ console.log(currentAdmin,"currentAdmin")
         throw new Error('No authentication token found');
       }
       
-      console.log('🔗 Fetching from:', `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/getUserConversation/${userId}`);
+      console.log('🔗 Fetching from:', `https://api.medconnect.com.ge/api/v1/chatHistory/admin/getUserConversation/${userId}`);
       
       const response = await fetch(
-        `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/getUserConversation/${userId}`, 
+        `https://api.medconnect.com.ge/api/v1/chatHistory/admin/getUserConversation/${userId}`, 
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -248,7 +249,7 @@ console.log(currentAdmin,"currentAdmin")
       // const token = getToken();
       const token=Cookies.get('token')
       console.log(token,"token")
-      await fetch('https://giomaxatadxe-backend.onrender.com/api/v1/chat/markAllAsSeen', {
+      await fetch('https://api.medconnect.com.ge/api/v1/chat/markAllAsSeen', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
