@@ -238,10 +238,17 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const currentUserId = user._id || user.id;
     console.log('currentUserId', currentUserId);
     
-    // Use new API endpoint that returns all messages for current user
-    const apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/admin/history`;
+    // Use different API endpoint based on mode
+    let apiUrl: string;
+    if (isAdminMode) {
+      // Admin mode: fetch admin chat history
+      apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/admin/history`;
+    } else {
+      // Patient mode: fetch patient chat history
+      apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/getChat/${targetId}`;
+    }
     
-    console.log('🔗 Fetching from:', apiUrl);
+    console.log('🔗 Fetching from:', apiUrl, 'Mode:', isAdminMode ? 'Admin' : 'Patient');
     
     const response = await fetch(apiUrl, {
       headers: {
