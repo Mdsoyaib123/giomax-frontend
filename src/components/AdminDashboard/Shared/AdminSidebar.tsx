@@ -234,7 +234,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
             <p>{adminData?.role || "admin"}</p>
           </div>
         </div>
-        <div className="  cursor-pointer">
+        <div className=" cursor-pointer">
           <FiLogOut className=" text-red-600" />
         </div>
       </div>

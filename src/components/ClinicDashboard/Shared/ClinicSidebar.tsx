@@ -223,23 +223,31 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       {/* Help & Support */}
       <div
         onClick={handleLogout}
-        className="border border-[#CED4DA] bg-[#F8F9FA] p-4 cursor-pointer"
+        className="p-2 cursor-pointer flex justify-between items-center gap-5 bg-[#F8F9FA] border border-[#CED4DA] m-4 rounded-2xl"
       >
-        <div className="flex   justify-between">
-          <div className="flex gap-6">
+        {/* Left Section */}
+        <div className="gap-3 flex items-center">
+          <div>
             <img
               src={clinic?.userId?.profileImage || "/default-avatar.png"}
-              alt="Logo"
-              className=" h-14 object-contain rounded-xl"
+              alt="Avatar"
+              className="h-14 w-14 object-cover rounded-2xl"
             />
-            <div className="flex flex-col">
-              {clinic?.userId?.fullName || "Admin"}
-              <span>{clinic?.userId?.role || "admin"}</span>
-            </div>
           </div>
-          <button type="button" className="text-red-600 cursor-pointer">
-            <LogOut />
-          </button>
+
+          <div>
+            <h2 className="text-xl font-sans font-semibold">
+              {clinic?.userId?.fullName || "Admin"}
+            </h2>
+            <p className="text-sm text-gray-600">
+              {clinic?.userId?.role || "admin"}
+            </p>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="cursor-pointer text-red-600">
+          <LogOut />
         </div>
       </div>
     </div>
