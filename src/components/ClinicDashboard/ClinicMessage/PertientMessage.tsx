@@ -112,7 +112,7 @@ console.log(getToken());
       console.log('📥 Fetching clinic patients...',currentUserId);
       
       const response = await fetch(
-        `https://giomaxatadxe-backend.onrender.com/api/v1/doctor-appointment/getSingleClinicChats/${clinicId}`,
+        `https://api.medconnect.com.ge/api/v1/doctor-appointment/getSingleClinicChats/${clinicId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -170,7 +170,7 @@ console.log(getToken());
 
       console.log('📥 Fetching admin data...');
       const response = await fetch(
-        'https://giomaxatadxe-backend.onrender.com/api/v1/user/get-admin',
+        'https://api.medconnect.com.ge/api/v1/user/get-admin',
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -239,7 +239,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
     console.log('currentUserId', currentUserId);
     
     // Use new API endpoint that returns all messages for current user
-    const apiUrl = `https://giomaxatadxe-backend.onrender.com/api/v1/chatHistory/admin/history`;
+    const apiUrl = `https://api.medconnect.com.ge/api/v1/chatHistory/admin/history`;
     
     console.log('🔗 Fetching from:', apiUrl);
     
@@ -372,7 +372,7 @@ const fetchMessages = useCallback(async (targetId: string) => {
       
       await Promise.all(
         unseenMessages.map(msg =>
-          fetch(`https://giomaxatadxe-backend.onrender.com/api/v1/chat/mark-seen/${msg._id}`, {
+          fetch(`https://api.medconnect.com.ge/api/v1/chat/mark-seen/${msg._id}`, {
             method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -392,17 +392,39 @@ const fetchMessages = useCallback(async (targetId: string) => {
   useEffect(() => {
     if (!socket) return;
 
+    const currentUserId = currentUser?._id || currentUser?.id;
+
     // FIXED: Listen for messages from admin
     const handleAdminMessage = (data: Message) => {
       console.log('📩 New message from admin:', data);
       
       // Check if this message is for current user
       const isForCurrentUser = 
-        data.receiverId === (currentUser?._id || currentUser?.id) ||
-        (data.receiverType === 'admin' && data.senderId === (currentUser?._id || currentUser?.id)) ||
-        data.chatType === 'admin_user';
+        data.receiverId === currentUserId ||
+        (data.receiverType === 'admin' && data.senderId === currentUserId) ||
+        data.chatType === 'admin_user' ||
+        data.chatType === 'user_admin';
       
-      if (isForCurrentUser) {
+      if (isForCurrentUser && isAdminMode) {
+        setMessages(prev => {
+          // Prevent duplicates
+          const exists = prev.some(msg => msg._id === data._id);
+          if (exists) return prev;
+          return [...prev, data];
+        });
+      }
+    };
+
+    // Handle messages from patients (when clinic receives message from patient)
+    const handlePatientMessage = (data: Message) => {
+      console.log('📩 New message from patient:', data);
+      
+      // Only handle messages FROM patient TO clinic (incoming messages)
+      const isFromPatient = 
+        data.receiverId === currentUserId &&
+        data.senderId === selectedPatientId;
+      
+      if (isFromPatient && !isAdminMode && selectedPatientId) {
         setMessages(prev => {
           // Prevent duplicates
           const exists = prev.some(msg => msg._id === data._id);
@@ -416,35 +438,65 @@ const fetchMessages = useCallback(async (targetId: string) => {
     const handleMessageSent = (data: any) => {
       console.log('✅ Message sent confirmation:', data);
       
-      // Update optimistic message with real ID
-      setMessages(prev => prev.map(msg => 
-        msg._id.includes('temp_') && msg.message === data.message 
-          ? { ...msg, _id: data._id } 
-          : msg
-      ));
+      // Update optimistic message with real ID and full data
+      setMessages(prev => {
+        // Find and replace optimistic message
+        const hasOptimistic = prev.some(msg => 
+          msg._id.includes('temp_') && 
+          msg.message === data.message &&
+          ((isAdminMode && msg.receiverId === selectedAdminId) || 
+           (!isAdminMode && msg.receiverId === selectedPatientId))
+        );
+        
+        if (hasOptimistic) {
+          // Replace optimistic message with real one
+          return prev.map(msg => {
+            if (msg._id.includes('temp_') && 
+                msg.message === data.message &&
+                ((isAdminMode && msg.receiverId === selectedAdminId) || 
+                 (!isAdminMode && msg.receiverId === selectedPatientId))) {
+              return data;
+            }
+            return msg;
+          });
+        } else {
+          // If no optimistic message found, add the real one (in case it wasn't added optimistically)
+          const exists = prev.some(msg => msg._id === data._id);
+          if (!exists) {
+            return [...prev, data];
+          }
+          return prev;
+        }
+      });
     };
 
     // Listen for typing indicator
     const handleTyping = (data: { userId: string; isTyping: boolean }) => {
-      console.log('⌨️ Admin typing indicator:', data);
-      // If typing is from admin (or any user that's not current user)
-      if (data.userId !== (currentUser?._id || currentUser?.id)) {
-        setIsAdminTyping(data.isTyping);
+      console.log('⌨️ Typing indicator:', data);
+      // If typing is from someone that's not current user
+      if (data.userId !== currentUserId) {
+        if (isAdminMode && data.userId === selectedAdminId) {
+          setIsAdminTyping(data.isTyping);
+        } else if (!isAdminMode && data.userId === selectedPatientId) {
+          setIsAdminTyping(data.isTyping);
+        }
       }
     };
 
-    // FIXED: Listen for correct event
+    // FIXED: Listen for correct events
     socket.on('receive_message_from_admin', handleAdminMessage);
+    socket.on('receive_message', handlePatientMessage);
     socket.on('message_sent', handleMessageSent);
     socket.on('user_typing', handleTyping);
 
     // Cleanup
     return () => {
       socket.off('receive_message_from_admin', handleAdminMessage);
+      socket.off('receive_message', handlePatientMessage);
       socket.off('message_sent', handleMessageSent);
       socket.off('user_typing', handleTyping);
     };
-  }, [socket]); // Remove dependencies that cause infinite loop
+  }, [socket, currentUser, isAdminMode, selectedAdminId, selectedPatientId]);
 console.log('selectedAdminId', selectedAdminId);
 console.log('selectedPatientId', selectedPatientId);
 console.log('isAdminMode', isAdminMode);
@@ -468,21 +520,7 @@ console.log('isAdminMode', isAdminMode);
     const targetId = isAdminMode ? selectedAdminId : selectedPatientId;
     console.log('📤 Sending message:', isAdminMode ? 'to admin' : 'to patient', messageInput);
 
-    // FIXED: Backend expects only { message } - userId comes from socket auth
-    const messageData = {
-      message: messageInput
-    };
-
-    // Send via socket - use appropriate event based on mode
-    if (isAdminMode) {
-      socket.emit('send_message_to_admin', messageData);
-    } else {
-      // For patient mode, use the same event or appropriate patient message event
-      // socket.emit('send_message_to_admin', messageData); // TODO: Update if different event needed
-      socket.emit('receive_from_user', messageData); // TODO: Update if different event needed
-    }
-
-    // Create optimistic message
+    // Create optimistic message first
     const optimisticMessage: Message = {
       _id: `temp_${Date.now()}`,
       message: messageInput,
@@ -490,18 +528,32 @@ console.log('isAdminMode', isAdminMode);
       senderName: currentUser.name,
       receiverId: targetId || undefined,
       receiverType: isAdminMode ? 'admin' : 'user',
-      chatType: isAdminMode ? 'user_admin' : 'user_admin',
+      chatType: isAdminMode ? 'user_admin' : 'patient_clinic',
       seen: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    
-    
-// console.log('optimisticMessage', optimisticMessage);
-// console.log('messages', optimisticMessage.messages);
-    // Add to messages immediately
+-    // Add to messages immediately
     setMessages(prev => [...prev, optimisticMessage]);
+
+    // Send via socket - use appropriate event based on mode
+    if (isAdminMode) {
+      // For admin mode, use existing event
+      socket.emit('send_message_to_admin', { message: messageInput });
+    } else {
+      // For patient mode, use backend's send_message event with proper payload
+      console.log('📤 Emitting send_message to patient:', {
+        receiverId: targetId,
+        message: messageInput,
+        chatType: 'patient_clinic'
+      });
+      socket.emit('send_message', {
+        receiverId: targetId,
+        message: messageInput,
+        chatType: 'patient_clinic'
+      });
+    }
 
     // Clear input
     setMessageInput('');
