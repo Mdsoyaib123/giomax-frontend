@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   // IoIosSearch,
   IoMdArrowDropdownCircle,
-  IoMdNotificationsOutline,
+  // IoMdNotificationsOutline,
 } from "react-icons/io";
 import {
   DropdownMenu,
@@ -118,7 +118,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
         {/* Right Section */}
         <div className="flex items-center ml-2">
           {/* Notification Button */}
-          <div
+          {/* <div
             className="relative p-2 border border-gray-300 rounded-xl w-fit cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => setIsNotifOpen(true)}
           >
@@ -126,7 +126,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
             <span className="absolute top-0.5 right-2 bg-green-600 text-white text-xs font-semibold rounded-2xl w-5 h-5 flex items-center justify-center">
               3
             </span>
-          </div>
+          </div> */}
 
           {/* User Dropdown */}
           <DropdownMenu>

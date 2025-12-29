@@ -14,8 +14,9 @@ import {
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ReactNode, useState } from "react";
-import { useAppDispatch } from "@/redux/hooks/redux-hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 import { logOut } from "@/redux/features/auth/authSlice";
+import { useGetAClinicQuery } from "@/redux/features/admin/clinic/clinicBasicApi";
 
 // Types
 export interface SidebarItem {
@@ -72,6 +73,14 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const userId = useAppSelector((state) => state.auth.user?.id);
+
+  const { data: clinicResponse } = useGetAClinicQuery(userId!, {
+    skip: !userId,
+  });
+
+  const clinic = clinicResponse?.data;
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -90,6 +99,8 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       icon
     );
 
+  // const adminData = data?.data;
+
   return (
     <div
       className="flex flex-col h-full bg-[#FFFFFF]"
@@ -98,7 +109,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       {/* Logo */}
       <Link to="/clinic-dashboard/dashboard">
         <div className="flex items-center border-b border-gray-200 mt-1 p-2">
-          <div className="flex-shrink-0 w-12 h-12 mr-3">
+          <div className="shrink-0 w-12 h-12 mr-3">
             <img
               src={logo}
               alt="Wardier Medical Clinic Logo"
@@ -210,20 +221,23 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Help & Support */}
-      <div className="border border-[#CED4DA] bg-[#F8F9FA] p-4">
+      <div
+        onClick={handleLogout}
+        className="border border-[#CED4DA] bg-[#F8F9FA] p-4 cursor-pointer"
+      >
         <div className="flex   justify-between">
           <div className="flex gap-6">
-            <img src={logo} alt="Logo" className=" size-11 object-contain" />
+            <img
+              src={clinic?.userId?.profileImage || "/default-avatar.png"}
+              alt="Logo"
+              className=" h-14 object-contain rounded-xl"
+            />
             <div className="flex flex-col">
-              Giorigi M.
-              <span>Clinic</span>
+              {clinic?.userId?.fullName || "Admin"}
+              <span>{clinic?.userId?.role || "admin"}</span>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            type="button"
-            className="text-red-600 cursor-pointer"
-          >
+          <button type="button" className="text-red-600 cursor-pointer">
             <LogOut />
           </button>
         </div>
