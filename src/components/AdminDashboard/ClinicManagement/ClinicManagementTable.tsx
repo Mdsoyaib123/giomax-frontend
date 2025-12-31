@@ -666,19 +666,25 @@ const ClinicManagementTable: React.FC<Props> = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
+              <button
+                onClick={() => setOpenProfile(null)}
+                className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
+              >
+                Close
+              </button>
               {openProfile.userId.isAdminVerified ? (
                 <button
-                  onClick={() => setOpenProfile(null)}
-                  className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
+                  disabled
+                  className="w-full cursor-not-allowed px-5 py-2.5 rounded-lg border border-blue-200 bg-blue-500 text-white white opacity-70"
                 >
-                  Close
+                  Approved
                 </button>
               ) : (
                 <button
                   onClick={() => handleAcceptUser(openProfile.userId._id)}
                   className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-blue-500 text-gray-700  transition text-white hover:bg-blue-700"
                 >
-                  {isAcceptingUser ? "Accepting..." : "Accept"}
+                  {isAcceptingUser ? "Approving..." : "Approve"}
                 </button>
               )}
 
