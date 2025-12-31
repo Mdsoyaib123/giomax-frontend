@@ -37,7 +37,12 @@ interface Document {
 
 const NurseManagement: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data: nursesResponse, isLoading, error } = useGetAllNursesQuery();
+  const {
+    data: nursesResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllNursesQuery();
   const [deleteNurse] = useDeleteNurseMutation();
   const [updateNurseStatus] = useUpdateNurseStatusMutation();
   const [acceptUser, { isLoading: isAcceptingUser }] = useAcceptUserMutation();
@@ -117,6 +122,7 @@ const NurseManagement: React.FC = () => {
     try {
       await acceptUser(clinicId).unwrap();
       toast.success("User accepted successfully!");
+      refetch();
       setOpenProfile(null);
     } catch (error) {
       console.error("Error accepting user:", error);

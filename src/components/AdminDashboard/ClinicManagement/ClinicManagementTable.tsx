@@ -33,7 +33,12 @@ const ClinicManagementTable: React.FC<Props> = () => {
   const { filterStatus, searchTerm, currentPage, itemsPerPage } =
     useAppSelector((state) => state.clinicManagement);
 
-  const { data: clinicsResponse, isLoading, error } = useGetAllClinicsQuery();
+  const {
+    data: clinicsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllClinicsQuery();
   const [openProfile, setOpenProfile] = useState<Clinic | null>(null);
   // const navigate = useNavigate();
 
@@ -74,6 +79,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
       await acceptUser(clinicId).unwrap();
       toast.success("User accepted successfully!");
       setOpenProfile(null);
+      refetch();
     } catch (error) {
       console.error("Error accepting user:", error);
       toast.error("Failed to accept user!");
