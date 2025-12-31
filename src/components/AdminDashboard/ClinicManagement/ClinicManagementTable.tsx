@@ -11,7 +11,10 @@ import { X, FileText } from "lucide-react";
 // } from "@/components/ui/select";
 // import { useNavigate } from "react-router-dom";
 // import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
-import { useGetAllClinicsQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
+import {
+  useAcceptUserMutation,
+  useGetAllClinicsQuery,
+} from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Clinic } from "@/redux/types/admin/clinicManagementTypes";
 import {
   // setFilterStatus,
@@ -19,6 +22,7 @@ import {
 } from "@/redux/features/admin/clinic/clinicManagementSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
+import { toast } from "sonner";
 
 interface Props {
   id?: string | number;
@@ -35,6 +39,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
   // Get clinics from response or empty array
   const clinics = clinicsResponse?.data || [];
+  const [acceptUser, { isLoading: isAcceptingUser }] = useAcceptUserMutation();
 
   // Filter clinics based on status and search term
   const filteredClinics = clinics.filter((clinic) => {
@@ -63,7 +68,17 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
     return true;
   });
-
+  const handleAcceptUser = async (clinicId: string) => {
+    console.log(clinicId);
+    try {
+      await acceptUser(clinicId).unwrap();
+      toast.success("User accepted successfully!");
+      setOpenProfile(null);
+    } catch (error) {
+      console.error("Error accepting user:", error);
+      toast.error("Failed to accept user!");
+    }
+  };
   // Pagination
   const totalPages = Math.ceil(filteredClinics.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -651,12 +666,21 @@ const ClinicManagementTable: React.FC<Props> = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <button
-                onClick={() => setOpenProfile(null)}
-                className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
-              >
-                Close
-              </button>
+              {openProfile.userId.isAdminVerified ? (
+                <button
+                  onClick={() => setOpenProfile(null)}
+                  className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
+                >
+                  Close
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleAcceptUser(openProfile.userId._id)}
+                  className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-blue-500 text-gray-700  transition text-white hover:bg-blue-700"
+                >
+                  Accept
+                </button>
+              )}
 
               {/* <button
                 onClick={handleClick}
