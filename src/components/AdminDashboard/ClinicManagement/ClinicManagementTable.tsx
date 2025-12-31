@@ -678,7 +678,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
                   onClick={() => handleAcceptUser(openProfile.userId._id)}
                   className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-blue-500 text-gray-700  transition text-white hover:bg-blue-700"
                 >
-                  Accept
+                  {isAcceptingUser ? "Accepting..." : "Accept"}
                 </button>
               )}
 
