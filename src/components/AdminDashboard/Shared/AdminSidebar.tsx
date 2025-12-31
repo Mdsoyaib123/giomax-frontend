@@ -1,6 +1,5 @@
 // AdminSidebar.tsx
 import logo from "@/assets/Logo/LogoMain.svg";
-import logo1 from "@/assets/Logo/userLogout.svg";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -19,6 +18,7 @@ import { FiLogOut } from "react-icons/fi";
 import { logOut } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hooks/redux-hook";
 import { baseApi } from "@/redux/hooks/baseApi";
+import { useGetAdminQuery } from "@/redux/features/auth/authApi";
 
 // Types
 export interface SidebarItem {
@@ -82,6 +82,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const { data, isLoading } = useGetAdminQuery();
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -96,6 +97,8 @@ const AdminSidebar: React.FC<SidebarProps> = ({
     dispatch(baseApi.util.resetApiState());
     navigate("/login", { replace: true });
   };
+
+  const adminData = data?.data;
 
   return (
     <div
@@ -219,17 +222,19 @@ const AdminSidebar: React.FC<SidebarProps> = ({
         <div className="gap-3 flex items-center justify-baseline">
           <div>
             <img
-              src={logo1}
+              src={adminData?.profileImage || "/default-avatar.png"}
               alt="Logo"
-              className="h-16  w-full max-w-[300px] object-contain"
+              className="h-14  w-full max-w-[200px] object-contain rounded-2xl"
             />
           </div>
           <div>
-            <h2 className=" text-xl font-sans font-semibold">Giorgi M.</h2>
-            <p>Admin</p>
+            <h2 className=" text-xl font-sans font-semibold">
+              {isLoading ? "Loading..." : adminData?.fullName || "Admin"}
+            </h2>
+            <p>{adminData?.role || "admin"}</p>
           </div>
         </div>
-        <div className="  cursor-pointer">
+        <div className=" cursor-pointer">
           <FiLogOut className=" text-red-600" />
         </div>
       </div>

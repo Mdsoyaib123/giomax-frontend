@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   // IoIosSearch,
   IoMdArrowDropdownCircle,
-  IoMdNotificationsOutline,
+  // IoMdNotificationsOutline,
 } from "react-icons/io";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo1 from "@/assets/Logo/userLogout.svg";
+// import logo1 from "@/assets/Logo/userLogout.svg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
@@ -45,7 +45,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
   const { data, isLoading } = useGetAdminQuery();
 
-  console.log(data);
+  console.log(data, "dsfsdfds profile");
 
   const admin = useAppSelector((state) => state.auth.admin);
 
@@ -55,6 +55,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
     dispatch(baseApi.util.resetApiState());
     navigate("/login", { replace: true });
   };
+  const adminData = data?.data;
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -117,7 +118,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
         {/* Right Section */}
         <div className="flex items-center ml-2">
           {/* Notification Button */}
-          <div
+          {/* <div
             className="relative p-2 border border-gray-300 rounded-xl w-fit cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => setIsNotifOpen(true)}
           >
@@ -125,7 +126,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
             <span className="absolute top-0.5 right-2 bg-green-600 text-white text-xs font-semibold rounded-2xl w-5 h-5 flex items-center justify-center">
               3
             </span>
-          </div>
+          </div> */}
 
           {/* User Dropdown */}
           <DropdownMenu>
@@ -133,8 +134,8 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
               <div className="p-2 flex justify-between items-center gap-5 m-4 rounded-2xl cursor-pointer hover:bg-gray-50 transition-colors">
                 <div className="flex items-center gap-3">
                   <img
-                    src={logo1}
-                    alt="User"
+                    src={adminData?.profileImage || "/default-avatar.png"}
+                    alt="Admin"
                     className="h-12 w-12 rounded-full object-cover"
                   />
                   <div>

@@ -98,7 +98,7 @@ const Login: React.FC = () => {
               <h2 className=" text-2xl md:text-3xl lg:text-4xl font-sans mb-2">
                 Login to Med Connect
               </h2>
-              <p className="text-center">
+              <p className="text-start">
                 Enter your credentials to access your stories
               </p>
             </div>
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
             <div>
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="flex flex-col">
-                  <label htmlFor="email" className="text-white mb-2">
+                  <label htmlFor="email" className="text-black mb-2">
                     Email
                   </label>
                   <input
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="password" className="text-white mb-2">
+                  <label htmlFor="password" className="text-black mb-2">
                     Password
                   </label>
                   <div className="relative">

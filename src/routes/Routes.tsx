@@ -73,8 +73,8 @@ const routes = createBrowserRouter([
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
       { path: "settings", element: <ClinicSettingsPage /> },
-      { path: "payment", element: <PaymentEarning></PaymentEarning> },
-      { path: "message", element: <PertientMessage></PertientMessage> },
+      { path: "payment", element: <PaymentEarning/> },
+      { path: "message", element: <PertientMessage/> },
     ],
   },
 

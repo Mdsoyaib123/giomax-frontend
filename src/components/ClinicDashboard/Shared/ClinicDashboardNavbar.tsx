@@ -45,6 +45,7 @@ const ClinicDashboardNavbar: React.FC<NavbarProps> = ({
     skip: !userId,
   });
   const clinic = clinicResponse?.data;
+
   useEffect(() => {
     if (!clinic?.userId) return;
 

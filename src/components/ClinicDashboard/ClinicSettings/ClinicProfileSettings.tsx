@@ -6,8 +6,9 @@ import {
 import { useAppSelector } from "@/redux/hooks/redux-hook";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
+ 
 
-const ClinicProfileSettings = () => {
+const ClinicProfileSettings =  () => {
   const [clinicName, setClinicName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
