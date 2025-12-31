@@ -24,6 +24,7 @@ export interface User {
   updatedAt: string;
   profileImage?: string;
   fcmToken?: string | null;
+  isAdminVerified?: boolean;
   userId?: {
     _id: string;
     fullName: string;
@@ -76,7 +77,7 @@ export interface PaymentAndEarnings {
 
 export interface Clinic {
   _id: string;
-  userId: User | string;
+  userId: User;
   nationality: string;
   nationalIdNumber: string;
   clinicCertificates: ClinicCertificate[];
