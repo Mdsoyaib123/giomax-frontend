@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 // import { TiDeleteOutline } from "react-icons/ti";
 import { FaEye } from "react-icons/fa";
