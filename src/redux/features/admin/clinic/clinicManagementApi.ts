@@ -69,6 +69,13 @@ export const clinicManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CLINIC_MANAGEMENT"],
     }),
+    acceptUser: builder.mutation({
+      query: (id) => ({
+        url: `/user/add-admin-approval/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["CLINIC_MANAGEMENT"],
+    })
   }),
   overrideExisting: false,
 });
@@ -80,4 +87,5 @@ export const {
   useDeleteClinicMutation,
   useApproveClinicMutation,
   useSuspendClinicMutation,
+  useAcceptUserMutation
 } = clinicManagementApi;
