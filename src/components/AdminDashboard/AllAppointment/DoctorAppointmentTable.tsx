@@ -73,9 +73,9 @@ const DoctorAppointmentTable: React.FC = () => {
     setShowDetailsModal(true);
 
     // If status is cancelled, show refund dialog
-    if (appointment.status === "cancelled") {
-      setShowRefundDialog(true);
-    }
+    // if (appointment.status === "cancelled") {
+    //   setShowRefundDialog(true);
+    // }
   };
 
   // Handle status update
