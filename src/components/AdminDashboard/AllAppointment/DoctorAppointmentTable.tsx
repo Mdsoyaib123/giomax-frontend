@@ -636,7 +636,7 @@ const DoctorAppointmentTable: React.FC = () => {
               )}
 
               {/* Refund Button - Only show for cancelled appointments */}
-              {selectedAppointment.status === "cancelled" &&
+              {/* {selectedAppointment.status === "cancelled" &&
                 !showRefundDialog && (
                   <button
                     onClick={() => setShowRefundDialog(true)}
@@ -644,7 +644,7 @@ const DoctorAppointmentTable: React.FC = () => {
                   >
                     Refund Payment
                   </button>
-                )}
+                )} */}
 
               {/* Cancel Appointment Button */}
               {/* {selectedAppointment.status !== "cancelled" &&
