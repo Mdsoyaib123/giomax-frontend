@@ -57,6 +57,14 @@ export const adminPaymentApi = baseApi.injectEndpoints({
       }),
       providesTags: ["REFUND_REQUEST"],
     }),
+    acceptRefundRequest: builder.mutation<any, { id: string; data: any }>({
+      query: ({ id, data }) => ({
+        url: `/refund/acceptOrReject/refund-requests/${id}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["REFUND_REQUEST"],
+    }),
   }),
 });
 
@@ -66,4 +74,5 @@ export const {
   useRejectWithdrawRequestMutation,
   useGetWithdrawRequestsByUserQuery,
   useGetAllrefundRequestsQuery,
+  useAcceptRefundRequestMutation,
 } = adminPaymentApi;

@@ -1,17 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { useGetAllrefundRequestsQuery } from "@/redux/features/admin/payment/adminPaymentApi";
+import {
+  useAcceptRefundRequestMutation,
+  useGetAllrefundRequestsQuery,
+} from "@/redux/features/admin/payment/adminPaymentApi";
 import {
   FiMoreVertical,
   FiCheckCircle,
   FiXCircle,
   FiClock,
-  FiEye,
+  //   FiEye,
   FiChevronLeft,
   FiChevronRight,
   FiChevronsLeft,
   FiChevronsRight,
+  FiLoader,
 } from "react-icons/fi";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
+import { toast } from "sonner";
 
 // Define the type for refund request
 interface RefundRequest {
@@ -37,13 +43,25 @@ interface RefundResponse {
 }
 
 export default function PaymentRefundPage() {
-  const { data: response, isLoading, error } = useGetAllrefundRequestsQuery();
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllrefundRequestsQuery();
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [processingRequest, setProcessingRequest] = useState<string | null>(
+    null
+  );
+
+  // Use your acceptRefundRequest mutation for both accept and reject
+  const [updateRefundRequest, { isLoading: isUpdating }] =
+    useAcceptRefundRequestMutation();
 
   const refundData = (response as RefundResponse)?.data || [];
 
@@ -54,22 +72,63 @@ export default function PaymentRefundPage() {
     setIsMenuOpen(true);
   };
 
-  const handleMenuAction = (action: "view" | "approve" | "reject") => {
+  const handleUpdateRefundStatus = async (status: "approved" | "rejected") => {
     if (!selectedRequest) return;
 
-    switch (action) {
-      case "view":
-        console.log("View details for:", selectedRequest);
-        break;
-      case "approve":
-        console.log("Approve refund for:", selectedRequest);
-        break;
-      case "reject":
-        console.log("Reject refund for:", selectedRequest);
-        break;
+    try {
+      setProcessingRequest(selectedRequest);
+
+      // Prepare the payload exactly as your RTK Query expects
+      const payload = {
+        id: selectedRequest,
+        data: { status }, // This will be sent in the request body
+      };
+
+      const response = await updateRefundRequest(payload).unwrap();
+
+      if (response.success) {
+        const actionText = status === "approved" ? "approved" : "rejected";
+        toast.success(response.message || `Refund ${actionText} successfully!`);
+        // The mutation already invalidates the REFUND_REQUEST tag, so data will be refetched automatically
+        // But we can also manually refetch if needed
+        refetch();
+      } else {
+        toast.error(response.message || `Failed to ${status} refund`);
+      }
+    } catch (error: any) {
+      console.error(`Error ${status} refund:`, error);
+      const actionText = status === "approved" ? "approving" : "rejecting";
+      toast.error(
+        error?.data?.message ||
+          `An error occurred while ${actionText} the refund`
+      );
+    } finally {
+      setProcessingRequest(null);
+      setIsMenuOpen(false);
     }
-    setIsMenuOpen(false);
   };
+
+  const handleAcceptRefund = async () => {
+    await handleUpdateRefundStatus("approved");
+  };
+
+  const handleRejectRefund = async () => {
+    await handleUpdateRefundStatus("rejected");
+  };
+
+  // Handle view details
+  //   const handleViewDetails = () => {
+  //     if (!selectedRequest) return;
+
+  //     // Find the selected request
+  //     const request = refundData.find((r) => r._id === selectedRequest);
+  //     if (request) {
+  //       console.log("Request details:", request);
+  //       // You could show a modal with detailed information here
+  //       toast.info(`Viewing details for request: ${selectedRequest}`);
+  //     }
+  //     setIsMenuOpen(false);
+  //   };
 
   const toggleRowExpand = (requestId: string) => {
     const newExpandedRows = new Set(expandedRows);
@@ -140,6 +199,11 @@ export default function PaymentRefundPage() {
 
   const maskCardNumber = (cardNumber: string) => {
     return `**** **** **** ${cardNumber.slice(-4)}`;
+  };
+
+  // Check if a request is currently being processed
+  const isProcessing = (requestId: string) => {
+    return processingRequest === requestId;
   };
 
   // Pagination calculations
@@ -314,7 +378,11 @@ export default function PaymentRefundPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {getStatusIcon(request.status)}
+                        {isProcessing(request._id) ? (
+                          <FiLoader className="animate-spin text-blue-500 text-lg" />
+                        ) : (
+                          getStatusIcon(request.status)
+                        )}
                         <span
                           className={`ml-2 px-2 py-1 text-xs rounded-full border ${getStatusColor(
                             request.status
@@ -334,16 +402,29 @@ export default function PaymentRefundPage() {
                             e.stopPropagation();
                             handleMenuToggle(e, request._id);
                           }}
-                          className="p-1 hover:bg-gray-100 rounded transition-colors"
-                          disabled={request.status !== "pending"}
+                          className="p-1 hover:bg-gray-100 rounded transition-colors disabled:cursor-not-allowed"
+                          disabled={
+                            request.status !== "pending" ||
+                            isProcessing(request._id)
+                          }
+                          title={
+                            request.status !== "pending"
+                              ? "Only pending requests can be modified"
+                              : ""
+                          }
                         >
-                          <FiMoreVertical
-                            className={`text-lg ${
-                              request.status !== "pending"
-                                ? "text-gray-300"
-                                : "text-gray-600"
-                            }`}
-                          />
+                          {isProcessing(request._id) ? (
+                            <FiLoader className="animate-spin text-gray-400 text-lg" />
+                          ) : (
+                            <FiMoreVertical
+                              className={`text-lg ${
+                                request.status !== "pending" ||
+                                isProcessing(request._id)
+                                  ? "text-gray-300"
+                                  : "text-gray-600 hover:text-gray-900"
+                              }`}
+                            />
+                          )}
                         </button>
                         {expandedRows.has(request._id) ? (
                           <MdExpandLess className="text-gray-400" />
@@ -549,26 +630,40 @@ export default function PaymentRefundPage() {
               transform: "translateX(-100%)",
             }}
           >
-            <button
-              onClick={() => handleMenuAction("view")}
+            {/* <button
+              onClick={handleViewDetails}
               className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             >
               <FiEye className="mr-3 text-gray-400" />
               View Details
+            </button> */}
+            <button
+              onClick={handleAcceptRefund}
+              disabled={isUpdating}
+              className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUpdating && processingRequest === selectedRequest ? (
+                <FiLoader className="animate-spin mr-3 text-green-500" />
+              ) : (
+                <FiCheckCircle className="mr-3 text-green-500" />
+              )}
+              {isUpdating && processingRequest === selectedRequest
+                ? "Processing..."
+                : "Approve Refund"}
             </button>
             <button
-              onClick={() => handleMenuAction("approve")}
-              className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors"
+              onClick={handleRejectRefund}
+              disabled={isUpdating}
+              className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <FiCheckCircle className="mr-3 text-green-500" />
-              Approve Refund
-            </button>
-            <button
-              onClick={() => handleMenuAction("reject")}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors"
-            >
-              <FiXCircle className="mr-3 text-red-500" />
-              Reject Refund
+              {isUpdating && processingRequest === selectedRequest ? (
+                <FiLoader className="animate-spin mr-3 text-red-500" />
+              ) : (
+                <FiXCircle className="mr-3 text-red-500" />
+              )}
+              {isUpdating && processingRequest === selectedRequest
+                ? "Processing..."
+                : "Reject Refund"}
             </button>
           </div>
         </>
