@@ -20,7 +20,7 @@ const PaymentEarningCard = () => {
 
   // Format currency with commas and 2 decimal places
   const formatCurrency = (amount: number) => {
-    return `$${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+    return `₾ ${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
   };
 
   // Format number with commas
@@ -34,21 +34,21 @@ const PaymentEarningCard = () => {
       title: "Pending Payouts",
       amount: data?.data?.clinicPendingMoney
         ? formatCurrency(data.data.clinicPendingMoney)
-        : "$ 0.00",
+        : "₾ 0.00",
       icon: pic1,
     },
     {
       title: "Total Withdrawn",
       amount: data?.data?.clinicTotalWithdrew
         ? formatCurrency(data.data.clinicTotalWithdrew)
-        : "$ 0.00",
+        : "₾ 0.00",
       icon: pic,
     },
     {
       title: "Total Transactions",
       amount: data?.data?.totalTransactions
         ? formatNumber(data.data.totalTransactions)
-        : "0",
+        : "₾ 0",
       icon: Patients,
     },
   ];
