@@ -8,6 +8,7 @@ interface DoctorAppointmentState {
   filters: {
     status: string;
     serviceType: string;
+    clinicId: string;
   };
   pagination: {
     currentPage: number;
@@ -25,6 +26,7 @@ const initialState: DoctorAppointmentState = {
   filters: {
     status: "all",
     serviceType: "all",
+    clinicId: "all",
   },
   pagination: {
     currentPage: 1,
@@ -54,7 +56,7 @@ const doctorAppointmentSlice = createSlice({
 
     setFilter: (
       state,
-      action: PayloadAction<{ key: "status" | "serviceType"; value: string }>
+      action: PayloadAction<{ key: "status" | "serviceType" | "clinicId"; value: string }>
     ) => {
       state.filters[action.payload.key] = action.payload.value;
 
@@ -70,6 +72,12 @@ const doctorAppointmentSlice = createSlice({
       if (state.filters.serviceType !== "all") {
         filtered = filtered.filter(
           (app) => app.serviceType === state.filters.serviceType
+        );
+      }
+
+      if (state.filters.clinicId !== "all") {
+        filtered = filtered.filter(
+          (app) => app.clinicId._id === state.filters.clinicId
         );
       }
 
@@ -91,7 +99,7 @@ const doctorAppointmentSlice = createSlice({
     },
 
     clearFilters: (state) => {
-      state.filters = { status: "all", serviceType: "all" };
+      state.filters = { status: "all", serviceType: "all", clinicId: "all" };
       state.filteredAppointments = state.appointments;
       state.pagination.totalItems = state.appointments.length;
       state.pagination.currentPage = 1;
