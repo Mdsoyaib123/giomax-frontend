@@ -1,7 +1,7 @@
-import Patients from "@/assets/aaa.png";
 import Doctors from "@/assets/bbb.png";
 import Clinics from "@/assets/ccc.png";
 import { useGetPaymentDataQuery } from "@/redux/features/admin/dashboard/adminDashboardApi";
+import { TbCurrencyLari } from "react-icons/tb";
 
 const PaymentCard = () => {
   const { data: paymentData, isLoading } = useGetPaymentDataQuery({});
@@ -23,7 +23,7 @@ const PaymentCard = () => {
       title: "Total Transactions",
       amount: `₾ ${data?.allPaymentTransactions ?? 0}`,
       unit: `${data?.allPaymentTransactions ?? 0} transactions`,
-      icon: Patients,
+      icon: <TbCurrencyLari className="text-green-500" size={30} />,
     },
     {
       title: "Total Paid Out",
@@ -49,11 +49,17 @@ const PaymentCard = () => {
           {/* Top */}
           <div className="space-y-2">
             <div className="bg-[#F9F8F6] border border-[#F6F4F2] w-12 h-12 rounded-xl flex items-center justify-center">
-              <img
-                src={item.icon}
-                alt={item.title}
-                className="w-6 h-6 object-contain"
-              />
+              {typeof item.icon === "string" ? (
+                <img
+                  src={item.icon}
+                  alt={item.title}
+                  className="w-6 h-6 object-contain"
+                />
+              ) : (
+                <div className="w-6 h-6 flex items-center justify-center">
+                  {item.icon}
+                </div>
+              )}
             </div>
 
             <h1 className="text-lg font-medium text-[#343A40]">{item.title}</h1>
