@@ -223,7 +223,7 @@ const NurseManagement: React.FC = () => {
   const calculateEarnings = (nurse: any) => {
     const earnings =
       nurse.paymentAndEarnings?.totalEarnings?.totalThisMonth || 0;
-    return `$${earnings.toFixed(2)}`;
+    return `₾ ${earnings.toFixed(2)}`;
   };
 
   if (isLoading) {
@@ -511,7 +511,11 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={`$${openProfile.professionalInformation.consultationFee}`}
+                  value={`₾ ${
+                    openProfile?.professionalInformation?.consultationFee?.toFixed(
+                      2
+                    ) || "0.00"
+                  }`}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -584,7 +588,7 @@ const NurseManagement: React.FC = () => {
                             className="flex justify-between text-sm text-gray-600"
                           >
                             <span>{sub.name}</span>
-                            <span>${sub.price}</span>
+                            <span>₾ {sub.price}</span>
                           </div>
                         ))}
                       </div>

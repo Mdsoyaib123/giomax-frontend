@@ -21,19 +21,19 @@ const PaymentCard = () => {
   const statusData = [
     {
       title: "Total Transactions",
-      amount: `$${data?.allPaymentTransactions ?? 0}`,
+      amount: `₾ ${data?.allPaymentTransactions ?? 0}`,
       unit: `${data?.allPaymentTransactions ?? 0} transactions`,
       icon: Patients,
     },
     {
       title: "Total Paid Out",
-      amount: `$${data?.totalPaidAmount ?? 0}`,
+      amount: `₾ ${data?.totalPaidAmount ?? 0}`,
       unit: "Completed payments",
       icon: Doctors,
     },
     {
       title: "Payable Amount",
-      amount: `$${data?.totalPayableAmount ?? 0}`,
+      amount: `₾ ${data?.totalPayableAmount ?? 0}`,
       unit: "Payable payments",
       icon: Clinics,
     },
