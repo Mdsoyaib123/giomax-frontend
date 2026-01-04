@@ -56,6 +56,11 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: d5,
+    label: "Payment Refund",
+    href: "/admin-dashboard/payment-refund",
+  },
+  {
+    icon: d5,
     label: "Nurse Management",
     href: "/admin-dashboard/nurse-management",
   },
@@ -69,6 +74,7 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Support Message",
     href: "/admin-dashboard/Support-message",
   },
+
   // {
   //   icon: d8,
   //   label: "Settings",

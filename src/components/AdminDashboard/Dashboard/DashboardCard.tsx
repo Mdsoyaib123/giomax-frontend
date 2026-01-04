@@ -3,9 +3,8 @@ import Patients from "@/assets/Logo/patientss.svg";
 import Doctors from "@/assets/Logo/doctors.svg";
 import Clinics from "@/assets/Logo/clinics.svg";
 import Bookings from "@/assets/Logo/bookings.svg";
-import Earnings from "@/assets/Logo/earnings.svg";
 import { useGetAdminOverviewQuery } from "@/redux/features/admin/dashboard/adminDashboardApi";
-
+import { TbCurrencyLari } from "react-icons/tb";
 const DashboardCard = () => {
   const { data: overviewData } = useGetAdminOverviewQuery({});
 
@@ -77,13 +76,13 @@ const DashboardCard = () => {
     // },
     {
       title: "Admin Earnings",
-      amount: `$${overviewData?.data.adminEarnings ?? 0}`,
+      amount: `₾ ${overviewData?.data.adminEarnings?.toFixed(2) ?? 0}`,
       change: calculateChange(
-        overviewData?.data.adminEarnings ?? 0,
+        overviewData?.data.adminEarnings?.toFixed(2) ?? 0,
         previousMonthData.adminEarnings
       ),
       unit: "vs last month",
-      icon: Earnings,
+      icon: <TbCurrencyLari className="w-6 h-6 text-green-400" />,
     },
   ];
 
@@ -92,7 +91,6 @@ const DashboardCard = () => {
       {statsData.map((item) => {
         const isNegative = item.change < 0;
         const changeColor = isNegative ? "#E35A5F" : "#12CC1E";
-
         return (
           <div
             key={item.title}
@@ -101,11 +99,15 @@ const DashboardCard = () => {
             {/* Top */}
             <div className="space-y-2">
               <div className="bg-[#F9F8F6] border border-[#F6F4F2] w-12 h-12 rounded-xl p-3 flex items-center justify-center">
-                <img
-                  src={item.icon}
-                  alt={item.title}
-                  className="w-6 h-6 object-contain"
-                />
+                {typeof item.icon === "string" ? (
+                  <img
+                    src={item.icon}
+                    alt={item.title}
+                    className="w-6 h-6 object-contain"
+                  />
+                ) : (
+                  item.icon
+                )}
               </div>
 
               <h1 className="text-lg leading-[160%] font-medium text-[#343A40]">

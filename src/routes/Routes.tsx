@@ -27,6 +27,7 @@ import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/Pertient
 import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
 import SupportMessage from "@/components/AdminDashboard/SupportMessage";
 import AdminProfile from "@/components/AdminDashboard/Shared/AdminProfile";
+import PaymentRefundPage from "@/pages/Admin/PaymentRefundPage";
 
 const routes = createBrowserRouter([
   {
@@ -73,8 +74,8 @@ const routes = createBrowserRouter([
       { path: "booking-management", element: <ClinicBookingManagementPage /> },
       { path: "doctor-management", element: <ClinicDoctorManagementPage /> },
       { path: "settings", element: <ClinicSettingsPage /> },
-      { path: "payment", element: <PaymentEarning/> },
-      { path: "message", element: <PertientMessage/> },
+      { path: "payment", element: <PaymentEarning /> },
+      { path: "message", element: <PertientMessage /> },
     ],
   },
 
@@ -94,6 +95,7 @@ const routes = createBrowserRouter([
       { path: "Support-message", element: <SupportMessage /> },
       { path: "booking-management", element: <BookingManagementPage /> },
       { path: "payments", element: <PaymentsPage /> },
+      { path: "payment-refund", element: <PaymentRefundPage /> },
       { path: "nurse-management", element: <NurseManagementPage /> },
       { path: "clinic-management", element: <ClinicManagementPage /> },
       { path: "clinic-management/:id", element: <PaymentHistoryClinic /> },
