@@ -27,6 +27,7 @@ import PertientMessage from "@/components/ClinicDashboard/ClinicMessage/Pertient
 import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
 import SupportMessage from "@/components/AdminDashboard/SupportMessage";
 import AdminProfile from "@/components/AdminDashboard/Shared/AdminProfile";
+import PaymentRefundPage from "@/pages/Admin/PaymentRefundPage";
 
 const routes = createBrowserRouter([
   {

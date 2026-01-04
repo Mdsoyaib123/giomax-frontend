@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/hooks/baseApi";
 import {
   WithdrawRequestResponse,
@@ -49,6 +50,13 @@ export const adminPaymentApi = baseApi.injectEndpoints({
         `/withdrawRequest/getWithdrawRequests/me?ownerId=${ownerId}`,
       providesTags: ["WITHDRAW_REQUEST"],
     }),
+    getAllrefundRequests: builder.query<any, void>({
+      query: () => ({
+        url: "/refund/getAll",
+        method: "GET",
+      }),
+      providesTags: ["REFUND_REQUEST"],
+    }),
   }),
 });
 
@@ -57,4 +65,5 @@ export const {
   useMarkAsPaidMutation,
   useRejectWithdrawRequestMutation,
   useGetWithdrawRequestsByUserQuery,
+  useGetAllrefundRequestsQuery,
 } = adminPaymentApi;
