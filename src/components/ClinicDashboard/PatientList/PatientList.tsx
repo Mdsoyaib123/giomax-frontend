@@ -17,27 +17,6 @@ import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 
-interface Appointment {
-  _id: string;
-  patientId: Patient | null;
-  doctorId: {
-    _id: string;
-    userId: string;
-  };
-  clinicId: string;
-  serviceType: string;
-  visitingType: string;
-  reasonForVisit: string;
-  followUpDetails: string;
-  status: string;
-  prefarenceDate: string;
-  prefarenceTime: string;
-  appoinmentFee: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
 const PatientList = () => {
   const navigate = useNavigate();
   const [openProfile, setOpenProfile] = useState<Patient | null>(null);
@@ -53,9 +32,9 @@ const PatientList = () => {
     service: "",
     serviceType: "",
     date: "",
-    time: "",
     password: "",
     comfirmPassword: "",
+    role: "patient",
     bloodGroup: "",
     dateOfBirth: "",
   });
@@ -77,25 +56,19 @@ const PatientList = () => {
     navigate("/clinic-dashboard/message");
   };
 
-  // Get appointments from API response
-  const allAppointments: Appointment[] = apiResponse?.data || [];
+  // Get patients from API response
+  const allPatients = apiResponse?.data || [];
 
-  // Extract unique patients from appointments
-  const uniquePatients = allAppointments
-    .map((appointment) => appointment.patientId)
-    .filter((patient) => patient !== null && patient.userId) // Filter out null patientIds and patients without userId
-    .filter(
-      (patient, index, self) =>
-        // Remove duplicates by patient _id
-        index === self.findIndex((p) => p?._id === patient?._id)
-    );
+  // Debug: Log the API response
+  console.log("API Response:", apiResponse);
+  console.log("All Patients:", allPatients);
 
   // Filter patients based on search query
-  const filteredPatients = uniquePatients.filter((patient) => {
-    if (!patient || !patient.userId) return false;
+  const filteredPatients = allPatients.filter((patient: any) => {
+    if (!patient) return false;
 
-    const fullName = patient.userId.fullName?.toLowerCase() || "";
-    const email = patient.userId.email?.toLowerCase() || "";
+    const fullName = patient.userId?.fullName?.toLowerCase() || "";
+    const email = patient.userId?.email?.toLowerCase() || "";
     const phone = patient.phoneNumber?.toLowerCase() || "";
     const query = searchQuery.toLowerCase();
 
@@ -103,6 +76,9 @@ const PatientList = () => {
       fullName.includes(query) || email.includes(query) || phone.includes(query)
     );
   });
+
+  // Debug: Log filtered patients
+  console.log("Filtered Patients:", filteredPatients);
 
   // Calculate pagination values
   const totalPatients = filteredPatients.length;
@@ -114,6 +90,9 @@ const PatientList = () => {
 
   // Get current page patients
   const currentPatients = filteredPatients.slice(startIndex, endIndex);
+
+  // Debug: Log current patients
+  console.log("Current Patients:", currentPatients);
 
   // Calculate showing text
   const getShowingText = () => {
@@ -189,8 +168,8 @@ const PatientList = () => {
         service: "",
         serviceType: "",
         date: "",
-        time: "",
         password: "",
+        role: "patient",
         comfirmPassword: "",
         bloodGroup: "",
         dateOfBirth: "",
@@ -217,10 +196,9 @@ const PatientList = () => {
   };
 
   // Get appointment count for a patient
-  const getAppointmentCount = (patientId: string) => {
-    return allAppointments.filter(
-      (appointment) => appointment.patientId?._id === patientId
-    ).length;
+  const getAppointmentCount = (patient: any) => {
+    // Use the appointmentCount field from the patient data
+    return patient.appointmentCount || 0;
   };
 
   return (
@@ -319,7 +297,7 @@ const PatientList = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {getAppointmentCount(patient._id)} visits
+                                  {getAppointmentCount(patient)} visits
                                 </span>
                               </td>
                               <td className="px-6 flex items-center justify-center py-4 whitespace-nowrap text-sm">
@@ -617,18 +595,6 @@ const PatientList = () => {
                       type="date"
                       name="date"
                       value={patientData.date}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Appointment Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="time"
-                      name="time"
-                      value={patientData.time}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
                     />
