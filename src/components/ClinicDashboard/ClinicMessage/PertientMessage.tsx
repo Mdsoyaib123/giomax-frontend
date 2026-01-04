@@ -112,7 +112,7 @@ console.log(getToken());
       console.log('📥 Fetching clinic patients...',currentUserId);
       
       const response = await fetch(
-        `https://api.medconnect.com.ge/api/v1/doctor-appointment/getSingleClinicChats/${clinicId}`,
+        `https://api.medconnect.com.ge/api/v1/doctor-appointment/getSingleClinicChats/${currentUserId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -127,16 +127,20 @@ console.log(getToken());
 
       const data = await response.json();
       console.log('📦 Clinic patients API response:', data);
-
+console.log('data.data', data.data);
       if (data.success && Array.isArray(data.data)) {
         const formattedPatients: User[] = data.data.map((item: any) => {
-          const user = item.userId || item;
+          console.log('🔍 Processing patient item:', item);
+          // userId is a string ID, not an object
+          const patientId = item.userId || item._id;
+          console.log('🔍 Patient ID:', patientId);
+          
           return {
-            _id: user._id,
-            name: user.fullName || user.name || 'Unknown Patient',
-            email: user.email,
-            role: user.role || 'patient',
-            avatar: user.profileImage || `https://ui-avatars.com/api/?name=${user.fullName || 'Patient'}&background=random`,
+            _id: patientId,
+            name: item.fullName || item.name || 'Unknown Patient',
+            email: item.email,
+            role: item.role || 'patient',
+            avatar: item.profileImage || `https://ui-avatars.com/api/?name=${item.fullName || 'Patient'}&background=random`,
             online: false,
             unreadCount: 0,
             lastMessage: '',
@@ -144,8 +148,9 @@ console.log(getToken());
           };
         });
 
+        console.log('✅ Formatted patients:', formattedPatients);
         setPatients(formattedPatients);
-        console.log('✅ Fetched patients:', formattedPatients.length);
+        console.log('✅ Fetched patients count:', formattedPatients.length);
       } else {
         console.warn('⚠️ No patients array in response');
         setPatients([]);
@@ -504,9 +509,15 @@ const fetchMessages = useCallback(async (targetId: string) => {
       socket.off('user_typing', handleTyping);
     };
   }, [socket, currentUser, isAdminMode, selectedAdminId, selectedPatientId]);
-console.log('selectedAdminId', selectedAdminId);
-console.log('selectedPatientId', selectedPatientId);
-console.log('isAdminMode', isAdminMode);
+
+  // Log selectedPatientId whenever it changes
+  useEffect(() => {
+    console.log('🔵 selectedPatientId:', selectedPatientId);
+    if (selectedPatientId) {
+      console.log('✅ Patient selected with ID:', selectedPatientId);
+    }
+  }, [selectedPatientId]);
+
   // Send message - FIXED
   const sendMessage = useCallback(() => {
     const hasSelectedContact = isAdminMode ? selectedAdminId : selectedPatientId;
