@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { RiRefund2Fill } from "react-icons/ri";
+import { ReactElement } from "react";
 
 // Import custom icons
 import side1 from "@/assets/side1.png";
@@ -22,7 +24,7 @@ import { useGetAdminQuery } from "@/redux/features/auth/authApi";
 
 // Types
 export interface SidebarItem {
-  icon: string;
+  icon: string | ReactElement;
   label: string;
   href?: string;
   badge?: string;
@@ -55,7 +57,7 @@ const defaultSidebarItems: SidebarItem[] = [
     href: "/admin-dashboard/payments",
   },
   {
-    icon: d5,
+    icon: <RiRefund2Fill className="w-5 h-5" />,
     label: "Payment Refund",
     href: "/admin-dashboard/payment-refund",
   },
@@ -146,11 +148,17 @@ const AdminSidebar: React.FC<SidebarProps> = ({
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <img
-                        src={item.icon}
-                        alt={item.label}
-                        className="w-5 h-5 transition-all duration-300 object-contain"
-                      />
+                      {typeof item.icon === "string" ? (
+                        <img
+                          src={item.icon}
+                          alt={item.label}
+                          className="w-5 h-5 transition-all duration-300 object-contain"
+                        />
+                      ) : (
+                        <div className="w-5 h-5 transition-all duration-300 flex items-center justify-center">
+                          {item.icon}
+                        </div>
+                      )}
                       <span className="whitespace-nowrap">{item.label}</span>
                     </div>
                   </Link>
@@ -164,11 +172,17 @@ const AdminSidebar: React.FC<SidebarProps> = ({
                     }`}
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <img
-                        src={item.icon}
-                        alt={item.label}
-                        className="w-5 h-5 transition-all duration-300 object-contain"
-                      />
+                      {typeof item.icon === "string" ? (
+                        <img
+                          src={item.icon}
+                          alt={item.label}
+                          className="w-5 h-5 transition-all duration-300 object-contain"
+                        />
+                      ) : (
+                        <div className="w-5 h-5 transition-all duration-300 flex items-center justify-center">
+                          {item.icon}
+                        </div>
+                      )}
                       <span className="whitespace-nowrap">{item.label}</span>
                     </div>
 

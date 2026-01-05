@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   FaEye,
   FaCalendarAlt,
@@ -61,7 +61,7 @@ const DoctorAppointmentTable: React.FC = () => {
   const [refundAppointment] = useRefundAppointmentMutation();
 
   // Extract clinics data
-  const clinics = clinicsResponse?.data || [];
+  const clinics = useMemo(() => clinicsResponse?.data || [], [clinicsResponse]);
 
   // Add a clinic filter option
   useEffect(() => {
@@ -614,7 +614,7 @@ const DoctorAppointmentTable: React.FC = () => {
                 <div>
                   <p className="text-xs text-gray-500">Amount</p>
                   <p className="font-medium">
-                    ${selectedAppointment.appoinmentFee}
+                    ₾ {selectedAppointment.appoinmentFee}
                   </p>
                 </div>
               </div>
@@ -660,7 +660,7 @@ const DoctorAppointmentTable: React.FC = () => {
               <textarea
                 value={selectedAppointment.reasonForVisit}
                 readOnly
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm min-h-[80px"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm min-h-[80px]"
               />
             </div>
 
@@ -673,7 +673,7 @@ const DoctorAppointmentTable: React.FC = () => {
                 <textarea
                   value={selectedAppointment.followUpDetails}
                   readOnly
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm min-h-20"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm min-h-[80px]"
                 />
               </div>
             )}

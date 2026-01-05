@@ -72,7 +72,7 @@ const AllTransactions: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 font-semibold">
-                        $ {transaction.amount}
+                        ₾ {transaction.amount}
                       </td>
 
                       <td className="px-6 py-4 text-gray-600">

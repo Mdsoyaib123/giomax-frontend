@@ -75,7 +75,10 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       return;
     }
 
-    if (formData.appointmentType === appointmentTypeOptions[0]) {
+    if (
+      formData.appointmentType === "" ||
+      !appointmentTypeOptions.includes(formData.appointmentType)
+    ) {
       toast.error("Please select a valid appointment type!");
       return;
     }
