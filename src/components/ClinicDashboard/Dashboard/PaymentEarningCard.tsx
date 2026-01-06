@@ -20,7 +20,7 @@ const PaymentEarningCard = () => {
 
   // Format currency with commas and 2 decimal places
   const formatCurrency = (amount: number) => {
-    return `$${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+    return `₾ ${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
   };
 
   // Format number with commas
@@ -34,21 +34,21 @@ const PaymentEarningCard = () => {
       title: "Pending Payouts",
       amount: data?.data?.clinicPendingMoney
         ? formatCurrency(data.data.clinicPendingMoney)
-        : "$ 0.00",
+        : "₾ 0.00",
       icon: pic1,
     },
     {
       title: "Total Withdrawn",
       amount: data?.data?.clinicTotalWithdrew
         ? formatCurrency(data.data.clinicTotalWithdrew)
-        : "$ 0.00",
+        : "₾ 0.00",
       icon: pic,
     },
     {
       title: "Total Transactions",
       amount: data?.data?.totalTransactions
         ? formatNumber(data.data.totalTransactions)
-        : "0",
+        : "₾ 0",
       icon: Patients,
     },
   ];
@@ -101,8 +101,8 @@ const PaymentEarningCard = () => {
 
       {/* Loading state */}
       {isLoading || isClinicIdLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 w-full">
-          {[1, 2, 3].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-5 w-full">
+          {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="w-full h-48 p-6 bg-white rounded-2xl flex flex-col justify-between shadow-sm space-y-4 animate-pulse"
@@ -120,7 +120,7 @@ const PaymentEarningCard = () => {
           Failed to load payment data. Please try again.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-5 w-full">
           {allStatusData.map((single) => (
             <div
               key={single.title}
