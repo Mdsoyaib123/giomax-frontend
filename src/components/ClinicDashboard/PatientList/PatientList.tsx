@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaEye, FaSpinner } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { X } from "lucide-react";
@@ -17,28 +17,30 @@ import TableRowSkeleton from "@/components/Skeleton/TableRowSkeleton";
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 
-// Define the appointment type based on your response
 interface Appointment {
   _id: string;
-  patientId: {
+  patientId: Patient | null;
+  doctorId: {
     _id: string;
-    userId: {
-      _id: string;
-      fullName: string;
-      email: string;
-      role: string;
-      profileImage?: string;
-    };
-    bloodGroup: string;
-    gender: string;
-    phoneNumber?: string;
-  } | null;
-  // ... other appointment fields
+    userId: string;
+  };
+  clinicId: string;
+  serviceType: string;
+  visitingType: string;
+  reasonForVisit: string;
+  followUpDetails: string;
+  status: string;
+  prefarenceDate: string;
+  prefarenceTime: string;
+  appoinmentFee: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const PatientList = () => {
   const navigate = useNavigate();
-  const [openProfile, setOpenProfile] = useState<any | null>(null);
+  const [openProfile, setOpenProfile] = useState<Patient | null>(null);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,13 +53,12 @@ const PatientList = () => {
     service: "",
     serviceType: "",
     date: "",
+    time: "",
     password: "",
     comfirmPassword: "",
-    role: "patient",
     bloodGroup: "",
     dateOfBirth: "",
   });
-
   const { clinicId: id } = useSingleClinicId();
   const { data: apiResponse, isLoading } = useGetClinicAllPatientsQuery(
     { id },
@@ -66,57 +67,6 @@ const PatientList = () => {
     }
   );
   const [createPatient, { isLoading: isCreating }] = useCreatePatientMutation();
-  const [uniquePatients, setUniquePatients] = useState<any[]>([]);
-
-  // Process appointments to get unique patients
-  useEffect(() => {
-    if (apiResponse?.data) {
-      const appointments = apiResponse.data as Appointment[];
-
-      // Filter out appointments without patientId and get unique patients
-      const patientMap = new Map();
-
-      appointments.forEach((appointment) => {
-        if (appointment.patientId && appointment.patientId.userId) {
-          const patientId = appointment.patientId._id;
-          const userId = appointment.patientId.userId._id;
-
-          // If patient not in map, add it
-          if (!patientMap.has(patientId)) {
-            patientMap.set(patientId, {
-              _id: patientId,
-              userId: {
-                _id: userId,
-                fullName: appointment.patientId.userId.fullName,
-                email: appointment.patientId.userId.email,
-                role: appointment.patientId.userId.role,
-                profileImage: appointment.patientId.userId.profileImage,
-              },
-              bloodGroup: appointment.patientId.bloodGroup,
-              gender: appointment.patientId.gender,
-              phoneNumber: appointment.patientId.phoneNumber || "No Phone",
-              // Calculate appointment count for this patient
-              appointmentCount: 1,
-            });
-          } else {
-            // If patient already in map, increment appointment count
-            const existingPatient = patientMap.get(patientId);
-            patientMap.set(patientId, {
-              ...existingPatient,
-              appointmentCount: (existingPatient.appointmentCount || 0) + 1,
-            });
-          }
-        }
-      });
-
-      // Convert map to array
-      const patientsArray = Array.from(patientMap.values());
-      setUniquePatients(patientsArray);
-
-      console.log("Unique Patients:", patientsArray);
-      console.log("Total unique patients:", patientsArray.length);
-    }
-  }, [apiResponse]);
 
   // Navigate to payment history page
   const handleClick = (patientId: string) => {
@@ -127,12 +77,25 @@ const PatientList = () => {
     navigate("/clinic-dashboard/message");
   };
 
-  // Filter patients based on search query
-  const filteredPatients = uniquePatients.filter((patient: any) => {
-    if (!patient) return false;
+  // Get appointments from API response
+  const allAppointments: Appointment[] = apiResponse?.data || [];
 
-    const fullName = patient.userId?.fullName?.toLowerCase() || "";
-    const email = patient.userId?.email?.toLowerCase() || "";
+  // Extract unique patients from appointments
+  const uniquePatients = allAppointments
+    .map((appointment) => appointment.patientId)
+    .filter((patient) => patient !== null && patient.userId) // Filter out null patientIds and patients without userId
+    .filter(
+      (patient, index, self) =>
+        // Remove duplicates by patient _id
+        index === self.findIndex((p) => p?._id === patient?._id)
+    );
+
+  // Filter patients based on search query
+  const filteredPatients = uniquePatients.filter((patient) => {
+    if (!patient || !patient.userId) return false;
+
+    const fullName = patient.userId.fullName?.toLowerCase() || "";
+    const email = patient.userId.email?.toLowerCase() || "";
     const phone = patient.phoneNumber?.toLowerCase() || "";
     const query = searchQuery.toLowerCase();
 
@@ -140,9 +103,6 @@ const PatientList = () => {
       fullName.includes(query) || email.includes(query) || phone.includes(query)
     );
   });
-
-  // Debug: Log filtered patients
-  console.log("Filtered Patients:", filteredPatients);
 
   // Calculate pagination values
   const totalPatients = filteredPatients.length;
@@ -154,9 +114,6 @@ const PatientList = () => {
 
   // Get current page patients
   const currentPatients = filteredPatients.slice(startIndex, endIndex);
-
-  // Debug: Log current patients
-  console.log("Current Patients:", currentPatients);
 
   // Calculate showing text
   const getShowingText = () => {
@@ -180,16 +137,20 @@ const PatientList = () => {
   // Generate page numbers with ellipsis for better UX
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 5; // Maximum number of page buttons to show
 
     if (totalPages <= maxVisiblePages) {
+      // Show all pages if total pages are less than or equal to maxVisiblePages
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
+      // Show first page, last page, and pages around current page
       if (currentPage <= 3) {
+        // Near the beginning
         pageNumbers.push(1, 2, 3, 4, "...", totalPages);
       } else if (currentPage >= totalPages - 2) {
+        // Near the end
         pageNumbers.push(
           1,
           "...",
@@ -199,6 +160,7 @@ const PatientList = () => {
           totalPages
         );
       } else {
+        // In the middle
         pageNumbers.push(
           1,
           "...",
@@ -227,8 +189,8 @@ const PatientList = () => {
         service: "",
         serviceType: "",
         date: "",
+        time: "",
         password: "",
-        role: "patient",
         comfirmPassword: "",
         bloodGroup: "",
         dateOfBirth: "",
@@ -240,7 +202,7 @@ const PatientList = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   // Handle input/select change
@@ -255,8 +217,10 @@ const PatientList = () => {
   };
 
   // Get appointment count for a patient
-  const getAppointmentCount = (patient: any) => {
-    return patient.appointmentCount || 0;
+  const getAppointmentCount = (patientId: string) => {
+    return allAppointments.filter(
+      (appointment) => appointment.patientId?._id === patientId
+    ).length;
   };
 
   return (
@@ -269,6 +233,7 @@ const PatientList = () => {
           />
         </div>
         <div className="w-full sm:w-auto">
+          {/* Add New Patient Button */}
           <button
             onClick={() => setShowAddPatientModal(true)}
             className="h-10 px-4 bg-[#2E6FF3] text-white text-sm font-medium rounded-lg hover:bg-[#034ee6] transition-colors cursor-pointer whitespace-nowrap flex items-center gap-2 w-full sm:w-auto"
@@ -354,7 +319,7 @@ const PatientList = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {getAppointmentCount(patient)} visits
+                                  {getAppointmentCount(patient._id)} visits
                                 </span>
                               </td>
                               <td className="px-6 flex items-center justify-center py-4 whitespace-nowrap text-sm">
@@ -481,10 +446,250 @@ const PatientList = () => {
           />
         )}
 
-        {/* Add New Patient Modal (Keep this as is) */}
+        {/* Add New Patient Modal */}
         {showAddPatientModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            {/* ... Modal content remains the same ... */}
+            <div className="bg-white rounded-lg w-full max-w-2xl relative shadow-2xl border border-[#DBE0E5]">
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 sm:p-6 border-b border-[#DBE0E5]">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
+                    Add New Patient
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Enter patient information
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddPatientModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-5 sm:p-6 space-y-5">
+                {/* Patient Name & Gender */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Patient Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      placeholder="Ex: David Gongonza"
+                      value={patientData.fullName}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="gender"
+                      value={patientData.gender}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    >
+                      <option value="">Select Patient Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Date of Birth & Blood Group */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date of Birth <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="dateOfBirth"
+                      value={patientData.dateOfBirth}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Blood Group <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="bloodGroup"
+                      value={patientData.bloodGroup}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    >
+                      <option value="">Select Blood Group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Enter Patient Email Address"
+                      value={patientData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phoneNumber"
+                      placeholder="Enter Patient Phone Number"
+                      value={patientData.phoneNumber}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Service & Service Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="service"
+                      value={patientData.service}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    >
+                      <option value="">Select Service</option>
+                      <option value="inClinic">In Clinic</option>
+                      <option value="online">Online</option>
+                      <option value="Consultation">Consultation</option>
+                      <option value="Follow-up">Follow-up</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service Type <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="serviceType"
+                      value={patientData.serviceType}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    >
+                      <option value="">Select Service Type</option>
+                      <option value="General Checkup">General Checkup</option>
+                      <option value="Consultation">Consultation</option>
+                      <option value="Follow-up">Follow-up</option>
+                      <option value="Emergency">Emergency</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Appointment Date & Time */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Appointment Date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="date"
+                      value={patientData.date}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Appointment Time <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="time"
+                      name="time"
+                      value={patientData.time}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Password & Confirm Password */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Enter Password"
+                      value={patientData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      name="comfirmPassword"
+                      placeholder="Confirm Password"
+                      value={patientData.comfirmPassword}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 p-5 sm:p-6 border-t border-[#DBE0E5] bg-gray-50">
+                <button
+                  onClick={() => setShowAddPatientModal(false)}
+                  className="flex-1 py-3 border border-gray-300 rounded-lg bg-white hover:bg-gray-100 text-gray-700 font-medium text-sm transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  disabled={isCreating}
+                  onClick={handleAddPatient}
+                  className="flex-1 font-medium text-sm cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white border border-[#2E6FF3] hover:bg-[#0b51de] transition"
+                >
+                  {isCreating ? (
+                    <div className="flex items-center justify-center">
+                      <FaSpinner className="animate-spin mr-2" />
+                      <span className="ml-2">Adding...</span>
+                    </div>
+                  ) : (
+                    "Add Patient"
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
