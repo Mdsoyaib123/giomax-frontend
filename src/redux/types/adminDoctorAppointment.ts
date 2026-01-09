@@ -18,11 +18,15 @@ export interface IDoctor {
   userId: IUser;
 }
 
+export interface IClinicRef {
+  _id: string;
+}
+
 export interface IAppointment {
   _id: string;
   patientId: IPatient | null;
   doctorId: IDoctor;
-  clinicId: string;
+  clinicId: IClinicRef;
   serviceType: "inClinic" | "online";
   visitingType: "firstVisit" | "followUp";
   reasonForVisit: string;

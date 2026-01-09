@@ -41,7 +41,7 @@ const defaultSidebarItems: SidebarItem[] = [
   },
   {
     icon: <Users />,
-    label: "Parient List",
+    label: "Patient List",
     href: "/clinic-dashboard/patient-list",
   },
   {

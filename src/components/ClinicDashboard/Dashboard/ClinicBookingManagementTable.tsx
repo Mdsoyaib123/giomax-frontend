@@ -113,7 +113,7 @@ const ClinicBookingManagementTable: React.FC = () => {
       dateTime: `${appointment.prefarenceDate}, ${appointment.prefarenceTime}`,
       payment:
         appointment.appoinmentFee > 0
-          ? `$${appointment.appoinmentFee.toFixed(2)}`
+          ? `₾ ${appointment.appoinmentFee.toFixed(2)}`
           : "Free",
       fee: appointment.appoinmentFee,
       bloodGroup: appointment.patientId?.bloodGroup,

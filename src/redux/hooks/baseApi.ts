@@ -63,6 +63,7 @@ export const baseApi = createApi({
     "CLINIC_BASIC",
     "CLINIC_PATIENT",
     "AdminProfile",
+    "REFUND_REQUEST",
   ],
   endpoints: () => ({}),
 });

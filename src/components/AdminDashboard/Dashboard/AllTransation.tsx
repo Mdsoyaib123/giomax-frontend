@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useGetAllTransactionsQuery } from "@/redux/features/admin/dashboard/adminDashboardApi";
 
@@ -71,7 +72,7 @@ const AllTransactions: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 font-semibold">
-                        $ {transaction.amount}
+                        ₾ {transaction.amount}
                       </td>
 
                       <td className="px-6 py-4 text-gray-600">

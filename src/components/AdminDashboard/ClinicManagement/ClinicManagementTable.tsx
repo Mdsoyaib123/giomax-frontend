@@ -11,7 +11,10 @@ import { X, FileText } from "lucide-react";
 // } from "@/components/ui/select";
 // import { useNavigate } from "react-router-dom";
 // import { MdOutlineDoNotDisturb, MdCheckCircle } from "react-icons/md";
-import { useGetAllClinicsQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
+import {
+  useAcceptUserMutation,
+  useGetAllClinicsQuery,
+} from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Clinic } from "@/redux/types/admin/clinicManagementTypes";
 import {
   // setFilterStatus,
@@ -19,6 +22,7 @@ import {
 } from "@/redux/features/admin/clinic/clinicManagementSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
+import { toast } from "sonner";
 
 interface Props {
   id?: string | number;
@@ -29,12 +33,18 @@ const ClinicManagementTable: React.FC<Props> = () => {
   const { filterStatus, searchTerm, currentPage, itemsPerPage } =
     useAppSelector((state) => state.clinicManagement);
 
-  const { data: clinicsResponse, isLoading, error } = useGetAllClinicsQuery();
+  const {
+    data: clinicsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllClinicsQuery();
   const [openProfile, setOpenProfile] = useState<Clinic | null>(null);
   // const navigate = useNavigate();
 
   // Get clinics from response or empty array
   const clinics = clinicsResponse?.data || [];
+  const [acceptUser, { isLoading: isAcceptingUser }] = useAcceptUserMutation();
 
   // Filter clinics based on status and search term
   const filteredClinics = clinics.filter((clinic) => {
@@ -63,7 +73,18 @@ const ClinicManagementTable: React.FC<Props> = () => {
 
     return true;
   });
-
+  const handleAcceptUser = async (clinicId: string) => {
+    console.log(clinicId);
+    try {
+      await acceptUser(clinicId).unwrap();
+      toast.success("User accepted successfully!");
+      setOpenProfile(null);
+      refetch();
+    } catch (error) {
+      console.error("Error accepting user:", error);
+      toast.error("Failed to accept user!");
+    }
+  };
   // Pagination
   const totalPages = Math.ceil(filteredClinics.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -657,6 +678,21 @@ const ClinicManagementTable: React.FC<Props> = () => {
               >
                 Close
               </button>
+              {openProfile.userId.isAdminVerified ? (
+                <button
+                  disabled
+                  className="w-full cursor-not-allowed px-5 py-2.5 rounded-lg border border-blue-200 bg-blue-500 text-white white opacity-70"
+                >
+                  Approved
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleAcceptUser(openProfile.userId._id)}
+                  className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-blue-500 text-gray-700  transition text-white hover:bg-blue-700"
+                >
+                  {isAcceptingUser ? "Approving..." : "Approve"}
+                </button>
+              )}
 
               {/* <button
                 onClick={handleClick}

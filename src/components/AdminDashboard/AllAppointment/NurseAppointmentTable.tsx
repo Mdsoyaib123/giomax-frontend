@@ -14,7 +14,7 @@ import {
 
 import {
   useGetNurseAppointmentsQuery,
-  useUpdateNurseAppointmentMutation,
+  // useUpdateNurseAppointmentMutation,
   useCancelNurseAppointmentMutation,
   useGetNurseSingleAppointmentQuery,
   useConfirmNurseAppointmentMutation,
@@ -59,7 +59,7 @@ const NurseAppointmentTable: React.FC = () => {
   });
 
   // RTK Query mutations
-  const [_updateAppointment] = useUpdateNurseAppointmentMutation();
+  // const [_updateAppointment] = useUpdateNurseAppointmentMutation();
   const [cancelAppointment] = useCancelNurseAppointmentMutation();
   const [confirmAppointment] = useConfirmNurseAppointmentMutation();
 
@@ -91,6 +91,7 @@ const NurseAppointmentTable: React.FC = () => {
       const date = new Date(`${dateStr}T${timeStr}`);
       return format(date, "yyyy-MM-dd, hh:mm a");
     } catch (error) {
+      console.error("Error formatting date:", error);
       return `${dateStr}, ${timeStr}`;
     }
   };
@@ -400,7 +401,7 @@ const NurseAppointmentTable: React.FC = () => {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-700 font-semibold">
-                          $ {appointment.appointmentFee}
+                          ₾ {appointment.appointmentFee}
                         </td>
                         <td className="px-6 py-4 text-center space-x-2 flex justify-center">
                           <button
@@ -615,7 +616,7 @@ const NurseAppointmentTable: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={`$${selectedAppointment.appointmentFee}`}
+                    value={`₾ ${selectedAppointment.appointmentFee}`}
                     readOnly
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm"
                   />
