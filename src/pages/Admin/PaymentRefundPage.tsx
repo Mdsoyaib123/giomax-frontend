@@ -9,12 +9,15 @@ import {
   FiCheckCircle,
   FiXCircle,
   FiClock,
-  //   FiEye,
   FiChevronLeft,
   FiChevronRight,
   FiChevronsLeft,
   FiChevronsRight,
   FiLoader,
+  FiCopy,
+  FiCreditCard,
+  FiCalendar,
+  FiUser,
 } from "react-icons/fi";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import { toast } from "sonner";
@@ -58,6 +61,10 @@ export default function PaymentRefundPage() {
   const [processingRequest, setProcessingRequest] = useState<string | null>(
     null
   );
+  const [copiedField, setCopiedField] = useState<{
+    id: string;
+    type: string;
+  } | null>(null);
 
   // Use your acceptRefundRequest mutation for both accept and reject
   const [updateRefundRequest, { isLoading: isUpdating }] =
@@ -68,6 +75,7 @@ export default function PaymentRefundPage() {
   const handleMenuToggle = (event: React.MouseEvent, requestId: string) => {
     event.stopPropagation();
     setSelectedRequest(requestId);
+    console.log(requestId);
     setMenuPosition({ x: event.clientX, y: event.clientY });
     setIsMenuOpen(true);
   };
@@ -78,19 +86,23 @@ export default function PaymentRefundPage() {
     try {
       setProcessingRequest(selectedRequest);
 
-      // Prepare the payload exactly as your RTK Query expects
-      const payload = {
+      // Find the selected request to get all its data
+      const request = refundData.find((r) => r._id === selectedRequest);
+      console.log(request, "fchd");
+      if (!request) {
+        toast.error("Refund request not found");
+        return;
+      }
+      console.log(request.appointmentType);
+      // Try Option 1 first (most common RTK Query pattern)
+      const response = await updateRefundRequest({
         id: selectedRequest,
-        data: { status }, // This will be sent in the request body
-      };
-
-      const response = await updateRefundRequest(payload).unwrap();
+        data: { status: status, appointmentType: request.appointmentType },
+      }).unwrap();
 
       if (response.success) {
         const actionText = status === "approved" ? "approved" : "rejected";
         toast.success(response.message || `Refund ${actionText} successfully!`);
-        // The mutation already invalidates the REFUND_REQUEST tag, so data will be refetched automatically
-        // But we can also manually refetch if needed
         refetch();
       } else {
         toast.error(response.message || `Failed to ${status} refund`);
@@ -100,6 +112,7 @@ export default function PaymentRefundPage() {
       const actionText = status === "approved" ? "approving" : "rejecting";
       toast.error(
         error?.data?.message ||
+          error?.message ||
           `An error occurred while ${actionText} the refund`
       );
     } finally {
@@ -116,20 +129,6 @@ export default function PaymentRefundPage() {
     await handleUpdateRefundStatus("rejected");
   };
 
-  // Handle view details
-  //   const handleViewDetails = () => {
-  //     if (!selectedRequest) return;
-
-  //     // Find the selected request
-  //     const request = refundData.find((r) => r._id === selectedRequest);
-  //     if (request) {
-  //       console.log("Request details:", request);
-  //       // You could show a modal with detailed information here
-  //       toast.info(`Viewing details for request: ${selectedRequest}`);
-  //     }
-  //     setIsMenuOpen(false);
-  //   };
-
   const toggleRowExpand = (requestId: string) => {
     const newExpandedRows = new Set(expandedRows);
     if (newExpandedRows.has(requestId)) {
@@ -138,6 +137,30 @@ export default function PaymentRefundPage() {
       newExpandedRows.add(requestId);
     }
     setExpandedRows(newExpandedRows);
+  };
+
+  const handleCopyToClipboard = async (
+    text: string,
+    requestId: string,
+    fieldType: string
+  ) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField({ id: requestId, type: fieldType });
+      toast.success(
+        `${
+          fieldType.charAt(0).toUpperCase() + fieldType.slice(1)
+        } copied to clipboard`
+      );
+
+      // Reset copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedField(null);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -198,7 +221,21 @@ export default function PaymentRefundPage() {
   };
 
   const maskCardNumber = (cardNumber: string) => {
-    return `**** **** **** ${cardNumber.slice(-4)}`;
+    if (!cardNumber) return "N/A";
+    const cleaned = cardNumber.replace(/\s/g, "");
+    if (cleaned.length < 4) return cardNumber;
+    return `**** **** **** ${cleaned.slice(-4)}`;
+  };
+
+  const formatCardNumber = (cardNumber: string) => {
+    if (!cardNumber) return "";
+    const cleaned = cardNumber.replace(/\s/g, "");
+    return cleaned.replace(/(\d{4})/g, "$1 ").trim();
+  };
+
+  const showFullCardNumber = (cardNumber: string) => {
+    if (!cardNumber) return "N/A";
+    return formatCardNumber(cardNumber);
   };
 
   // Check if a request is currently being processed
@@ -256,7 +293,7 @@ export default function PaymentRefundPage() {
               </p>
             </div>
             <div className="p-3 bg-blue-50 rounded-lg">
-              <FiClock className="text-blue-500 text-xl" />
+              <FiCreditCard className="text-blue-500 text-xl" />
             </div>
           </div>
         </div>
@@ -343,21 +380,90 @@ export default function PaymentRefundPage() {
                     onClick={() => toggleRowExpand(request._id)}
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {request.cardHolderName}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
+                            {request.cardHolderName || "N/A"}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyToClipboard(
+                                request.cardHolderName,
+                                request._id,
+                                "name"
+                              );
+                            }}
+                            className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Copy cardholder name"
+                          >
+                            <FiCopy
+                              className={`text-sm ${
+                                copiedField?.id === request._id &&
+                                copiedField?.type === "name"
+                                  ? "text-green-500"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                          </button>
                         </div>
-                        <div className="text-sm text-gray-500 font-mono">
-                          {maskCardNumber(request.cardNumber)}
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-gray-500 font-mono">
+                            {maskCardNumber(request.cardNumber)}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyToClipboard(
+                                request.cardNumber,
+                                request._id,
+                                "card"
+                              );
+                            }}
+                            className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Copy card number"
+                          >
+                            <FiCopy
+                              className={`text-sm ${
+                                copiedField?.id === request._id &&
+                                copiedField?.type === "card"
+                                  ? "text-green-500"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                          </button>
                         </div>
                         <div className="text-xs text-gray-400">
-                          Exp: {request.expiryDate}
+                          Exp: {request.expiryDate || "N/A"} | CVV: ***
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 font-mono">
-                        {request.userId.slice(0, 10)}...
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-900 font-mono">
+                          {request.userId?.slice(0, 10)}...
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyToClipboard(
+                              request.userId,
+                              request._id,
+                              "userId"
+                            );
+                          }}
+                          className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                          title="Copy User ID"
+                        >
+                          <FiCopy
+                            className={`text-sm ${
+                              copiedField?.id === request._id &&
+                              copiedField?.type === "userId"
+                                ? "text-green-500"
+                                : "text-gray-400"
+                            }`}
+                          />
+                        </button>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -371,8 +477,31 @@ export default function PaymentRefundPage() {
                         >
                           {request.appointmentType}
                         </span>
-                        <div className="ml-2 text-sm text-gray-500 font-mono">
-                          {request.appointmentId.slice(0, 8)}...
+                        <div className="flex items-center ml-2">
+                          <span className="text-sm text-gray-500 font-mono">
+                            {request.appointmentId?.slice(0, 8)}...
+                          </span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyToClipboard(
+                                request.appointmentId,
+                                request._id,
+                                "appointmentId"
+                              );
+                            }}
+                            className="ml-1 p-1 hover:bg-gray-100 rounded transition-colors"
+                            title="Copy Appointment ID"
+                          >
+                            <FiCopy
+                              className={`text-xs ${
+                                copiedField?.id === request._id &&
+                                copiedField?.type === "appointmentId"
+                                  ? "text-green-500"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                          </button>
                         </div>
                       </div>
                     </td>
@@ -439,51 +568,246 @@ export default function PaymentRefundPage() {
                   {expandedRows.has(request._id) && (
                     <tr className="bg-gray-50">
                       <td colSpan={6} className="px-6 py-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <p className="text-gray-500">Request ID</p>
-                            <p className="font-mono text-gray-900">
-                              {request._id}
-                            </p>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Card Details Section */}
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                              <h4 className="font-medium text-gray-700 mb-3 flex items-center">
+                                <FiCreditCard className="mr-2" />
+                                Card Details
+                              </h4>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Cardholder Name
+                                  </label>
+                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                    <p className="font-medium truncate">
+                                      {request.cardHolderName || "N/A"}
+                                    </p>
+                                    <button
+                                      onClick={() =>
+                                        handleCopyToClipboard(
+                                          request.cardHolderName,
+                                          request._id,
+                                          "fullName"
+                                        )
+                                      }
+                                      className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
+                                      title="Copy cardholder name"
+                                    >
+                                      <FiCopy
+                                        className={`text-sm ${
+                                          copiedField?.id === request._id &&
+                                          copiedField?.type === "fullName"
+                                            ? "text-green-500"
+                                            : "text-gray-400"
+                                        }`}
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Card Number
+                                  </label>
+                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                    <p className="font-mono font-medium">
+                                      {showFullCardNumber(request.cardNumber)}
+                                    </p>
+                                    <button
+                                      onClick={() =>
+                                        handleCopyToClipboard(
+                                          request.cardNumber.replace(/\s/g, ""),
+                                          request._id,
+                                          "fullCard"
+                                        )
+                                      }
+                                      className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
+                                      title="Copy full card number"
+                                    >
+                                      <FiCopy
+                                        className={`text-sm ${
+                                          copiedField?.id === request._id &&
+                                          copiedField?.type === "fullCard"
+                                            ? "text-green-500"
+                                            : "text-gray-400"
+                                        }`}
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="text-xs text-gray-500 mb-1 block">
+                                      Expiry Date
+                                    </label>
+                                    <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                      <p className="font-medium">
+                                        {request.expiryDate || "N/A"}
+                                      </p>
+                                      <button
+                                        onClick={() =>
+                                          handleCopyToClipboard(
+                                            request.expiryDate,
+                                            request._id,
+                                            "expiry"
+                                          )
+                                        }
+                                        className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
+                                        title="Copy expiry date"
+                                      >
+                                        <FiCopy
+                                          className={`text-sm ${
+                                            copiedField?.id === request._id &&
+                                            copiedField?.type === "expiry"
+                                              ? "text-green-500"
+                                              : "text-gray-400"
+                                          }`}
+                                        />
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-gray-500 mb-1 block">
+                                      CVV
+                                    </label>
+                                    <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                      <p className="font-medium">
+                                        {request.cvv || "N/A"}
+                                      </p>
+                                      <button
+                                        onClick={() =>
+                                          handleCopyToClipboard(
+                                            request.cvv,
+                                            request._id,
+                                            "cvv"
+                                          )
+                                        }
+                                        className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
+                                        title="Copy CVV"
+                                      >
+                                        <FiCopy
+                                          className={`text-sm ${
+                                            copiedField?.id === request._id &&
+                                            copiedField?.type === "cvv"
+                                              ? "text-green-500"
+                                              : "text-gray-400"
+                                          }`}
+                                        />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Timestamps Section */}
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                              <h4 className="font-medium text-gray-700 mb-3 flex items-center">
+                                <FiCalendar className="mr-2" />
+                                Timestamps
+                              </h4>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Created At
+                                  </label>
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <p className="text-sm">
+                                      {formatDateTime(request.createdAt)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Last Updated
+                                  </label>
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <p className="text-sm">
+                                      {formatDateTime(request.updatedAt)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Status
+                                  </label>
+                                  <div className="flex items-center">
+                                    <span
+                                      className={`px-3 py-1 text-sm rounded-full border ${getStatusColor(
+                                        request.status
+                                      )}`}
+                                    >
+                                      {getStatusText(request.status)}
+                                    </span>
+                                    <span className="ml-2 text-sm text-gray-500">
+                                      {request.status === "pending"
+                                        ? "Waiting for action"
+                                        : `Processed on ${formatDate(
+                                            request.updatedAt
+                                          )}`}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-gray-500">Full Appointment ID</p>
-                            <p className="font-mono text-gray-900">
-                              {request.appointmentId}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Created At</p>
-                            <p className="text-gray-900">
-                              {formatDateTime(request.createdAt)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Last Updated</p>
-                            <p className="text-gray-900">
-                              {formatDateTime(request.updatedAt)}
-                            </p>
-                          </div>
-                          <div className="md:col-span-2">
-                            <p className="text-gray-500">
-                              Full Card Details (Masked)
-                            </p>
-                            <div className="flex space-x-4 mt-1">
+
+                          {/* Additional Info */}
+                          <div className="bg-white p-4 rounded-lg border border-gray-200">
+                            <h4 className="font-medium text-gray-700 mb-3 flex items-center">
+                              <FiUser className="mr-2" />
+                              Additional Information
+                            </h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <p className="text-xs text-gray-500">
-                                  Card Number
-                                </p>
-                                <p className="font-mono">
-                                  {maskCardNumber(request.cardNumber)}
-                                </p>
+                                <label className="text-xs text-gray-500 mb-1 block">
+                                  Appointment Type
+                                </label>
+                                <div className="flex items-center">
+                                  <span
+                                    className={`px-3 py-1 text-sm rounded-full border ${
+                                      request.appointmentType === "doctor"
+                                        ? "bg-blue-100 text-blue-800 border-blue-200"
+                                        : "bg-purple-100 text-purple-800 border-purple-200"
+                                    }`}
+                                  >
+                                    {request.appointmentType}
+                                  </span>
+                                </div>
                               </div>
                               <div>
-                                <p className="text-xs text-gray-500">Expiry</p>
-                                <p>{request.expiryDate}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-500">CVV</p>
-                                <p>***</p>
+                                <label className="text-xs text-gray-500 mb-1 block">
+                                  Request ID
+                                </label>
+                                <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                                  <p className="font-mono text-sm truncate">
+                                    {request._id}
+                                  </p>
+                                  <button
+                                    onClick={() =>
+                                      handleCopyToClipboard(
+                                        request._id,
+                                        request._id,
+                                        "requestId"
+                                      )
+                                    }
+                                    className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
+                                    title="Copy Request ID"
+                                  >
+                                    <FiCopy
+                                      className={`text-sm ${
+                                        copiedField?.id === request._id &&
+                                        copiedField?.type === "requestId"
+                                          ? "text-green-500"
+                                          : "text-gray-400"
+                                      }`}
+                                    />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -630,13 +954,6 @@ export default function PaymentRefundPage() {
               transform: "translateX(-100%)",
             }}
           >
-            {/* <button
-              onClick={handleViewDetails}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-            >
-              <FiEye className="mr-3 text-gray-400" />
-              View Details
-            </button> */}
             <button
               onClick={handleAcceptRefund}
               disabled={isUpdating}
