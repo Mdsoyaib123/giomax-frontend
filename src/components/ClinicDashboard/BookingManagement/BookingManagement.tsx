@@ -24,7 +24,7 @@ const ITEMS_PER_PAGE = 12;
 const BookingManagement = () => {
   const [activeTab, setActiveTab] = useState<
     | "All"
-    | "Approved"
+    | "Confirmed"
     | "Completed"
     | "Pending"
     | "Cancelled"
@@ -73,7 +73,7 @@ const BookingManagement = () => {
   // Updated Tabs
   const tabs = [
     { id: "All", label: "All" },
-    { id: "approved", label: "Approved" },
+    { id: "confirmed", label: "Confirmed" },
     { id: "completed", label: "Completed" },
     { id: "pending", label: "Pending" },
     { id: "cancelled", label: "Cancelled" },

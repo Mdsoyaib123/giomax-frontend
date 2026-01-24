@@ -129,33 +129,85 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
             />
           </div>
 
-          {/* Availability & Working Hour */}
-          <div>
-            <label className="block text-base font-bold text-gray-900 mb-2">
-              Availability
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Availability Days */}
-              <div className="flex flex-wrap gap-2 py-3">
-                {doctor?.availabilityScheduleDays?.map((day) => (
-                  <span
-                    key={day}
-                    className="px-3 py-3 text-sm font-medium text-blue-700 capitalize bg-[#EFF6FF] border border-[#BEDBFF] rounded-md"
-                  >
-                    {day}
-                  </span>
-                ))}
+          {/* Per-Day Availability Settings */}
+          <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Availability Schedule</h3>
               </div>
-              {/* Working Hour */}
-              <InfoField
-                label="Working Hour"
-                value={
-                  (doctor?.workingHour &&
-                    `${doctor?.workingHour?.startTime} - ${doctor?.workingHour?.endTime}`) ||
-                  "not set"
-                }
-              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {doctor?.availability && doctor.availability.length > 0 ? (
+                  doctor.availability.map((item) => (
+                    <div
+                      key={item.day}
+                      className={`p-4 rounded-xl border transition-all ${
+                        item.isEnabled
+                          ? "border-blue-500 bg-blue-50/30 shadow-sm"
+                          : "border-gray-200 bg-gray-50 opacity-60"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <span className={`font-semibold ${item.isEnabled ? "text-blue-700" : "text-gray-500"}`}>
+                          {item.day}
+                        </span>
+                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${item.isEnabled ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-600"}`}>
+                          {item.isEnabled ? "Enabled" : "Disabled"}
+                        </span>
+                      </div>
+
+                      {item.isEnabled && (
+                        <div className="grid grid-cols-2 gap-3 transition-opacity duration-200">
+                          <div>
+                            <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+                              Start Time
+                            </label>
+                            <div className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-sm font-medium text-gray-700 shadow-sm">
+                              {item.startTime}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+                              End Time
+                            </label>
+                            <div className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-sm font-medium text-gray-700 shadow-sm">
+                              {item.endTime}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                )) : (
+                  <div className="col-span-2 py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                     <p className="text-gray-500 font-medium">No availability schedule set for this doctor.</p>
+                  </div>
+                )}
+              </div>
             </div>
+
+          {/* Blocked Dates Section */}
+          <div className="space-y-4 pt-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Blocked Dates</h3>
+              </div>
+
+              {doctor?.blockedDates && doctor.blockedDates.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {doctor.blockedDates.map((item, index) => (
+                    <div
+                      key={item._id || index}
+                      className="px-4 py-2 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold rounded-lg shadow-sm flex items-center gap-2 hover:bg-red-100 transition-colors cursor-default"
+                    >
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                      {item.date.split("T")[0]}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-6 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                  <p className="text-gray-500 font-medium italic">No dates are currently blocked for this doctor.</p>
+                </div>
+              )}
           </div>
 
           {/* Verification Documents */}

@@ -4,6 +4,14 @@ export interface DoctorApiResponse {
     data: DoctorData[];
 }
 
+export interface DoctorAvailabilitySlot {
+    day: string;
+    startTime: string;
+    endTime: string;
+    isEnabled: boolean;
+    _id?: string;
+}
+
 // Main Doctor Data
 export interface DoctorData {
     _id: string;
@@ -28,9 +36,11 @@ export interface DoctorData {
     licenseNumber?: string;
     serviceType?: string;
     availabilityScheduleDays?: string[];
+    availability?: DoctorAvailabilitySlot[];
     appointmentType?: string;
     certificates?: Certificate[];
     professionalInformation?: ProfessionalInformation;
+    blockedDates?: { date: string; _id?: string }[];
 }
 
 // Working Hours

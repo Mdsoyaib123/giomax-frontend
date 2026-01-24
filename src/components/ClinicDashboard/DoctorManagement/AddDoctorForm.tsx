@@ -4,15 +4,20 @@ import { toast } from "sonner";
 import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 
+interface AvailabilitySlot {
+  day: string;
+  startTime: string;
+  endTime: string;
+  isEnabled: boolean;
+}
+
 interface DoctorData {
   doctorName: string;
   email: string;
   phoneNumber: string;
   licenseNumber: string;
   serviceType: string;
-  startTime: string;
-  endTime: string;
-  availabilityScheduleDays: string;
+  availabilitySchedule: AvailabilitySlot[];
   appointmentType: string;
   uploadCertificates?: File;
   onlineConsultationFee: string;
@@ -21,6 +26,16 @@ interface DoctorData {
 
 const appointmentTypeOptions = ["online", "onClinic"];
 
+const initialAvailability: AvailabilitySlot[] = [
+  { day: "Saturday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Sunday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Monday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Tuesday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Wednesday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Thursday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+  { day: "Friday", startTime: "09:00", endTime: "17:00", isEnabled: false },
+];
+
 const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [formData, setFormData] = useState<DoctorData>({
     doctorName: "",
@@ -28,9 +43,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     phoneNumber: "",
     licenseNumber: "",
     serviceType: "",
-    startTime: "",
-    endTime: "",
-    availabilityScheduleDays: "",
+    availabilitySchedule: initialAvailability,
     appointmentType: appointmentTypeOptions[0],
     onlineConsultationFee: "",
     clinicVisitFee: "",
@@ -60,6 +73,32 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   };
 
+  const handleToggleDay = (index: number) => {
+    setFormData((prev) => {
+      const newSchedule = [...prev.availabilitySchedule];
+      newSchedule[index] = {
+        ...newSchedule[index],
+        isEnabled: !newSchedule[index].isEnabled,
+      };
+      return { ...prev, availabilitySchedule: newSchedule };
+    });
+  };
+
+  const handleTimeChange = (
+    index: number,
+    field: "startTime" | "endTime",
+    value: string
+  ) => {
+    setFormData((prev) => {
+      const newSchedule = [...prev.availabilitySchedule];
+      newSchedule[index] = {
+        ...newSchedule[index],
+        [field]: value,
+      };
+      return { ...prev, availabilitySchedule: newSchedule };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isClinicIdLoading) return;
@@ -83,9 +122,21 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       return;
     }
 
+    const enabledDays = formData.availabilitySchedule.filter((day) => day.isEnabled);
+    
+    if (enabledDays.length === 0) {
+      toast.error("Please select at least one availability day!");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     console.log("Adding new doctor:", formData);
-    const payload = { ...formData, clinicId: clinicId };
+    const payload = { 
+      ...formData, 
+      availability: enabledDays,
+      clinicId: clinicId 
+    };
     try {
       await addNewDoctor(payload).unwrap();
       toast.success("New doctor added successfully!");
@@ -95,13 +146,6 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       toast.error("Failed to add new doctor. Please try again.");
       setLoading(false);
     }
-
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("New doctor added successfully!");
-      onClose();
-    }, 1500);
   };
 
   return (
@@ -261,60 +305,71 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
             </div>
 
-            {/* Working Hours */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Start Time */}
+            {/* Availability Settings */}
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Start Time <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    name="startTime"
-                    value={formData.startTime}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  />
-                </div>
+                <h3 className="text-lg font-bold text-gray-900">Availability Settings</h3>
+                <p className="text-sm text-gray-500">
+                  Set your working hours for each day. Toggle to enable/disable days.
+                </p>
               </div>
 
-              {/* End Time */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  End Time <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="time"
-                    name="endTime"
-                    value={formData.endTime}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {formData.availabilitySchedule.map((item, index) => (
+                  <div
+                    key={item.day}
+                    className={`p-4 rounded-xl border transition-all ${
+                      item.isEnabled
+                        ? "border-blue-500 bg-blue-50/30 shadow-sm"
+                        : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={`font-semibold ${item.isEnabled ? "text-blue-700" : "text-gray-700"}`}>
+                        {item.day}
+                      </span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={item.isEnabled}
+                          onChange={() => handleToggleDay(index)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
 
-            {/* Availability Schedule */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Availability Days <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="availabilityScheduleDays"
-                value={formData.availabilityScheduleDays}
-                onChange={handleChange}
-                placeholder="Monday, Tuesday, Wednesday, Friday"
-                required
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Separate days with commas (e.g., Monday, Wednesday, Friday)
-              </p>
+                    <div className={`grid grid-cols-2 gap-3 transition-opacity duration-200 ${item.isEnabled ? "opacity-100" : "opacity-40 pointer-events-none"}`}>
+                      <div>
+                        <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+                          Start Time
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="time"
+                            value={item.startTime}
+                            onChange={(e) => handleTimeChange(index, "startTime", e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+                          End Time
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="time"
+                            value={item.endTime}
+                            onChange={(e) => handleTimeChange(index, "endTime", e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Fees Section */}
