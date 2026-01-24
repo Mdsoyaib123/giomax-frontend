@@ -97,8 +97,7 @@ const ClinicManagementTable: React.FC<Props> = () => {
   const getClinicStatus = (clinic: Clinic): string => {
     // Implement your actual status logic here
     // For now, using a simple logic based on reviews count
-    if (clinic.reviews.length > 5) return "Active";
-    if (clinic.reviews.length > 0) return "Pending";
+  if (clinic.userId.isAdminVerified) return "Active";
     return "Pending";
   };
 

@@ -478,7 +478,7 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile.professionalInformation.speciality}
+                  value={openProfile?.professionalInformation?.speciality || "N/A"}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -489,7 +489,7 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile.professionalInformation.experience}
+                  value={openProfile?.professionalInformation?.experience || "N/A"}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -500,7 +500,7 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile.professionalInformation.MedicalLicense}
+                  value={openProfile?.professionalInformation?.MedicalLicense || "N/A"}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -548,7 +548,7 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile.avarageRating.toFixed(1)}
+                  value={openProfile?.avarageRating?.toFixed(1) || "0.0"}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -561,7 +561,7 @@ const NurseManagement: React.FC = () => {
                 About
               </label>
               <textarea
-                value={openProfile.professionalInformation.about}
+                value={openProfile?.professionalInformation?.about || "N/A"}
                 readOnly
                 rows={3}
                 className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
@@ -572,7 +572,7 @@ const NurseManagement: React.FC = () => {
             <div className="mt-4">
               <h3 className="font-semibold font-sans mb-2">Services</h3>
               <div className="space-y-3">
-                {openProfile.professionalInformation.services.map(
+                {openProfile?.professionalInformation?.services?.map(
                   (service: any) => (
                     <div
                       key={service._id}
@@ -582,7 +582,7 @@ const NurseManagement: React.FC = () => {
                         {service.serviceName}
                       </h4>
                       <div className="mt-2 space-y-1">
-                        {service.subServices.map((sub: any) => (
+                        {service.subServices?.map((sub: any) => (
                           <div
                             key={sub._id}
                             className="flex justify-between text-sm text-gray-600"
@@ -634,7 +634,13 @@ const NurseManagement: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={`${openProfile.availability.startTime} - ${openProfile.availability.endTime}`}
+                      value={
+                        openProfile?.availability
+                          ? `${openProfile.availability.startTime || "N/A"} - ${
+                              openProfile.availability.endTime || "N/A"
+                            }`
+                          : "N/A"
+                      }
                       readOnly
                       className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                     />
@@ -645,7 +651,10 @@ const NurseManagement: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      value={openProfile.availability.workingDays.join(", ")}
+                      value={
+                        openProfile?.availability?.workingDays?.join(", ") ||
+                        "N/A"
+                      }
                       readOnly
                       className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                     />
