@@ -31,6 +31,8 @@ export interface User {
 export interface Patient {
     _id: string;
     userId: User; // Full nested user object
+    phoneNumber?: string;
+    nationalIdNumber?: string;
     gender: 'male' | 'female' | 'other' | string;
     bloodGroup: BloodGroup | string; // Allow string if you want flexibility
     age: number;

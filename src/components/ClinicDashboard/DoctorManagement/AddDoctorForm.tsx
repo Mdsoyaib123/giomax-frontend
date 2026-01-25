@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, ArrowLeft, UploadCloud, Edit, DollarSign } from "lucide-react";
+import { X, ArrowLeft, UploadCloud, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 import { useSingleClinicId } from "@/hooks/userClinicId";
@@ -22,10 +22,10 @@ interface DoctorData {
   uploadCertificates?: File;
   onlineConsultationFee: string;
   clinicVisitFee: string;
-  specialty: string;
+  speciality: string;
 }
 
-const appointmentTypeOptions = ["online", "onClinic"];
+const appointmentTypeOptions = ["inClinic", "online","both"];
 
 const initialAvailability: AvailabilitySlot[] = [
   { day: "Saturday", startTime: "09:00", endTime: "17:00", isEnabled: false },
@@ -48,7 +48,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     appointmentType: appointmentTypeOptions[0],
     onlineConsultationFee: "",
     clinicVisitFee: "",
-    specialty: "",
+    speciality: "",
   });
 
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -272,20 +272,20 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               {/* Specialty - New text input */}
-              <div>
+              {/* <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Specialty <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  name="specialty"
-                  value={formData.specialty}
+                  name="speciality"
+                  value={formData.speciality}
                   onChange={handleChange}
                   placeholder="e.g., Cardiology, Pediatrics"
                   required
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
                 />
-              </div>
+              </div> */}
 
               {/* Appointment Type */}
               <div>
@@ -410,7 +410,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     step="0.01"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
                   />
-                  <DollarSign className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                
                 </div>
               </div>
 
@@ -431,7 +431,6 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     step="0.01"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
                   />
-                  <DollarSign className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
               </div>
             </div>
