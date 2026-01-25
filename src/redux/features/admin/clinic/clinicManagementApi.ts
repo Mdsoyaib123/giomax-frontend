@@ -75,7 +75,8 @@ export const clinicManagementApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
       invalidatesTags: ["CLINIC_MANAGEMENT"],
-    })
+    }),
+    
   }),
   overrideExisting: false,
 });

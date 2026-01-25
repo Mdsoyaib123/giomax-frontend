@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/pages/Login.tsx
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -177,12 +178,12 @@ const Login: React.FC = () => {
             </form>
 
             {/* Register */}
-            <p className="text-center text-sm text-gray-300">
+            {/* <p className="text-center text-sm text-gray-300">
               Don’t have an account?{" "}
               <a href="/signup" className="text-[#8fcbd6] hover:text-sky-300">
                 Register
               </a>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

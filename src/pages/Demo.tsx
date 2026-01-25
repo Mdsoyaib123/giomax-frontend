@@ -108,7 +108,7 @@ const Login = () => {
               </form>
             </div>
 
-            <div>
+            {/* <div>
               <p className="text-sm text-gray-700 mt-4 text-center ">
                 Don’t have an account?
                 <a
@@ -118,7 +118,7 @@ const Login = () => {
                   Register
                 </a>
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

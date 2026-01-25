@@ -30,7 +30,7 @@ const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
 
     if (result.error?.status === 401) {
       Cookies.remove("token");
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
     }

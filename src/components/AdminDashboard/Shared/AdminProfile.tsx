@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // pages/admin/AdminProfile.tsx
 import { useState, ChangeEvent, useEffect } from "react";
 import {
@@ -89,7 +90,7 @@ const AdminProfile = () => {
       }
 
       console.log("Sending FormData with fields:");
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value instanceof File ? value.name : value);
       }
 
@@ -366,7 +367,7 @@ const AdminProfile = () => {
                   disabled={
                     isSaving || (!avatar && fullName === adminData?.fullName)
                   }
-                  className="gap-2 border border-[#AFAFAF] rounded-xl bg-[#2E6FF3] text-black"
+                  className="gap-2 border border-[#AFAFAF] rounded-xl bg-[#2E6FF3] text-white"
                 >
                   {isSaving ? (
                     <>
@@ -375,7 +376,7 @@ const AdminProfile = () => {
                     </>
                   ) : (
                     <>
-                      <Save className="h-4 w-4 text-black" />
+                      <Save className="h-4 w-4 text-white" />
                       Save Changes
                     </>
                   )}

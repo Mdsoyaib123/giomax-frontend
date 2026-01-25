@@ -156,12 +156,12 @@ const Signup = () => {
           </form>
 
           {/* Login Redirect */}
-          <p className="text-sm text-gray-700 mt-4 text-center">
+          {/* <p className="text-sm text-gray-700 mt-4 text-center">
             Already have an account?{" "}
             <a href="/login" className="text-[#2A779E] hover:text-sky-300 ml-1">
               Log In
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
