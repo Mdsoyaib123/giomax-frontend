@@ -377,7 +377,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               {/* Online Consultation Fee */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Online Consultation Fee ($){" "}
+                  Online Consultation Fee (₾){" "}
                   <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -399,7 +399,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               {/* Clinic Visit Fee */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Clinic Visit Fee ($) <span className="text-red-500">*</span>
+                  Clinic Visit Fee (₾) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
