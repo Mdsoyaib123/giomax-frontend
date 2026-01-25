@@ -28,6 +28,7 @@ import NurseManagementPage from "@/pages/Admin/NurseManagementPage";
 import SupportMessage from "@/components/AdminDashboard/SupportMessage";
 import AdminProfile from "@/components/AdminDashboard/Shared/AdminProfile";
 import PaymentRefundPage from "@/pages/Admin/PaymentRefundPage";
+import ProtectedRoute from "@/components/Shared/ProtectedRoute";
 
 const routes = createBrowserRouter([
   {
@@ -66,7 +67,11 @@ const routes = createBrowserRouter([
   /* Client Dashboard */
   {
     path: "/clinic-dashboard",
-    element: <ClinicLayout />,
+    element: (
+      <ProtectedRoute requiredRole="clinic">
+        <ClinicLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <ClinicDashboardPage /> },
       { path: "dashboard", element: <ClinicDashboardPage /> },
@@ -83,9 +88,9 @@ const routes = createBrowserRouter([
   {
     path: "/admin-dashboard",
     element: (
-      // <AdminRoute>
-      <AdminLayout />
-      // </AdminRoute>
+      <ProtectedRoute requiredRole="admin">
+        <AdminLayout />
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <AdminDashboardPage /> },

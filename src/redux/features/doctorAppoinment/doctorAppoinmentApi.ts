@@ -9,8 +9,15 @@ export const doctorAppointmentApi = baseApi.injectEndpoints({
             providesTags: ["DOCTOR_APPOINTMENT"]
         }),
         ClinicDoctorAllAppointments: builder.query({
-            query: ({ id, status = " " }) =>
-                `clinic/getClinicAppointments/${id}?status=${status}`,
+            query: ({ id, status, prefarenceDate, serviceType, doctorId }) => {
+                const params = new URLSearchParams();
+                if (status && status !== " " && status !== "All") params.append("status", status);
+                if (prefarenceDate) params.append("prefarenceDate", prefarenceDate);
+                if (serviceType) params.append("serviceType", serviceType);
+                if (doctorId) params.append("doctorId", doctorId);
+                
+                return `clinic/getClinicAppointments/${id}?${params.toString()}`;
+            },
             providesTags: ["DOCTOR_APPOINTMENT"],
         }),
 

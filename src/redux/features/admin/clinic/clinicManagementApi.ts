@@ -76,6 +76,13 @@ export const clinicManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["CLINIC_MANAGEMENT"],
     }),
+    getAllClinicPreferanceDate: builder.query({
+      query: (clinicId: string) => ({
+        url: `/clinic/getAllAppoinmentsPrefarenceDate/${clinicId}`,
+        method: "GET",
+      }),
+      providesTags: ["CLINIC_MANAGEMENT"],
+    }),
     
   }),
   overrideExisting: false,
@@ -88,5 +95,6 @@ export const {
   useDeleteClinicMutation,
   useApproveClinicMutation,
   useSuspendClinicMutation,
-  useAcceptUserMutation
+  useAcceptUserMutation,
+  useGetAllClinicPreferanceDateQuery
 } = clinicManagementApi;

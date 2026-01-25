@@ -18,6 +18,7 @@ import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 import { useGetAllPatientsQuery } from "@/redux/features/admin/patient/adminPatientApi";
+import { useGetAllClinicPreferanceDateQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -37,17 +38,29 @@ const BookingManagement = () => {
     useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [filterDate, setFilterDate] = useState("");
+  const [filterServiceType, setFilterServiceType] = useState("");
+  const [filterDoctorId, setFilterDoctorId] = useState("");
+
   const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
 
   const { data: patientsData, isLoading: isLoadingPatient } =
     useGetAllPatientsQuery();
   const { data: doctorsData, isLoading: isLoadingDoctors } =
     useGetAllDoctorsQuery({ id: clinicId }, { skip: !clinicId });
-  console.log("object", patientsData, doctorsData);
+  const { data: preferanceDateData } =
+    useGetAllClinicPreferanceDateQuery(clinicId ? clinicId : "", {
+      skip: !clinicId,
+    });
+  console.log("preferanceDateData", preferanceDateData);
+  
   const { data, isLoading } = useClinicDoctorAllAppointmentsQuery(
     {
       id: clinicId,
       status: activeTab === "All" ? "" : activeTab,
+      prefarenceDate: filterDate,
+      serviceType: filterServiceType,
+      doctorId: filterDoctorId,
     },
     {
       skip: !clinicId,
@@ -223,21 +236,81 @@ const BookingManagement = () => {
 
         {/* Tabs Header - Smaller buttons */}
         {activeTab !== "AppointmentDetails" && (
-          <div className="w-full bg-[#F5F6F9] border border-[#DBE0E5] rounded-xl overflow-hidden flex flex-wrap gap-2 p-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={`px-6 cursor-pointer py-2 text-sm font-medium rounded-lg transition-all duration-300
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="w-full lg:w-3/5 bg-[#F5F6F9] border border-[#DBE0E5] rounded-xl overflow-hidden flex flex-wrap gap-2 p-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`px-6 cursor-pointer py-2 text-sm font-medium rounded-lg transition-all duration-300
                 ${
                   activeTab === tab.id
                     ? "bg-blue-500 text-white shadow-md font-semibold"
                     : "text-gray-600 hover:bg-blue-50"
                 }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Additional Filters */}
+            <div className="flex flex-wrap gap-3 items-center flex-1">
+                {/* Date Filter */}
+                <select
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="px-4 py-2 bg-white border border-[#DBE0E5] rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="">All Dates</option>
+                  {preferanceDateData &&
+                    preferanceDateData.data &&
+                    Array.isArray(preferanceDateData.data) &&
+                    preferanceDateData.data.map((date: string) => (
+                      <option key={date} value={date}>
+                        {date}
+                      </option>
+                    ))}
+                </select>
+
+              {/* Service Type Filter */}
+              <select
+                value={filterServiceType}
+                onChange={(e) => setFilterServiceType(e.target.value)}
+                className="px-4 py-2 bg-white border border-[#DBE0E5] rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
-                {tab.label}
-              </button>
-            ))}
+                <option value="">All Services</option>
+                <option value="online">Online</option>
+                <option value="inClinic">Clinic Visit</option>
+              </select>
+
+              {/* Doctor Filter */}
+              <select
+                value={filterDoctorId}
+                onChange={(e) => setFilterDoctorId(e.target.value)}
+                className="px-4 py-2 bg-white border border-[#DBE0E5] rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="">All Doctors</option>
+                {doctorsData?.data?.map((doctor: any) => (
+                  <option key={doctor._id} value={doctor._id}>
+                    {doctor?.userId?.fullName}
+                  </option>
+                ))}
+              </select>
+
+              {(filterDate || filterServiceType || filterDoctorId) && (
+                <button
+                  onClick={() => {
+                    setFilterDate("");
+                    setFilterServiceType("");
+                    setFilterDoctorId("");
+                  }}
+                  className="text-xs text-blue-500 hover:text-blue-700 font-medium cursor-pointer"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
           </div>
         )}
 
