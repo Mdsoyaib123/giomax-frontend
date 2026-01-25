@@ -238,18 +238,6 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
     }
   };
 
-  const specialtyOptions = [
-    "General Practitioner",
-    "Cardiology",
-    "Pediatrics",
-    "Neurology",
-    "Dermatology",
-    "Orthopedic Surgeon",
-    "Gynecologist",
-    "ENT Specialist",
-    "Psychiatrist",
-    doctor?.professionalInformation?.speciality || "Other",
-  ].filter((value, index, self) => self.indexOf(value) === index);
 
   const serviceTypeOptions = [
     "General Physician",
@@ -447,7 +435,13 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                 Professional Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                {renderSelect("Specialty", "specialty", specialtyOptions)}
+                {renderInput(
+                  "Specialty",
+                  "specialty",
+                  "text",
+                  true,
+                  "e.g., General Medicine, Cardiology"
+                )}
                 {renderNumberInput(
                   "Years of Experience",
                   "experienceYears",

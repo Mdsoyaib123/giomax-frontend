@@ -22,6 +22,7 @@ interface DoctorData {
   uploadCertificates?: File;
   onlineConsultationFee: string;
   clinicVisitFee: string;
+  specialty: string;
 }
 
 const appointmentTypeOptions = ["online", "onClinic"];
@@ -47,6 +48,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     appointmentType: appointmentTypeOptions[0],
     onlineConsultationFee: "",
     clinicVisitFee: "",
+    specialty: "",
   });
 
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -263,7 +265,23 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   name="serviceType"
                   value={formData.serviceType}
                   onChange={handleChange}
-                  placeholder="e.g., General Medicine, Cardiology, Pediatrics"
+                  placeholder="e.g., General Physician"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
+                />
+              </div>
+
+              {/* Specialty - New text input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Specialty <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="specialty"
+                  value={formData.specialty}
+                  onChange={handleChange}
+                  placeholder="e.g., Cardiology, Pediatrics"
                   required
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
                 />

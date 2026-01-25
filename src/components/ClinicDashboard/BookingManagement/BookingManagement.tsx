@@ -17,7 +17,7 @@ import { useGetAllDoctorsQuery } from "@/redux/features/doctors/doctorsApi";
 
 import { toast } from "sonner";
 import { useSingleClinicId } from "@/hooks/userClinicId";
-import { useGetClinicAllPatientsQuery } from "@/redux/features/patients/patientsApi";
+import { useGetAllPatientsQuery } from "@/redux/features/admin/patient/adminPatientApi";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -40,12 +40,7 @@ const BookingManagement = () => {
   const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
 
   const { data: patientsData, isLoading: isLoadingPatient } =
-    useGetClinicAllPatientsQuery(
-      { id: clinicId },
-      {
-        skip: !clinicId,
-      }
-    );
+    useGetAllPatientsQuery();
   const { data: doctorsData, isLoading: isLoadingDoctors } =
     useGetAllDoctorsQuery({ id: clinicId }, { skip: !clinicId });
   console.log("object", patientsData, doctorsData);
@@ -136,7 +131,7 @@ const BookingManagement = () => {
       }).unwrap();
       setShowAppointmentDialog(false);
       setShowSuccessDialog(true);
-      setShowAppointmentDialog(true);
+      toast.success("Appointment created successfully");
     } catch (error: any) {
       toast.error(error.data.message);
     }
@@ -474,7 +469,7 @@ const BookingManagement = () => {
                         <option value="">Select patient</option>
                         {patientsData?.data?.map((patient: any) => (
                           <option key={patient._id} value={patient?._id ?? ""}>
-                            {patient?.patientId?.userId.fullName ?? "unknown"}
+                            {patient.userId.fullName ?? "unknown"}
                           </option>
                         ))}
                       </>
@@ -494,6 +489,7 @@ const BookingManagement = () => {
                     value={formData.visitingType}
                     onChange={handleInputChange}
                   >
+                    <option value="">Select visiting type</option>
                     <option value="fristVisit">First Visit</option>
                     <option value="followUp">Walk-in</option>
                   </select>
