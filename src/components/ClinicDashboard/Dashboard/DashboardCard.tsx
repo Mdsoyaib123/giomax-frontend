@@ -1,10 +1,9 @@
 import { FaUserInjured, FaCalendarCheck } from "react-icons/fa";
-import { MdPendingActions, MdCheckCircle } from "react-icons/md";
+import {  MdCheckCircle } from "react-icons/md";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetClinicDashboardOverviewQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
 import { Stethoscope,  } from "lucide-react";
-import { icon } from "leaflet";
 
 const DashboardCard = () => {
   const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
@@ -46,7 +45,7 @@ const DashboardCard = () => {
       title: "Total Pending Money",
       amount: dashboardData?.clinicPendingMoney?.toString() || "0",
       change: "0",
-      unit: "pending money",
+      unit:  "awaiting payment",
       icon: <MdCheckCircle className="w-6 h-6 text-purple-500" />,
       bgColor: "bg-purple-50",
     },

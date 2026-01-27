@@ -25,16 +25,16 @@ import { toast } from "sonner";
 const formatPatientForTable = (patient: Patient): PatientTableData => {
   return {
     id: patient._id,
-    patientId: patient?._id,
-    name: patient?.userId?.fullName,
-    email: patient.userId?.email,
-    phone: patient?.phoneNumber,
-    age: patient?.age,
-    gender: patient?.gender,
-    bloodGroup: patient?.bloodGroup,
+    patientId: patient?._id || "",
+    name: patient?.userId?.fullName || "N/A",
+    email: patient.userId?.email || "N/A",
+    phone: patient?.phoneNumber || "N/A",
+    age: patient?.age || 0,
+    gender: patient?.gender || "N/A",
+    bloodGroup: patient?.bloodGroup || "N/A",
     totalBookings: "0",
     lastAppointment: new Date().toLocaleDateString(),
-    createdAt: new Date(patient.createdAt).toLocaleDateString(),
+    createdAt: patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : "N/A",
   };
 };
 
@@ -48,12 +48,12 @@ const filterPatients = (
   const term = searchTerm.toLowerCase();
   return patients.filter(
     (patient) =>
-      patient.name.toLowerCase().includes(term) ||
-      patient.email.toLowerCase().includes(term) ||
-      patient.phone.includes(term) ||
-      patient.gender.toLowerCase().includes(term) ||
-      patient.bloodGroup.toLowerCase().includes(term) ||
-      patient.age.toString().includes(term)
+      (patient?.name?.toLowerCase() || "").includes(term) ||
+      (patient?.email?.toLowerCase() || "").includes(term) ||
+      (patient?.phone?.toLowerCase() || "").includes(term) ||
+      (patient?.gender?.toLowerCase() || "").includes(term) ||
+      (patient?.bloodGroup?.toLowerCase() || "").includes(term) ||
+      (patient?.age?.toString() || "").includes(term)
   );
 };
 

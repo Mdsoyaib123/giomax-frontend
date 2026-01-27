@@ -24,12 +24,15 @@ interface Appointment {
     userId: {
       _id: string;
       fullName: string;
+      email: string;
       role: string;
       profileImage?: string;
-    };
+    } | string; // userId can be a string ID or an object
     gender: string;
     bloodGroup: string;
     age: number;
+    email?: string; // Fallback email if directly on patientId
+    fullName?: string; // Fallback name if directly on patientId
   } | null;
   doctorId: {
     _id: string;
@@ -37,7 +40,7 @@ interface Appointment {
       _id: string;
       fullName: string;
       role: string;
-    } | null;
+    } | string | null;
   };
   clinicId: string;
   serviceType: string;
@@ -67,6 +70,7 @@ interface Booking {
   gender?: string;
   age?: number;
   reasonForVisit: string;
+  patientEmail: string;
   appointmentId: string; // Add original appointment ID
 }
 
@@ -92,36 +96,42 @@ const ClinicBookingManagementTable: React.FC = () => {
     appointments: Appointment[] = []
   ): Booking[] => {
     // Filter out appointments where patientId is null or doctorId.userId is null
-    const validAppointments = appointments.filter(
-      (appointment) =>
-        appointment.patientId !== null && appointment.doctorId?.userId !== null
-    );
+    const validAppointments = appointments
 
-    return validAppointments.map((appointment) => ({
-      id: appointment._id.substring(appointment._id.length - 6).toUpperCase(),
-      patientName: appointment.patientId?.userId?.fullName || "Unknown Patient",
-      doctorName: appointment.doctorId?.userId?.fullName || "Unknown Doctor",
-      note: appointment.reasonForVisit,
-      type: appointment.serviceType === "inClinic" ? "In-Clinic" : "Online",
-      status: (appointment.status.charAt(0).toUpperCase() +
-        appointment.status.slice(1)) as
-        | "Pending"
-        | "Confirmed"
-        | "Completed"
-        | "Cancelled"
-        | "Rejected",
-      dateTime: `${appointment.prefarenceDate}, ${appointment.prefarenceTime}`,
-      payment:
-        appointment.appoinmentFee > 0
-          ? `₾ ${appointment.appoinmentFee.toFixed(2)}`
-          : "Free",
-      fee: appointment.appoinmentFee,
-      bloodGroup: appointment.patientId?.bloodGroup,
-      gender: appointment.patientId?.gender,
-      age: appointment.patientId?.age,
-      reasonForVisit: appointment.reasonForVisit,
-      appointmentId: appointment._id, // Store the original appointment ID
-    }));
+    return validAppointments.map((appointment) => {
+      const patient = appointment.patientId;
+      const patientUser = typeof patient?.userId === "object" ? patient.userId : null;
+      
+      const doctor = appointment.doctorId;
+      const doctorUser = typeof doctor?.userId === "object" ? doctor.userId : null;
+
+      return {
+        id: appointment._id.substring(appointment._id.length - 6).toUpperCase(),
+        patientName: patientUser?.fullName || patient?.fullName || "Unknown Patient",
+        doctorName: doctorUser?.fullName || "Unknown Doctor",
+        note: appointment.reasonForVisit,
+        type: appointment.serviceType === "inClinic" ? "In-Clinic" : "Online",
+        status: (appointment.status.charAt(0).toUpperCase() +
+          appointment.status.slice(1)) as
+          | "Pending"
+          | "Confirmed"
+          | "Completed"
+          | "Cancelled"
+          | "Rejected",
+        dateTime: `${appointment.prefarenceDate}, ${appointment.prefarenceTime}`,
+        payment:
+          appointment.appoinmentFee > 0
+            ? `₾ ${appointment.appoinmentFee.toFixed(2)}`
+            : "Free",
+        fee: appointment.appoinmentFee,
+        bloodGroup: patient?.bloodGroup,
+        gender: patient?.gender,
+        age: patient?.age,
+        reasonForVisit: appointment.reasonForVisit,
+        patientEmail: patientUser?.email || patient?.email || "N/A",
+        appointmentId: appointment._id, // Store the original appointment ID
+      };
+    });
   };
 
   // Get appointments from API response
@@ -494,6 +504,17 @@ const ClinicBookingManagementTable: React.FC = () => {
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
                 />
               </div>
+              {/* <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                Patient Email
+                </label>
+                <input
+                  type="text"
+                  value={openProfile.patientEmail || "N/A"}
+                  readOnly
+                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c4a54] focus:border-[#2c4a54]"
+                />
+              </div> */}
 
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
