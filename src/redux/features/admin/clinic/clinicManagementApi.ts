@@ -83,7 +83,13 @@ export const clinicManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["CLINIC_MANAGEMENT"],
     }),
-    
+    getClinicDashboardOverview: builder.query({
+      query: (clinicId: string) => ({
+        url: `clinic/getClinicDashboardOverview/${clinicId}`,
+        method: "GET",
+      }),
+      providesTags: ["CLINIC_MANAGEMENT"],
+    }),
   }),
   overrideExisting: false,
 });
@@ -96,5 +102,6 @@ export const {
   useApproveClinicMutation,
   useSuspendClinicMutation,
   useAcceptUserMutation,
-  useGetAllClinicPreferanceDateQuery
+  useGetAllClinicPreferanceDateQuery,
+  useGetClinicDashboardOverviewQuery
 } = clinicManagementApi;

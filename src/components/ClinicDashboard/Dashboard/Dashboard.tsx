@@ -2,14 +2,15 @@ import DashboardCard from "./DashboardCard";
 
 import ClinicBookingManagementTable from "./ClinicBookingManagementTable";
 import SectionTitle from "@/common/SectionTitle";
-
+ 
 const Dashboard = () => {
+  
   return (
     <div className=" space-y-6">
       <div>
         <SectionTitle
           title="Dashboard Overview"
-          description="Welcome back Giorgi! Here's overview of what's happening today."
+          description="Welcome back Here's overview of what's happening today."
         />
       </div>
       <div>

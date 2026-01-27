@@ -1,50 +1,52 @@
 import { FaUserInjured, FaCalendarCheck } from "react-icons/fa";
 import { MdPendingActions, MdCheckCircle } from "react-icons/md";
 import { useSingleClinicId } from "@/hooks/userClinicId";
-import { useGetClinicDashboardQuery } from "@/redux/features/doctors/doctorsApi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetClinicDashboardOverviewQuery } from "@/redux/features/admin/clinic/clinicManagementApi";
+import { Stethoscope,  } from "lucide-react";
+import { icon } from "leaflet";
 
 const DashboardCard = () => {
   const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
-  const { data, isLoading, isError } = useGetClinicDashboardQuery(
+  const { data, isLoading, isError } = useGetClinicDashboardOverviewQuery(
     clinicId as string,
     { skip: !clinicId }
   );
-
+ console.log("data",data)
   // Extract data from API response
   const dashboardData = data?.data || {};
 
   // Only show the data we actually have from the API
   const statusData = [
     {
-      title: "Total Patients",
-      amount: dashboardData.totalPatients?.toString() || "0",
+      title: "Total Doctors",
+      amount: dashboardData?.clinicDoctors?.toString() || "0",
       change: "0",
       unit: "in clinic",
-      icon: <FaUserInjured className="w-6 h-6 text-blue-500" />,
+      icon: <Stethoscope className="w-6 h-6 text-blue-500" />,
       bgColor: "bg-blue-50",
     },
     {
       title: "Total Appointments",
-      amount: dashboardData.totalAppointments?.toString() || "0",
+      amount: dashboardData?.clinicAppointments?.toString() || "0",
       change: "0",
       unit: "all time",
       icon: <FaCalendarCheck className="w-6 h-6 text-green-500" />,
       bgColor: "bg-green-50",
     },
     {
-      title: "Pending Appointments",
-      amount: dashboardData.totalPendingAppointments?.toString() || "0",
+      title: "Total Patients",
+      amount: dashboardData?.clinicPatients?.toString() || "0",
       change: "0",
-      unit: "awaiting confirmation",
-      icon: <MdPendingActions className="w-6 h-6 text-yellow-500" />,
+      unit: "patients in clinic",
+      icon: <FaUserInjured className="w-6 h-6 text-yellow-500" />,
       bgColor: "bg-yellow-50",
     },
     {
-      title: "Completed Appointments",
-      amount: dashboardData.totalCompletedAppointments?.toString() || "0",
+      title: "Total Pending Money",
+      amount: dashboardData?.clinicPendingMoney?.toString() || "0",
       change: "0",
-      unit: "successfully served",
+      unit: "pending money",
       icon: <MdCheckCircle className="w-6 h-6 text-purple-500" />,
       bgColor: "bg-purple-50",
     },
