@@ -41,6 +41,11 @@ export interface DoctorData {
     certificates?: Certificate[];
     professionalInformation?: ProfessionalInformation;
     blockedDates?: { date: string; _id?: string }[];
+    availableDateRange?: {
+        startDate: string | Date | null;
+        endDate: string | Date | null;
+        isEnabled: boolean;
+    };
 }
 
 // Working Hours

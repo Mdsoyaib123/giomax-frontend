@@ -3,6 +3,8 @@ import { X, ArrowLeft, UploadCloud, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { useAddNewDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 import { useSingleClinicId } from "@/hooks/userClinicId";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface AvailabilitySlot {
   day: string;
@@ -23,6 +25,11 @@ interface DoctorData {
   onlineConsultationFee: string;
   clinicVisitFee: string;
   speciality: string;
+  availabilityDateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+    isEnabled: boolean;
+  };
 }
 
 const appointmentTypeOptions = ["inClinic", "online","both"];
@@ -38,6 +45,17 @@ const initialAvailability: AvailabilitySlot[] = [
 ];
 
 const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const [formData, setFormData] = useState<DoctorData>({
     doctorName: "",
     email: "",
@@ -49,6 +67,11 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     onlineConsultationFee: "",
     clinicVisitFee: "",
     speciality: "",
+    availabilityDateRange: {
+      startDate: null,
+      endDate: null,
+      isEnabled: true,
+    },
   });
 
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -132,15 +155,55 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       return;
     }
 
+    if (!formData.availabilityDateRange.startDate || !formData.availabilityDateRange.endDate) {
+      toast.error("Please select availability date range!");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    console.log("Adding new doctor:", formData);
-    const payload = { 
-      ...formData, 
-      availability: enabledDays,
-      clinicId: clinicId 
+
+    const formatDate = (date: Date | null) => {
+      if (!date) return "";
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     };
+
+    const formDataPayload = new FormData();
+    formDataPayload.append("doctorName", formData.doctorName);
+    formDataPayload.append("email", formData.email);
+    formDataPayload.append("phoneNumber", formData.phoneNumber);
+    formDataPayload.append("licenseNumber", formData.licenseNumber);
+    formDataPayload.append("serviceType", formData.serviceType);
+    formDataPayload.append("appointmentType", formData.appointmentType);
+    formDataPayload.append("onlineConsultationFee", formData.onlineConsultationFee);
+    formDataPayload.append("clinicVisitFee", formData.clinicVisitFee);
+    // speciality is currently empty/unused in form but in state
+    if (formData.speciality) formDataPayload.append("speciality", formData.speciality);
+    
+    if (clinicId) formDataPayload.append("clinicId", clinicId);
+
+    // File
+    if (formData.uploadCertificates) {
+      formDataPayload.append("uploadCertificates", formData.uploadCertificates);
+    }
+
+    // Complex objects
+    formDataPayload.append("availability", JSON.stringify(enabledDays));
+
+    const formattedDateRange = {
+      startDate: formatDate(formData.availabilityDateRange.startDate),
+      endDate: formatDate(formData.availabilityDateRange.endDate),
+      isEnabled: true,
+    };
+    formDataPayload.append("availableDateRange", JSON.stringify(formattedDateRange));
+
+    console.log("Sending FormData...");
+    
     try {
-      await addNewDoctor(payload).unwrap();
+      await addNewDoctor(formDataPayload).unwrap();
       toast.success("New doctor added successfully!");
       onClose();
     } catch (error) {
@@ -152,9 +215,9 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
-      <div className="bg-white rounded-xl max-w-4xl w-[1100px] relative shadow-2xl border border-gray-200 transform transition-all max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-xl w-full max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[95vh] overflow-hidden flex flex-col mx-4 md:mx-0">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
+        <div className="flex items-start justify-between p-4 md:p-6 border-b border-gray-100 shrink-0">
           <div className="flex items-center">
             <button
               onClick={onClose}
@@ -183,7 +246,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="grow overflow-y-auto">
-          <div className="p-6 space-y-6">
+          <div className="p-4 md:p-6 space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Doctor Name */}
@@ -320,6 +383,37 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </svg>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Availability Date Range */}
+            <div className="pb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Availability Date Range <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <DatePicker
+                  selectsRange={true}
+                  startDate={formData.availabilityDateRange.startDate}
+                  endDate={formData.availabilityDateRange.endDate}
+                  onChange={(update: [Date | null, Date | null]) => {
+                    const [start, end] = update;
+                    setFormData((prev) => ({
+                      ...prev,
+                      availabilityDateRange: {
+                        ...prev.availabilityDateRange,
+                        startDate: start,
+                        endDate: end,
+                      },
+                    }));
+                  }}
+                  isClearable={true}
+                  placeholderText="Select start and end date"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
+                  required
+                  monthsShown={isMobile ? 1 : 2}
+                  popperProps={{ strategy: "fixed" }}
+                />
               </div>
             </div>
 

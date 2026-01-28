@@ -1,4 +1,3 @@
-import logo from "@/assets/icon/Pic.png";
 import { Badge } from "@/components/ui/badge";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 
@@ -7,13 +6,14 @@ import {
   ChartPie,
   ChevronDown,
   CreditCard,
+  Hospital,
   LogOut,
   Settings,
   Stethoscope,
   Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 import { logOut } from "@/redux/features/auth/authSlice";
 import { useGetAClinicQuery } from "@/redux/features/admin/clinic/clinicBasicApi";
@@ -74,11 +74,12 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const userId = useAppSelector((state) => state.auth.user?.id);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [clinicName, setClinicName] = useState<string | null>("");
 
   const { data: clinicResponse } = useGetAClinicQuery(userId!, {
     skip: !userId,
   });
-  console.log("clinicResponse",clinicResponse);
 
   const clinic = clinicResponse?.data;
 
@@ -91,11 +92,17 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
+  useEffect(() => {
+      if (!clinic?.userId) return;
+  
+      setProfileImage(clinic.userId.profileImage ?? null);
+      setClinicName(clinic.userId.fullName ?? "");
+    }, [clinic]);
 
   // FIXED ICON RENDER
   const renderIcon = (icon: ReactNode, alt: string) =>
     typeof icon === "string" ? (
-      <img src={icon} alt={alt} className="w-5 h-5" />
+      <img src={icon} alt={alt} className="size-14 rounded-full object-cover" />
     ) : (
       icon
     );
@@ -111,15 +118,21 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
       <Link to="/clinic-dashboard/dashboard">
         <div className="flex items-center border-b border-gray-200 mt-1 p-2">
           <div className="shrink-0 w-12 h-12 mr-3">
-            <img
-              src={logo}
-              alt="Wardier Medical Clinic Logo"
-              className="object-contain w-full h-full"
-            />
+            {
+              profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Wardier Medical Clinic Logo"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center rounded-full bg-[#2E6FF3] text-white"><Hospital /></div>
+              )
+           }
           </div>
           <div>
             <p className="text-base text-[#000000] font-bold">
-             {clinic?.userId?.fullName}
+             {clinicName}
               <span className="block text-[12px] text-gray-500">
                 Powered by Med Connect
               </span>

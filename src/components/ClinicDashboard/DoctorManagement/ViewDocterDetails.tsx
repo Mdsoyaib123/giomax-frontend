@@ -185,6 +185,35 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
               </div>
             </div>
 
+          {/* Availability Date Range */}
+          <div className="space-y-4 pt-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Availability Date Range</h3>
+              </div>
+              <div className="p-4 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-between">
+                 <div className="flex items-center gap-4">
+                    <div>
+                       <span className="block text-xs font-semibold text-gray-500 uppercase">Start Date</span>
+                       <span className="text-sm font-medium text-gray-900">
+                          {doctor?.availableDateRange?.startDate 
+                            ? new Date(doctor.availableDateRange.startDate).toLocaleDateString() 
+                            : "Not Set"}
+                       </span>
+                    </div>
+                    <div className="h-8 w-px bg-gray-300"></div>
+                    <div>
+                       <span className="block text-xs font-semibold text-gray-500 uppercase">End Date</span>
+                       <span className="text-sm font-medium text-gray-900">
+                          {doctor?.availableDateRange?.endDate 
+                            ? new Date(doctor.availableDateRange.endDate).toLocaleDateString() 
+                            : "Not Set"}
+                       </span>
+                    </div>
+                 </div>
+                 
+              </div>
+          </div>
+
           {/* Blocked Dates Section */}
           <div className="space-y-4 pt-4">
               <div>

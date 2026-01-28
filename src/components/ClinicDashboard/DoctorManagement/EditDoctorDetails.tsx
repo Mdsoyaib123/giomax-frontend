@@ -3,6 +3,8 @@ import { X, ArrowLeft, UploadCloud, Plus, Trash2 } from "lucide-react";
 import { DoctorData, DoctorAvailabilitySlot } from "@/redux/types/doctorType";
 import { useUpdateDoctorMutation } from "@/redux/features/doctors/doctorsApi";
 import { toast } from "sonner";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface EditDoctorDetailsProps {
   doctor: DoctorData;
@@ -26,6 +28,11 @@ interface DoctorFormData {
   qualifications: string;
   about: string;
   blockedDatesUpdates: { date: string; action: "add" | "remove" }[];
+  availableDateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+    isEnabled: boolean;
+  };
 }
 
 // --- Main Component: EditDoctorDetails ---
@@ -35,6 +42,16 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
 }) => {
   console.log("Doctor data received:", doctor);
   const [updateDoctor, { isLoading }] = useUpdateDoctorMutation();
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const initialAvailability: DoctorAvailabilitySlot[] = [
     { day: "Saturday", startTime: "09:00", endTime: "17:00", isEnabled: false },
@@ -54,6 +71,13 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       return existing ? { ...existing } : slot;
     });
 
+    const startDate = doctor?.availableDateRange?.startDate
+      ? new Date(doctor.availableDateRange.startDate)
+      : null;
+    const endDate = doctor?.availableDateRange?.endDate
+      ? new Date(doctor.availableDateRange.endDate)
+      : null;
+
     return {
       name: doctor?.userId?.fullName || "",
       email: doctor?.userId?.email || "",
@@ -72,6 +96,11 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
         doctor?.professionalInformation?.qualifications || "MBBS, MD",
       about: doctor?.professionalInformation?.about || "Experienced doctor.",
       blockedDatesUpdates: [],
+      availableDateRange: {
+        startDate: startDate,
+        endDate: endDate,
+        isEnabled: doctor?.availableDateRange?.isEnabled ?? true,
+      },
     };
   };
 
@@ -193,6 +222,14 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       return;
     }
 
+    const formatDate = (date: Date | null) => {
+      if (!date) return "";
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
     try {
       // Prepare the API payload
       const updatedData = {
@@ -215,6 +252,11 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
           about: formData.about,
         },
         licenseNumber: formData.licenseNumber,
+        availableDateRange: {
+          startDate: formatDate(formData.availableDateRange.startDate),
+          endDate: formatDate(formData.availableDateRange.endDate),
+          isEnabled: true,
+        },
       };
 
       console.log("Payload for API:", updatedData);
@@ -358,7 +400,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
-      <div className="bg-white rounded-xl w-[1100px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-xl w-full max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[90vh] overflow-hidden flex flex-col mx-4 md:mx-0">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
           <div className="flex items-start">
@@ -389,7 +431,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
 
         {/* Form Content */}
         <form onSubmit={handleSubmit} className="grow overflow-y-auto">
-          <div className="p-6 space-y-8">
+          <div className="p-4 md:p-6 space-y-8">
             {/* Basic Info */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">
@@ -612,7 +654,35 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                 ))}
               </div>
             </div>
-
+             <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-4 border-t border-gray-100 pt-6">
+                Availability Date Range
+              </h3>
+              <div className="relative">
+                <DatePicker
+                  selectsRange={true}
+                  startDate={formData.availableDateRange.startDate}
+                  endDate={formData.availableDateRange.endDate}
+                  onChange={(update: [Date | null, Date | null]) => {
+                    const [start, end] = update;
+                    setFormData((prev) => ({
+                      ...prev,
+                      availableDateRange: {
+                        ...prev.availableDateRange,
+                        startDate: start,
+                        endDate: end,
+                      },
+                    }));
+                  }}
+                  isClearable={true}
+                  placeholderText="Select start and end date"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
+                  required
+                  monthsShown={isMobile ? 1 : 2}
+                  popperProps={{ strategy: "fixed" }}
+                />
+              </div>
+            </div>
             {/* Blocked Dates Management */}
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4 border-t border-gray-100 pt-6">
