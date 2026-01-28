@@ -1,4 +1,4 @@
-import logo from "@/assets/Pic.png";
+import logo from "@/assets/icon/Pic.png";
 import { Badge } from "@/components/ui/badge";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 
@@ -78,6 +78,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
   const { data: clinicResponse } = useGetAClinicQuery(userId!, {
     skip: !userId,
   });
+  console.log("clinicResponse",clinicResponse);
 
   const clinic = clinicResponse?.data;
 
@@ -118,7 +119,7 @@ const ClinicSidebar: React.FC<SidebarProps> = ({
           </div>
           <div>
             <p className="text-base text-[#000000] font-bold">
-              Wardier Medical Clinic
+             {clinic?.userId?.fullName}
               <span className="block text-[12px] text-gray-500">
                 Powered by Med Connect
               </span>
