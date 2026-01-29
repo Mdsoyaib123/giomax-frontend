@@ -21,6 +21,7 @@ export interface DoctorData {
     gender?: string;
     onlineConsultationFee?: number;
     clinicVisitFee?: number;
+    slotTimeDuration?: number;
     age?: number;
     bloodGroup?: string;
     medicalHistory?: MedicalHistory;

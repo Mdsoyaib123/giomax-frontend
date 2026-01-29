@@ -127,6 +127,10 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
               label="License Number"
               value={doctor?.licenseNumber || "not set"}
             />
+            <InfoField
+              label="Slot Time Duration (min)"
+              value={doctor?.slotTimeDuration?.toString() || "not set"}
+            />
           </div>
 
           {/* Per-Day Availability Settings */}

@@ -30,6 +30,7 @@ interface DoctorData {
     endDate: Date | null;
     isEnabled: boolean;
   };
+  slotTimeDuration: string;
 }
 
 const appointmentTypeOptions = ["inClinic", "online","both"];
@@ -72,6 +73,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       endDate: null,
       isEnabled: true,
     },
+    slotTimeDuration: "",
   });
 
   const [fileUploaded, setFileUploaded] = useState(false);
@@ -180,6 +182,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     formDataPayload.append("appointmentType", formData.appointmentType);
     formDataPayload.append("onlineConsultationFee", formData.onlineConsultationFee);
     formDataPayload.append("clinicVisitFee", formData.clinicVisitFee);
+    formDataPayload.append("slotTimeDuration", formData.slotTimeDuration);
     // speciality is currently empty/unused in form but in state
     if (formData.speciality) formDataPayload.append("speciality", formData.speciality);
     
@@ -523,6 +526,25 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     required
                     min="0"
                     step="0.01"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+               {/* Slot Time Duration */}
+               <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Slot Time Duration (minutes) <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="slotTimeDuration"
+                    value={formData.slotTimeDuration}
+                    onChange={handleChange}
+                    placeholder="e.g. 30"
+                    required
+                    min="1"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400"
                   />
                 </div>

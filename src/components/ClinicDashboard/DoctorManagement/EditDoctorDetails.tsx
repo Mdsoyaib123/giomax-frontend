@@ -24,6 +24,7 @@ interface DoctorFormData {
   appointmentType: string;
   onlineConsultationFee: number;
   clinicVisitFee: number;
+  slotTimeDuration: number;
   experienceYears: number;
   qualifications: string;
   about: string;
@@ -91,6 +92,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
       appointmentType: doctor?.appointmentType || "online",
       onlineConsultationFee: doctor?.onlineConsultationFee || 50,
       clinicVisitFee: doctor?.clinicVisitFee || 100,
+      slotTimeDuration: doctor?.slotTimeDuration || 30,
       experienceYears: doctor?.professionalInformation?.experienceYears || 10,
       qualifications:
         doctor?.professionalInformation?.qualifications || "MBBS, MD",
@@ -243,6 +245,7 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
         appointmentType: formData.appointmentType,
         onlineConsultationFee: formData.onlineConsultationFee,
         clinicVisitFee: formData.clinicVisitFee,
+        slotTimeDuration: formData.slotTimeDuration,
         blockedDates: formData.blockedDatesUpdates,
         professionalInformation: {
           speciality: formData.specialty,
@@ -588,6 +591,12 @@ const EditDoctorDetails: React.FC<EditDoctorDetailsProps> = ({
                   "clinicVisitFee",
                   0,
                   1000
+                )}
+                {renderNumberInput(
+                  "Slot Time Duration (minutes)",
+                  "slotTimeDuration",
+                  1,
+                  120
                 )}
               </div>
             </div>
