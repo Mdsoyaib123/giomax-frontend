@@ -28,11 +28,11 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const [errors, setErrors] = React.useState({
     amount: "",
-    cardNumber: "",
+    // cardNumber: "",
   });
 
   const validateForm = () => {
-    const newErrors = { amount: "", cardNumber: "" };
+    const newErrors = { amount: "", };
     let isValid = true;
 
     if (!amount.trim()) {
@@ -53,16 +53,16 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    if (!cardNumber.trim()) {
-      newErrors.cardNumber = "Card number is required";
-      isValid = false;
-    } else if (!/^\d+$/.test(cardNumber.replace(/\s/g, ""))) {
-      newErrors.cardNumber = "Card number must contain only digits";
-      isValid = false;
-    } else if (cardNumber.replace(/\s/g, "").length < 12) {
-      newErrors.cardNumber = "Card number must be at least 12 digits";
-      isValid = false;
-    }
+    // if (!cardNumber.trim()) {
+    //   newErrors.cardNumber = "Card number is required";
+    //   isValid = false;
+    // } else if (!/^\d+$/.test(cardNumber.replace(/\s/g, ""))) {
+    //   newErrors.cardNumber = "Card number must contain only digits";
+    //   isValid = false;
+    // } else if (cardNumber.replace(/\s/g, "").length < 12) {
+    //   newErrors.cardNumber = "Card number must be at least 12 digits";
+    //   isValid = false;
+    // }
 
     setErrors(newErrors);
     return isValid;
@@ -76,7 +76,7 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
     try {
       const withdrawData = {
         amount: parseFloat(amount),
-        cardNumber: cardNumber.replace(/\s/g, ""),
+        // cardNumber: cardNumber.replace(/\s/g, ""),
         ownerId: clinicId as string,
         walletId: single?.data?._id,
         ownerType: "CLINIC",
@@ -104,25 +104,26 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+  // const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
 
-    // Add space every 4 digits for better readability (optional)
-    if (value.length > 0) {
-      value = value.match(/.{1,4}/g)?.join(" ") || value;
-    }
+  //   // Add space every 4 digits for better readability (optional)
+  //   if (value.length > 0) {
+  //     value = value.match(/.{1,4}/g)?.join(" ") || value;
+  //   }
 
-    setCardNumber(value);
-    if (errors.cardNumber) {
-      setErrors({ ...errors, cardNumber: "" });
-    }
-  };
+  //   setCardNumber(value);
+  //   if (errors.cardNumber) {
+  //     setErrors({ ...errors, cardNumber: "" });
+  //   }
+  // };
 
   const handleBack = () => {
     setShowConfirmation(false);
     setAmount("1200.00");
     setCardNumber("");
-    setErrors({ amount: "", cardNumber: "" });
+    setErrors({ amount: "" });
+    // setErrors({ amount: "", cardNumber: "" });
     onClose();
   };
 
@@ -185,7 +186,7 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Card Number <span className="text-red-500">*</span>
                 </label>
@@ -207,7 +208,7 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
                 <p className="text-gray-500 text-xs mt-1">
                   Enter your bank account number or card number
                 </p>
-              </div>
+              </div> */}
 
               <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <Info

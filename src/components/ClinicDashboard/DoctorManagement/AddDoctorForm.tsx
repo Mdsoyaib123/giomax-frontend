@@ -194,7 +194,7 @@ const AddDoctorForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
 
     // Complex objects
-    formDataPayload.append("availability", JSON.stringify(enabledDays));
+    formDataPayload.append("availability", JSON.stringify(formData.availabilitySchedule));
 
     const formattedDateRange = {
       startDate: formatDate(formData.availabilityDateRange.startDate),

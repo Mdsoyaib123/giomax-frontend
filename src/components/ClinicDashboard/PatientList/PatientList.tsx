@@ -82,21 +82,14 @@ const PatientList = () => {
 
   // Extract unique patients from appointments
   const uniquePatients = allAppointments
-    .map((appointment) => appointment.patientId)
-    .filter((patient) => patient !== null && patient.userId) // Filter out null patientIds and patients without userId
-    .filter(
-      (patient, index, self) =>
-        // Remove duplicates by patient _id
-        index === self.findIndex((p) => p?._id === patient?._id)
-    );
-
+    
   // Filter patients based on search query
-  const filteredPatients = uniquePatients.filter((patient) => {
-    if (!patient || !patient.userId) return false;
+  const filteredPatients = uniquePatients.filter((patient : any) => {
+    if (!patient || !patient?.userId?._id) return false;
 
-    const fullName = patient.userId.fullName?.toLowerCase() || "";
-    const email = patient.userId.email?.toLowerCase() || "";
-    const phone = patient.phoneNumber?.toLowerCase() || "";
+    const fullName = patient?.userId?.fullName?.toLowerCase() || "";
+    const email = patient?.userId?.email?.toLowerCase() || "";
+    const phone = patient?.phoneNumber?.toLowerCase() || "";
     const query = searchQuery.toLowerCase();
 
     return (
