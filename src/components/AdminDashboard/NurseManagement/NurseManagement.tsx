@@ -184,12 +184,13 @@ const NurseManagement: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (confirmDelete) {
       try {
-        await deleteNurse(confirmDelete._id).unwrap();
+        await deleteNurse({
+          soloNurseUserId: confirmDelete.userId._id,
+          soloNurseId: confirmDelete._id,
+        }).unwrap();
         dispatch(removeNurse(confirmDelete._id));
 
-        toast.success("Nurse Deleted", {
-          description: `${confirmDelete.userId.fullName} has been deleted successfully!`,
-        });
+        toast.success("Nurse Deleted");
 
         setConfirmDelete(null);
       } catch (error) {

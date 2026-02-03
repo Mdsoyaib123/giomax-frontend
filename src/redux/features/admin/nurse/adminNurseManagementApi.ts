@@ -54,10 +54,10 @@ export const adminNurseManagementApi = baseApi.injectEndpoints({
     // Delete nurse
     deleteNurse: builder.mutation<
       { success: boolean; message: string },
-      string
+      { soloNurseUserId: string; soloNurseId: string }
     >({
-      query: (nurseId) => ({
-        url: `/solo-nurse/delete/${nurseId}/${nurseId}`,
+      query: ({ soloNurseUserId, soloNurseId }) => ({
+        url: `/solo-nurse/delete/${soloNurseUserId}/${soloNurseId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["NURSE_MANAGEMENT"],
