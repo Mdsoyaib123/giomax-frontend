@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface MedicalCondition {
   _id: string;
   name: string;
@@ -91,4 +92,5 @@ export interface PatientTableData {
   totalBookings?: string;
   lastAppointment?: string;
   createdAt: string;
+  profileImage?: string;
 }

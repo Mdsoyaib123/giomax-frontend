@@ -45,6 +45,7 @@ const formatPatientForTable = (patient: Patient): PatientTableData => {
     totalBookings: "0",
     lastAppointment: new Date().toLocaleDateString(),
     createdAt: patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : "N/A",
+    profileImage: patient.userId?.profileImage,
   };
 };
 
@@ -704,7 +705,24 @@ const PatientManagement: React.FC = () => {
                           className="border-b border-gray-100 hover:bg-gray-50 transition"
                         >
                           <td className="px-4 md:px-6 whitespace-nowrap py-3 font-semibold text-gray-900">
-                            {patient.name}
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
+                                {patient.profileImage ? (
+                                  <img
+                                    src={patient.profileImage}
+                                    alt={patient.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-50 text-xs">
+                                    {patient.name.charAt(0).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                              <span className="truncate max-w-[150px]" title={patient.name}>
+                                {patient.name}
+                              </span>
+                            </div>
                           </td>
                           <td className="px-4 md:px-6 whitespace-nowrap py-3 text-gray-700">
                             {patient.email}
