@@ -1,4 +1,4 @@
-import signupphoto from "@/assets/newphoto/login3.svg";
+import signupphoto from "@/assets/newphoto/login3.avif";
 // import logo from "@/assets/Logo/LogoMain.svg";
 
 import { useState } from "react";

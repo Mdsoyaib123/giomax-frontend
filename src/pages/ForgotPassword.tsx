@@ -1,5 +1,5 @@
 import { useState } from "react";
-import loginphoto from "@/assets/newphoto/login2.svg";
+import loginphoto from "@/assets/newphoto/login2.avif";
 import logo from "@/assets/Logo/LogoMain.svg";
 import MessageSend from "@/assets/Logo/MessageSend.svg";
 import { RxCross2 } from "react-icons/rx";
