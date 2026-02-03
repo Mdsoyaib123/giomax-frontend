@@ -5,40 +5,56 @@ import {
   useGetAllrefundRequestsQuery,
 } from "@/redux/features/admin/payment/adminPaymentApi";
 import {
-  FiMoreVertical,
-  FiCheckCircle,
-  FiXCircle,
-  FiClock,
-  FiChevronLeft,
-  FiChevronRight,
-  FiChevronsLeft,
-  FiChevronsRight,
-  FiLoader,
   FiCopy,
-  FiCreditCard,
-  FiCalendar,
-  FiUser,
+  FiEye,
 } from "react-icons/fi";
-import { MdExpandMore, MdExpandLess } from "react-icons/md";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Define the type for refund request
-interface RefundRequest {
+// Interfaces
+interface UserInfo {
   _id: string;
-  appointmentId: string;
-  userId: string;
-  appointmentType: string;
-  status: "pending" | "approved" | "rejected";
-  cardNumber: string;
-  cardHolderName: string;
-  expiryDate: string;
-  cvv: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  fullName: string;
+  email: string;
+  profileImage: string;
 }
 
-// Define the API response type
+interface PatientId {
+  _id: string;
+  userId: UserInfo;
+  bloodGroup: string;
+  age: number;
+  gender: string;
+  phoneNumber: string;
+}
+
+interface PaymentId {
+  _id: string;
+  amount: number;
+  status: string;
+  refundStatus: string;
+}
+
+interface RefundRequest {
+  _id: string;
+  paymentId: PaymentId;
+  appointmentId: string;
+  patientId: PatientId;
+  appointmentType: string;
+  reason: string;
+  status: string;
+  createdAt: string;
+}
+
 interface RefundResponse {
   success: boolean;
   message: string;
@@ -52,153 +68,53 @@ export default function PaymentRefundPage() {
     error,
     refetch,
   } = useGetAllrefundRequestsQuery();
-  const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  
+  const [selectedRequest, setSelectedRequest] = useState<RefundRequest | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [processingRequest, setProcessingRequest] = useState<string | null>(
-    null
-  );
-  const [copiedField, setCopiedField] = useState<{
-    id: string;
-    type: string;
-  } | null>(null);
+  const itemsPerPage = 10;
 
-  // Use your acceptRefundRequest mutation for both accept and reject
-  const [updateRefundRequest, { isLoading: isUpdating }] =
-    useAcceptRefundRequestMutation();
+  const [updateRefundRequest, { isLoading: isUpdating }] = useAcceptRefundRequestMutation();
 
   const refundData = (response as RefundResponse)?.data || [];
 
-  const handleMenuToggle = (event: React.MouseEvent, requestId: string) => {
-    event.stopPropagation();
-    setSelectedRequest(requestId);
-    console.log(requestId);
-    setMenuPosition({ x: event.clientX, y: event.clientY });
-    setIsMenuOpen(true);
+  const handleOpenDetails = (request: RefundRequest) => {
+    setSelectedRequest(request);
+    setIsModalOpen(true);
   };
 
-  const handleUpdateRefundStatus = async (status: "approved" | "rejected") => {
+  const handleUpdateStatus = async (status: "APPROVED" | "REJECTED") => {
     if (!selectedRequest) return;
 
     try {
-      setProcessingRequest(selectedRequest);
-
-      // Find the selected request to get all its data
-      const request = refundData.find((r) => r._id === selectedRequest);
-      console.log(request, "fchd");
-      if (!request) {
-        toast.error("Refund request not found");
-        return;
-      }
-      console.log(request.appointmentType);
-      // Try Option 1 first (most common RTK Query pattern)
-      const response = await updateRefundRequest({
-        id: selectedRequest,
-        data: { status: status, appointmentType: request.appointmentType },
+      const resp = await updateRefundRequest({
+        id: selectedRequest._id,
+        data: { status: status, appointmentType: selectedRequest.appointmentType },
       }).unwrap();
 
-      if (response.success) {
-        const actionText = status === "approved" ? "approved" : "rejected";
-        toast.success(response.message || `Refund ${actionText} successfully!`);
+      if (resp.success) {
+        toast.success(resp.message || `Refund ${status} successfully!`);
+        setIsModalOpen(false);
         refetch();
       } else {
-        toast.error(response.message || `Failed to ${status} refund`);
+        toast.error(resp.message || `Failed to ${status} refund`);
       }
-    } catch (error: any) {
-      console.error(`Error ${status} refund:`, error);
-      const actionText = status === "approved" ? "approving" : "rejecting";
-      toast.error(
-        error?.data?.message ||
-          error?.message ||
-          `An error occurred while ${actionText} the refund`
-      );
-    } finally {
-      setProcessingRequest(null);
-      setIsMenuOpen(false);
+    } catch (err: any) {
+      toast.error(err?.data?.message || "An error occurred");
     }
   };
 
-  const handleAcceptRefund = async () => {
-    await handleUpdateRefundStatus("approved");
-  };
-
-  const handleRejectRefund = async () => {
-    await handleUpdateRefundStatus("rejected");
-  };
-
-  const toggleRowExpand = (requestId: string) => {
-    const newExpandedRows = new Set(expandedRows);
-    if (newExpandedRows.has(requestId)) {
-      newExpandedRows.delete(requestId);
-    } else {
-      newExpandedRows.add(requestId);
-    }
-    setExpandedRows(newExpandedRows);
-  };
-
-  const handleCopyToClipboard = async (
-    text: string,
-    requestId: string,
-    fieldType: string
-  ) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedField({ id: requestId, type: fieldType });
-      toast.success(
-        `${
-          fieldType.charAt(0).toUpperCase() + fieldType.slice(1)
-        } copied to clipboard`
-      );
-
-      // Reset copied state after 2 seconds
-      setTimeout(() => {
-        setCopiedField(null);
-      }, 2000);
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-      toast.error("Failed to copy to clipboard");
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
+  const getStatusBadge = (status: string) => {
+    const s = status.toLowerCase();
+    switch (s) {
       case "approved":
-        return <FiCheckCircle className="text-green-500 text-lg" />;
+        return <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Approved</span>;
       case "rejected":
-        return <FiXCircle className="text-red-500 text-lg" />;
+        return <span className="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Rejected</span>;
       case "pending":
-        return <FiClock className="text-yellow-500 text-lg" />;
+        return <span className="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Pending</span>;
       default:
-        return null;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "pending":
-        return "Pending";
-      default:
-        return status;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "rejected":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">{status}</span>;
     }
   };
 
@@ -210,55 +126,13 @@ export default function PaymentRefundPage() {
     });
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const maskCardNumber = (cardNumber: string) => {
-    if (!cardNumber) return "N/A";
-    const cleaned = cardNumber.replace(/\s/g, "");
-    if (cleaned.length < 4) return cardNumber;
-    return `**** **** **** ${cleaned.slice(-4)}`;
-  };
-
-  const formatCardNumber = (cardNumber: string) => {
-    if (!cardNumber) return "";
-    const cleaned = cardNumber.replace(/\s/g, "");
-    return cleaned.replace(/(\d{4})/g, "$1 ").trim();
-  };
-
-  const showFullCardNumber = (cardNumber: string) => {
-    if (!cardNumber) return "N/A";
-    return formatCardNumber(cardNumber);
-  };
-
-  // Check if a request is currently being processed
-  const isProcessing = (requestId: string) => {
-    return processingRequest === requestId;
-  };
-
-  // Pagination calculations
   const totalPages = Math.ceil(refundData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedData = refundData.slice(startIndex, endIndex);
-
-  // Close menu when clicking outside
-  const handleClickOutside = () => {
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-    }
-  };
+  const paginatedData = refundData.slice(startIndex, startIndex + itemsPerPage);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
+      <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -266,725 +140,213 @@ export default function PaymentRefundPage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mt-4">
-        <p className="font-medium">Error loading refund requests</p>
-        <p className="text-sm">Please try again later</p>
+      <div className="text-center py-8 text-red-500">
+        Error loading refund requests. Please try again.
       </div>
     );
   }
 
   return (
-    <div className="p-6" onClick={handleClickOutside}>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Refund Requests</h1>
-        <p className="text-gray-600 mt-2">
-          Manage and process refund requests from users
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Requests</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {refundData.length}
-              </p>
-            </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <FiCreditCard className="text-blue-500 text-xl" />
-            </div>
-          </div>
+    <div className="p-6">
+      <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h2 className="text-lg md:text-xl font-semibold text-[#343A40]">
+            Refund Requests
+          </h2>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {refundData.filter((r) => r.status === "pending").length}
-              </p>
-            </div>
-            <div className="p-3 bg-yellow-50 rounded-lg">
-              <FiClock className="text-yellow-500 text-xl" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Processed</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {refundData.filter((r) => r.status !== "pending").length}
-              </p>
-            </div>
-            <div className="p-3 bg-green-50 rounded-lg">
-              <FiCheckCircle className="text-green-500 text-xl" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Card Information
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  User ID
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Appointment
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Requested
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedData.map((request) => (
-                <>
-                  <tr
-                    key={request._id}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => toggleRowExpand(request._id)}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
-                            {request.cardHolderName || "N/A"}
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopyToClipboard(
-                                request.cardHolderName,
-                                request._id,
-                                "name"
-                              );
-                            }}
-                            className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
-                            title="Copy cardholder name"
-                          >
-                            <FiCopy
-                              className={`text-sm ${
-                                copiedField?.id === request._id &&
-                                copiedField?.type === "name"
-                                  ? "text-green-500"
-                                  : "text-gray-400"
-                              }`}
-                            />
-                          </button>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm text-gray-500 font-mono">
-                            {maskCardNumber(request.cardNumber)}
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopyToClipboard(
-                                request.cardNumber,
-                                request._id,
-                                "card"
-                              );
-                            }}
-                            className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
-                            title="Copy card number"
-                          >
-                            <FiCopy
-                              className={`text-sm ${
-                                copiedField?.id === request._id &&
-                                copiedField?.type === "card"
-                                  ? "text-green-500"
-                                  : "text-gray-400"
-                              }`}
-                            />
-                          </button>
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          Exp: {request.expiryDate || "N/A"} | CVV: ***
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-gray-900 font-mono">
-                          {request.userId?.slice(0, 10)}...
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopyToClipboard(
-                              request.userId,
-                              request._id,
-                              "userId"
-                            );
-                          }}
-                          className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
-                          title="Copy User ID"
-                        >
-                          <FiCopy
-                            className={`text-sm ${
-                              copiedField?.id === request._id &&
-                              copiedField?.type === "userId"
-                                ? "text-green-500"
-                                : "text-gray-400"
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full border ${
-                            request.appointmentType === "doctor"
-                              ? "bg-blue-100 text-blue-800 border-blue-200"
-                              : "bg-purple-100 text-purple-800 border-purple-200"
-                          }`}
-                        >
-                          {request.appointmentType}
-                        </span>
-                        <div className="flex items-center ml-2">
-                          <span className="text-sm text-gray-500 font-mono">
-                            {request.appointmentId?.slice(0, 8)}...
-                          </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopyToClipboard(
-                                request.appointmentId,
-                                request._id,
-                                "appointmentId"
-                              );
-                            }}
-                            className="ml-1 p-1 hover:bg-gray-100 rounded transition-colors"
-                            title="Copy Appointment ID"
-                          >
-                            <FiCopy
-                              className={`text-xs ${
-                                copiedField?.id === request._id &&
-                                copiedField?.type === "appointmentId"
-                                  ? "text-green-500"
-                                  : "text-gray-400"
-                              }`}
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {isProcessing(request._id) ? (
-                          <FiLoader className="animate-spin text-blue-500 text-lg" />
-                        ) : (
-                          getStatusIcon(request.status)
-                        )}
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs rounded-full border ${getStatusColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusText(request.status)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(request.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMenuToggle(e, request._id);
-                          }}
-                          className="p-1 hover:bg-gray-100 rounded transition-colors disabled:cursor-not-allowed"
-                          disabled={
-                            request.status !== "pending" ||
-                            isProcessing(request._id)
-                          }
-                          title={
-                            request.status !== "pending"
-                              ? "Only pending requests can be modified"
-                              : ""
-                          }
-                        >
-                          {isProcessing(request._id) ? (
-                            <FiLoader className="animate-spin text-gray-400 text-lg" />
-                          ) : (
-                            <FiMoreVertical
-                              className={`text-lg ${
-                                request.status !== "pending" ||
-                                isProcessing(request._id)
-                                  ? "text-gray-300"
-                                  : "text-gray-600 hover:text-gray-900"
-                              }`}
-                            />
-                          )}
-                        </button>
-                        {expandedRows.has(request._id) ? (
-                          <MdExpandLess className="text-gray-400" />
-                        ) : (
-                          <MdExpandMore className="text-gray-400" />
-                        )}
-                      </div>
+        {/* Table Wrapper */}
+        <div className="p-5 border border-[#E4E4E4] rounded-lg">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="min-w-[1000px] w-full text-sm">
+              <thead className="bg-gray-100 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 text-left font-medium text-gray-700">Patient</th>
+                  <th className="px-6 py-4 text-left font-medium text-gray-700">Email</th>
+                  <th className="px-6 py-4 text-left font-medium text-gray-700">Phone</th>
+                  <th className="px-6 py-4 text-left font-medium text-gray-700">Payment ID</th>
+                  <th className="px-6 py-4 text-left font-medium text-gray-700">Status</th>
+                  <th className="px-6 py-4 text-center font-medium text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-10 text-gray-500">
+                      No refund requests found
                     </td>
                   </tr>
-
-                  {/* Expanded Row Details */}
-                  {expandedRows.has(request._id) && (
-                    <tr className="bg-gray-50">
-                      <td colSpan={6} className="px-6 py-4">
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            {/* Card Details Section */}
-                            <div className="bg-white p-4 rounded-lg border border-gray-200">
-                              <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                                <FiCreditCard className="mr-2" />
-                                Card Details
-                              </h4>
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">
-                                    Cardholder Name
-                                  </label>
-                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                    <p className="font-medium truncate">
-                                      {request.cardHolderName || "N/A"}
-                                    </p>
-                                    <button
-                                      onClick={() =>
-                                        handleCopyToClipboard(
-                                          request.cardHolderName,
-                                          request._id,
-                                          "fullName"
-                                        )
-                                      }
-                                      className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
-                                      title="Copy cardholder name"
-                                    >
-                                      <FiCopy
-                                        className={`text-sm ${
-                                          copiedField?.id === request._id &&
-                                          copiedField?.type === "fullName"
-                                            ? "text-green-500"
-                                            : "text-gray-400"
-                                        }`}
-                                      />
-                                    </button>
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">
-                                    Card Number
-                                  </label>
-                                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                    <p className="font-mono font-medium">
-                                      {showFullCardNumber(request.cardNumber)}
-                                    </p>
-                                    <button
-                                      onClick={() =>
-                                        handleCopyToClipboard(
-                                          request.cardNumber.replace(/\s/g, ""),
-                                          request._id,
-                                          "fullCard"
-                                        )
-                                      }
-                                      className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
-                                      title="Copy full card number"
-                                    >
-                                      <FiCopy
-                                        className={`text-sm ${
-                                          copiedField?.id === request._id &&
-                                          copiedField?.type === "fullCard"
-                                            ? "text-green-500"
-                                            : "text-gray-400"
-                                        }`}
-                                      />
-                                    </button>
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <label className="text-xs text-gray-500 mb-1 block">
-                                      Expiry Date
-                                    </label>
-                                    <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                      <p className="font-medium">
-                                        {request.expiryDate || "N/A"}
-                                      </p>
-                                      <button
-                                        onClick={() =>
-                                          handleCopyToClipboard(
-                                            request.expiryDate,
-                                            request._id,
-                                            "expiry"
-                                          )
-                                        }
-                                        className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
-                                        title="Copy expiry date"
-                                      >
-                                        <FiCopy
-                                          className={`text-sm ${
-                                            copiedField?.id === request._id &&
-                                            copiedField?.type === "expiry"
-                                              ? "text-green-500"
-                                              : "text-gray-400"
-                                          }`}
-                                        />
-                                      </button>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <label className="text-xs text-gray-500 mb-1 block">
-                                      CVV
-                                    </label>
-                                    <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                      <p className="font-medium">
-                                        {request.cvv || "N/A"}
-                                      </p>
-                                      <button
-                                        onClick={() =>
-                                          handleCopyToClipboard(
-                                            request.cvv,
-                                            request._id,
-                                            "cvv"
-                                          )
-                                        }
-                                        className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
-                                        title="Copy CVV"
-                                      >
-                                        <FiCopy
-                                          className={`text-sm ${
-                                            copiedField?.id === request._id &&
-                                            copiedField?.type === "cvv"
-                                              ? "text-green-500"
-                                              : "text-gray-400"
-                                          }`}
-                                        />
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Timestamps Section */}
-                            <div className="bg-white p-4 rounded-lg border border-gray-200">
-                              <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                                <FiCalendar className="mr-2" />
-                                Timestamps
-                              </h4>
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">
-                                    Created At
-                                  </label>
-                                  <div className="bg-gray-50 p-2 rounded">
-                                    <p className="text-sm">
-                                      {formatDateTime(request.createdAt)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">
-                                    Last Updated
-                                  </label>
-                                  <div className="bg-gray-50 p-2 rounded">
-                                    <p className="text-sm">
-                                      {formatDateTime(request.updatedAt)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">
-                                    Status
-                                  </label>
-                                  <div className="flex items-center">
-                                    <span
-                                      className={`px-3 py-1 text-sm rounded-full border ${getStatusColor(
-                                        request.status
-                                      )}`}
-                                    >
-                                      {getStatusText(request.status)}
-                                    </span>
-                                    <span className="ml-2 text-sm text-gray-500">
-                                      {request.status === "pending"
-                                        ? "Waiting for action"
-                                        : `Processed on ${formatDate(
-                                            request.updatedAt
-                                          )}`}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Additional Info */}
-                          <div className="bg-white p-4 rounded-lg border border-gray-200">
-                            <h4 className="font-medium text-gray-700 mb-3 flex items-center">
-                              <FiUser className="mr-2" />
-                              Additional Information
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="text-xs text-gray-500 mb-1 block">
-                                  Appointment Type
-                                </label>
-                                <div className="flex items-center">
-                                  <span
-                                    className={`px-3 py-1 text-sm rounded-full border ${
-                                      request.appointmentType === "doctor"
-                                        ? "bg-blue-100 text-blue-800 border-blue-200"
-                                        : "bg-purple-100 text-purple-800 border-purple-200"
-                                    }`}
-                                  >
-                                    {request.appointmentType}
-                                  </span>
-                                </div>
-                              </div>
-                              <div>
-                                <label className="text-xs text-gray-500 mb-1 block">
-                                  Request ID
-                                </label>
-                                <div className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                                  <p className="font-mono text-sm truncate">
-                                    {request._id}
-                                  </p>
-                                  <button
-                                    onClick={() =>
-                                      handleCopyToClipboard(
-                                        request._id,
-                                        request._id,
-                                        "requestId"
-                                      )
-                                    }
-                                    className="ml-2 p-1 hover:bg-gray-200 rounded flex-shrink-0"
-                                    title="Copy Request ID"
-                                  >
-                                    <FiCopy
-                                      className={`text-sm ${
-                                        copiedField?.id === request._id &&
-                                        copiedField?.type === "requestId"
-                                          ? "text-green-500"
-                                          : "text-gray-400"
-                                      }`}
-                                    />
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                ) : (
+                  paginatedData.map((request) => (
+                    <tr key={request._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8 border border-gray-100">
+                            <AvatarImage src={request.patientId?.userId?.profileImage} />
+                            <AvatarFallback>{request.patientId?.userId?.fullName?.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-gray-900">{request.patientId?.userId?.fullName || "N/A"}</span>
                         </div>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-700">{request.patientId?.userId?.email || "N/A"}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-700">{request.patientId?.phoneNumber || "N/A"}</td>
+                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                        {request.paymentId?._id?.substring(0, 12)}...
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(request.status)}</td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => handleOpenDetails(request)}
+                          className="inline-flex cursor-pointer items-center gap-1 px-3 py-1.5 rounded-md bg-[#2E6FF3] text-white text-xs hover:bg-[#1B54D3] transition"
+                        >
+                          <FiEye className="text-sm" /> View
+                        </button>
+                      </td>
                     </tr>
-                  )}
-                </>
-              ))}
-            </tbody>
-          </table>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Pagination */}
-        {refundData.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center mb-4 sm:mb-0">
-              <span className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(endIndex, refundData.length)}
-                </span>{" "}
-                of <span className="font-medium">{refundData.length}</span>{" "}
-                results
-              </span>
-              <select
-                className="ml-4 border border-gray-300 rounded-md text-sm py-1 px-2"
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-              >
-                <option value={5}>5 per page</option>
-                <option value={10}>10 per page</option>
-                <option value={25}>25 per page</option>
-                <option value={50}>50 per page</option>
-              </select>
-            </div>
-
-            <div className="flex items-center space-x-2">
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-sm text-gray-600">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">{Math.min(startIndex + itemsPerPage, refundData.length)}</span> of{" "}
+              <span className="font-medium">{refundData.length}</span> entries
+            </p>
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setCurrentPage(1)}
+                onClick={() => setCurrentPage(prev => prev - 1)}
                 disabled={currentPage === 1}
-                className={`p-2 rounded ${
-                  currentPage === 1
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-gray-100"
+                className={`flex items-center gap-1 px-3 py-1.5 border rounded-lg text-sm ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
                 }`}
               >
-                <FiChevronsLeft />
+                <IoIosArrowBack /> Prev
               </button>
-              <button
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`p-2 rounded ${
-                  currentPage === 1
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                <FiChevronLeft />
-              </button>
-
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-8 h-8 rounded text-sm ${
-                        currentPage === pageNum
-                          ? "bg-blue-500 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-                {totalPages > 5 && currentPage < totalPages - 2 && (
-                  <>
-                    <span className="text-gray-400">...</span>
-                    <button
-                      onClick={() => setCurrentPage(totalPages)}
-                      className="w-8 h-8 rounded text-sm text-gray-600 hover:bg-gray-100"
-                    >
-                      {totalPages}
-                    </button>
-                  </>
-                )}
+              <div className="min-w-[50px] text-center border px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 bg-gray-50">
+                {currentPage} / {totalPages}
               </div>
-
               <button
-                onClick={() => setCurrentPage(currentPage + 1)}
+                onClick={() => setCurrentPage(prev => prev + 1)}
                 disabled={currentPage === totalPages}
-                className={`p-2 rounded ${
-                  currentPage === totalPages
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-gray-100"
+                className={`flex items-center gap-1 px-3 py-1.5 border rounded-lg text-sm ${
+                  currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
                 }`}
               >
-                <FiChevronRight />
-              </button>
-              <button
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages}
-                className={`p-2 rounded ${
-                  currentPage === totalPages
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                <FiChevronsRight />
+                Next <IoIosArrowForward />
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Action Menu (Positioned Absolutely) */}
-      {isMenuOpen && selectedRequest && (
-        <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsMenuOpen(false)}
-          />
-          <div
-            className="absolute z-20 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
-            style={{
-              top: menuPosition.y,
-              left: menuPosition.x,
-              transform: "translateX(-100%)",
-            }}
-          >
-            <button
-              onClick={handleAcceptRefund}
-              disabled={isUpdating}
-              className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isUpdating && processingRequest === selectedRequest ? (
-                <FiLoader className="animate-spin mr-3 text-green-500" />
-              ) : (
-                <FiCheckCircle className="mr-3 text-green-500" />
-              )}
-              {isUpdating && processingRequest === selectedRequest
-                ? "Processing..."
-                : "Approve Refund"}
-            </button>
-            <button
-              onClick={handleRejectRefund}
-              disabled={isUpdating}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isUpdating && processingRequest === selectedRequest ? (
-                <FiLoader className="animate-spin mr-3 text-red-500" />
-              ) : (
-                <FiXCircle className="mr-3 text-red-500" />
-              )}
-              {isUpdating && processingRequest === selectedRequest
-                ? "Processing..."
-                : "Reject Refund"}
-            </button>
-          </div>
-        </>
-      )}
+      {/* Details Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl bg-white rounded-lg border border-gray-300">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center justify-between">
+              Refund Request Details
+              {selectedRequest && getStatusBadge(selectedRequest.status)}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedRequest && (
+            <div className="space-y-6 pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 {/* Patient Info Card */}
+                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={selectedRequest.patientId?.userId?.profileImage} />
+                      <AvatarFallback>{selectedRequest.patientId?.userId?.fullName?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs text-gray-500">Patient</p>
+                      <p className="font-medium">{selectedRequest.patientId?.userId?.fullName}</p>
+                    </div>
+                 </div>
+
+                 {/* Payment Info Card */}
+                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                      <span className="text-green-600 font-bold">$</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Amount</p>
+                      <p className="font-medium text-green-600">${selectedRequest.paymentId?.amount}</p>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                 <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Reason for Refund</p>
+                    <p className="text-sm mt-1">{selectedRequest.reason}</p>
+                 </div>
+                 
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                       <p className="text-xs text-gray-500">Appointment Type</p>
+                       <p className="font-medium capitalize">{selectedRequest.appointmentType?.toLowerCase()}</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                       <p className="text-xs text-gray-500">Date</p>
+                       <p className="font-medium">{formatDate(selectedRequest.createdAt)}</p>
+                    </div>
+                 </div>
+
+                 <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-500">Payment ID</p>
+                    <div className="flex items-center justify-between">
+                       <p className="font-mono text-xs">{selectedRequest.paymentId?._id}</p>
+                       <Button variant="ghost" size="sm" onClick={() => {
+                          navigator.clipboard.writeText(selectedRequest.paymentId?._id);
+                          toast.success("ID Copied");
+                       }}>
+                          <FiCopy />
+                       </Button>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-3 mt-6 sm:justify-start">
+            {selectedRequest?.status.toUpperCase() === "PENDING" ? (
+              <>
+                 <Button
+                  onClick={() => handleUpdateStatus("APPROVED")}
+                  disabled={isUpdating}
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-lg"
+                >
+                  Approve Refund
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleUpdateStatus("REJECTED")}
+                  disabled={isUpdating}
+                  className="flex-1 border-gray-300 rounded-lg"
+                >
+                  Reject
+                </Button>
+              </>
+            ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-full border-gray-300 rounded-lg"
+                >
+                  Close
+                </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
