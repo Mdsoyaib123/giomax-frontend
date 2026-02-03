@@ -45,4 +45,5 @@ export interface User {
     fullName: string;
     email: string;
     role: "patient" | "doctor" | "admin";
+    profileImage?: string;
 }

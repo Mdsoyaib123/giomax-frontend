@@ -47,11 +47,30 @@ const Dialogue: React.FC<DialogueProps> = ({
         </div>
 
         <div className="p-4 sm:p-6">
-          {/* Patient Basic Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          {/* Profile Image and Basic Info */}
+          {patient.userId?.profileImage && (
+            <div className="flex items-center mb-6">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300">
+                <img
+                  src={patient.userId.profileImage}
+                  alt={patient.userId.fullName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-xl font-bold text-gray-900">
+                  {patient.userId.fullName}
+                </h3>
+                <p className="text-gray-600">Patient ID: {patient._id}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Patient Information Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Patient Name
+                Full Name
               </label>
               <input
                 type="text"
@@ -74,11 +93,11 @@ const Dialogue: React.FC<DialogueProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
+                Phone Number
               </label>
               <input
                 readOnly
-                value={patient.gender}
+                value={patient.phoneNumber}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
@@ -93,7 +112,7 @@ const Dialogue: React.FC<DialogueProps> = ({
                   patient?.dateOfBirth
                     ? new Date().getFullYear() -
                       new Date(patient.dateOfBirth).getFullYear()
-                    : 0
+                    : patient.age || 0
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
@@ -101,25 +120,75 @@ const Dialogue: React.FC<DialogueProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                Gender
               </label>
               <input
                 readOnly
-                value={patient.phoneNumber}
+                value={patient.gender}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Number of Bookings
+                Blood Group
               </label>
               <input
                 readOnly
-                value={patient?.medicalHistory?.length ?? 0} // show 0 if array is undefined
+                value={patient.bloodGroup || "N/A"}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
               />
             </div>
+
+            {patient.dateOfBirth && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  readOnly
+                  value={new Date(patient.dateOfBirth).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
+                />
+              </div>
+            )}
+
+            {/* <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Member Since
+              </label>
+              <input
+                readOnly
+                value={new Date(patient.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Last Updated
+              </label>
+              <input
+                readOnly
+                value={new Date(patient.updatedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 text-sm"
+              />
+            </div> */}
           </div>
 
           {/* Appointment History */}

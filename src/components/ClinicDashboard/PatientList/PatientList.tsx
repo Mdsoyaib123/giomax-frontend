@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { FaEye, FaSpinner } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
@@ -299,10 +298,31 @@ const PatientList = () => {
                               className="hover:bg-gray-50 transition-colors duration-150"
                             >
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">
-                                {patient.userId?.fullName || "No Name"}
-                                <span className="ml-2 text-xs text-gray-500">
-                                  ({patient.userId?.role || "patient"})
-                                </span>
+                                <div className="flex items-center gap-3">
+                                  {patient.userId?.profileImage ? (
+                                    <img
+                                      src={patient.userId.profileImage}
+                                      alt={patient.userId.fullName}
+                                      className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold border border-blue-200">
+                                      {patient.userId?.fullName
+                                        ? patient.userId.fullName
+                                            .charAt(0)
+                                            .toUpperCase()
+                                        : "N"}
+                                    </div>
+                                  )}
+                                  <div className="flex flex-col">
+                                    <span>
+                                      {patient.userId?.fullName || "No Name"}
+                                    </span>
+                                    <span className="text-xs text-gray-500 font-normal capitalize">
+                                      {patient.userId?.role || "patient"}
+                                    </span>
+                                  </div>
+                                </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-[#6B7280]">
                                 {patient.userId?.email || "No Email"}
