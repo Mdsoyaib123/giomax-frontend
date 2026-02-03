@@ -300,15 +300,21 @@ export default function PaymentRefundPage() {
                     </div>
                  </div>
 
-                 <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-xs text-gray-500">Payment ID</p>
+                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+                    <p className="text-xs font-semibold text-heading-blue mb-1">Payment ID</p>
                     <div className="flex items-center justify-between">
-                       <p className="font-mono text-xs">{selectedRequest.paymentId?._id}</p>
-                       <Button variant="ghost" size="sm" onClick={() => {
+                       <p className="font-mono text-sm text-heading-blue font-bold select-all tracking-wider">
+                         {selectedRequest.paymentId?._id}
+                       </p>
+                       <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="hover:bg-blue-100 text-heading-blue"
+                        onClick={() => {
                           navigator.clipboard.writeText(selectedRequest.paymentId?._id);
                           toast.success("ID Copied");
                        }}>
-                          <FiCopy />
+                          <FiCopy size={16} />
                        </Button>
                     </div>
                  </div>

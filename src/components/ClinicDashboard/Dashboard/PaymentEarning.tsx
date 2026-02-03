@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGetWithdrawRequestsQuery } from "@/redux/features/admin/payment/clinicPaymentsApi";
-import { useAppSelector } from "@/redux/hooks/redux-hook";
+import { useSingleClinicId } from "@/hooks/userClinicId";
 
 // Transaction type definition based on API response
 interface Transaction {
@@ -89,12 +89,16 @@ const getServiceName = (ownerType: string) => {
 const TransactionHistory: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const userId = useAppSelector((state) => state.auth.user?.id);
+  // const userId = useAppSelector((state) => state.auth.user?.id);  
+  const {clinicId , isLoading : clinicLoading}=useSingleClinicId()
   const {
     data: withdrawRequests,
-    isLoading,
+    isLoading: withdrawLoading,
     error,
-  } = useGetWithdrawRequestsQuery(userId);
+    refetch,
+  } = useGetWithdrawRequestsQuery(clinicId, {
+    skip: !clinicId,
+  });
 
   const itemsPerPage = 5;
 
@@ -198,11 +202,11 @@ const TransactionHistory: React.FC = () => {
   };
 
   // Loading state
-  if (isLoading) {
+  if (clinicLoading || withdrawLoading) {
     return (
       <div className="p-6">
         <div className="mb-4 sm:mb-5">
-          <PaymentEarningCard />
+          <PaymentEarningCard onWithdrawSuccess={refetch} />
         </div>
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
           <div className="text-center py-10">
@@ -219,7 +223,7 @@ const TransactionHistory: React.FC = () => {
     return (
       <div className="p-6">
         <div className="mb-4 sm:mb-5">
-          <PaymentEarningCard />
+          <PaymentEarningCard onWithdrawSuccess={refetch} />
         </div>
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-6">
           <div className="text-center py-10 text-red-600">
@@ -235,7 +239,7 @@ const TransactionHistory: React.FC = () => {
       <div className="mt-5">
         {/* Payment Earning Card */}
         <div className="mb-4 sm:mb-5">
-          <PaymentEarningCard />
+          <PaymentEarningCard onWithdrawSuccess={refetch} />
         </div>
 
         {/* Main Table Card */}

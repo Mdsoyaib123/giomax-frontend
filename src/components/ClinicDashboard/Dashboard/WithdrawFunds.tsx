@@ -11,9 +11,14 @@ import { toast } from "sonner";
 interface WithdrawFundsProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
+const WithdrawFunds: React.FC<WithdrawFundsProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
   const { clinicId } = useSingleClinicId();
   const [createWithdrawRequest, { isLoading }] =
     useCreateWithdrawRequestMutation();
@@ -84,6 +89,10 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({ isOpen, onClose }) => {
 
       const response = await createWithdrawRequest(withdrawData).unwrap();
       console.log(response);
+
+      if (onSuccess) {
+        onSuccess();
+      }
 
       setShowConfirmation(true);
     } catch (error: any) {

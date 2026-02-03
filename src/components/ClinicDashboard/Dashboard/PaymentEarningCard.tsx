@@ -8,15 +8,22 @@ import SectionTitle from "@/common/SectionTitle";
 import { useSingleClinicId } from "@/hooks/userClinicId";
 import { useGetClinicPaymentsOverviewQuery } from "@/redux/features/admin/payment/clinicPaymentsApi";
 
-const PaymentEarningCard = () => {
+const PaymentEarningCard = ({ onWithdrawSuccess }: { onWithdrawSuccess?: () => void }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { clinicId, isLoading: isClinicIdLoading } = useSingleClinicId();
-  const { data, isLoading, isError } = useGetClinicPaymentsOverviewQuery(
+  const { data, isLoading, isError, refetch } = useGetClinicPaymentsOverviewQuery(
     clinicId as string,
     {
       skip: !clinicId,
     }
   );
+
+  const handleWithdrawSuccess = () => {
+    refetch(); // Refetch overview cards
+    if (onWithdrawSuccess) {
+      onWithdrawSuccess(); // Refetch transaction history in parent
+    }
+  };
 
   // Format currency with commas and 2 decimal places
   const formatCurrency = (amount: number) => {
@@ -74,6 +81,7 @@ const PaymentEarningCard = () => {
       <WithdrawFunds
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={handleWithdrawSuccess}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
