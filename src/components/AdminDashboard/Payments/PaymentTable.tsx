@@ -406,19 +406,19 @@ const PaymentTable: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Request ID
+                    Name
                   </label>
-                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono">
-                    {selectedRequest._id}
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-medium">
+                    {selectedRequest.ownerUserId?.fullName || "N/A"}
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Owner ID
+                    Email
                   </label>
-                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-mono">
-                    {selectedRequest.ownerId}
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 font-medium">
+                    {selectedRequest.ownerUserId?.email || "N/A"}
                   </div>
                 </div>
 

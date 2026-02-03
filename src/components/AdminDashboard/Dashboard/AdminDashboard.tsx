@@ -19,7 +19,7 @@ const AdminDashboard = () => {
       </div>
       <div>
         <div>
-          <AllTransactions />
+          <AllTransactions /> 
         </div>
       </div>
       {/* part-3 */}

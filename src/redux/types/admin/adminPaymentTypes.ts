@@ -16,6 +16,11 @@ export interface WithdrawRequest {
   ownerType: "SOLO_NURSE" | "CLINIC" | "SOLO_DOCTOR";
   amount: number;
   status: "PENDING" | "PAID" | "REJECTED";
+  ownerUserId?: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
   createdAt: string;
   updatedAt: string;
   __v: number;
