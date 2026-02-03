@@ -19,7 +19,6 @@ import {
 } from "@/redux/features/admin/payment/adminPaymentApi";
 import {
   setSelectedRequest,
-  setFilterStatus,
   setCurrentPage,
 } from "@/redux/features/admin/payment/adminPaymentSlice";
 import { WithdrawRequest } from "@/redux/types/admin/adminPaymentTypes";
@@ -31,6 +30,9 @@ const PaymentTable: React.FC = () => {
     useAppSelector((state) => state.adminPayment);
 
   // API Queries
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  // API Queries
   const {
     data: withdrawRequests,
     isLoading,
@@ -39,10 +41,16 @@ const PaymentTable: React.FC = () => {
   } = useGetAllWithdrawRequestsQuery({
     page: currentPage,
     limit: itemsPerPage,
-    status: filters.status === "ALL" ? undefined : filters.status,
+    status: undefined, // Client-side filtering: fetch all statuses
     ownerType: filters.ownerType === "ALL" ? undefined : filters.ownerType,
     search: filters.search || undefined,
   });
+
+  // Client-side filtering logic
+  const filteredRequests =  withdrawRequests?.data?.filter((request) => {
+    if (statusFilter === "ALL") return true;
+    return request.status === statusFilter;
+  }) || [];
 
   // const { data: statsData } = useGetPaymentStatsQuery();
   const [markAsPaid] = useMarkAsPaidMutation();
@@ -120,11 +128,6 @@ const PaymentTable: React.FC = () => {
     dispatch(setCurrentPage(page));
   };
 
-  // Handle filter changes
-  const handleStatusFilterChange = (value: string) => {
-    dispatch(setFilterStatus(value as any));
-  };
-
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -187,8 +190,8 @@ const PaymentTable: React.FC = () => {
               {/* Status Filter */}
               <div className="w-full sm:w-[180px]">
                 <Select
-                  value={filters.status}
-                  onValueChange={handleStatusFilterChange}
+                  value={statusFilter}
+                  onValueChange={setStatusFilter}
                 >
                   <SelectTrigger className="w-full h-10 cursor-pointer border border-[#B3B3B3] rounded-xl px-5 py-2.5 bg-[#FCFCFC] text-[#484848] text-sm">
                     <SelectValue placeholder="Select Status" />
@@ -260,7 +263,7 @@ const PaymentTable: React.FC = () => {
                   </thead>
 
                   <tbody className="bg-white divide-y divide-gray-300">
-                    {withdrawRequests?.data.map((request) => (
+                    {filteredRequests.map((request) => (
                       <tr key={request._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-gray-700 font-mono text-sm">
                           {request._id.slice(-8)}
