@@ -34,6 +34,10 @@ interface Document {
   title: string;
   fileUrl: string;
 }
+const safeToFixed = (value: any, digits = 2) => {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(digits) : "0.00";
+};
 
 const NurseManagement: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -246,6 +250,10 @@ const NurseManagement: React.FC = () => {
       </div>
     );
   }
+
+
+
+
 
   return (
     <div className="">
@@ -510,16 +518,17 @@ const NurseManagement: React.FC = () => {
                 <label className="block text-gray-700 font-medium mb-1">
                   Consultation Fee
                 </label>
-                <input
-                  type="text"
-                  value={`₾ ${
-                    openProfile?.professionalInformation?.consultationFee?.toFixed(
-                      2
-                    ) || "0.00"
-                  }`}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
+          <input
+  type="text"
+  value={`₾ ${safeToFixed(
+    openProfile?.professionalInformation?.consultationFee,
+    2
+  )}`}
+  readOnly
+  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
+/>
+
+
               </div>
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
