@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X, CheckCircle, XCircle } from "lucide-react";

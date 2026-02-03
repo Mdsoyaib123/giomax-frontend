@@ -143,7 +143,7 @@ const DoctorManagement: React.FC = () => {
             </h2>
 
             <div className="w-full md:w-60 flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5">
-              <IoIosSearch className="text-gray-400 text-lg flex-shrink-0" />
+              <IoIosSearch className="text-gray-400 text-lg shrink-0" />
               <input
                 type="search"
                 placeholder="Search doctors..."

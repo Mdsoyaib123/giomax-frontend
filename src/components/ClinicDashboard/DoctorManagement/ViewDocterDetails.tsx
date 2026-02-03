@@ -86,7 +86,7 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 font-inter">
       <div className="bg-white w-[1100px] h-[1446px] rounded-[8px] max-w-4xl relative shadow-2xl border border-gray-200 transform transition-all max-h-[95vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-start justify-between p-6 border-b border-gray-100 shrink-0">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Doctor Details</h2>
             <p className="text-sm text-gray-500 mt-1">
@@ -103,7 +103,7 @@ const ViewDoctorDetails: React.FC<ViewDoctorDetailsProps> = ({
         </div>
 
         {/* Content Area (Scrollable) */}
-        <div className="flex-grow overflow-y-auto p-6 space-y-6">
+        <div className="grow overflow-y-auto p-6 space-y-6">
           {/* Basic Info Grid (Responsive 2-column) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InfoField

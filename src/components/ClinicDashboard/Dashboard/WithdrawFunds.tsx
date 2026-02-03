@@ -222,7 +222,7 @@ const WithdrawFunds: React.FC<WithdrawFundsProps> = ({
               <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <Info
                   size={20}
-                  className="text-blue-600 flex-shrink-0 mt-0.5"
+                  className="text-blue-600 shrink-0 mt-0.5"
                 />
                 <p className="text-sm text-gray-700">
                   Bank withdrawals typically take 1-3{" "}

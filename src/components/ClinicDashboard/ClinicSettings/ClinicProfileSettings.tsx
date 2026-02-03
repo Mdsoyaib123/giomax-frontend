@@ -221,7 +221,7 @@ const ClinicProfileSettings =  () => {
                 </button>
               </div>
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center overflow-hidden">
+              <div className="w-24 h-24 rounded-full bg-linear-to-br from-teal-400 to-teal-600 flex items-center justify-center overflow-hidden">
                 <div className="text-white text-center">
                   <div className="text-2xl">🏥</div>
                   <div className="text-xs font-semibold mt-1">Add Photo</div>
