@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import loginphoto from "@/assets/newphoto/login1.svg";
+import loginphoto from "@/assets/newphoto/login1.avif";
 import logo from "@/assets/Logo/LogoMain.svg";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { LoginResponse } from "@/redux/types/auth.type";
