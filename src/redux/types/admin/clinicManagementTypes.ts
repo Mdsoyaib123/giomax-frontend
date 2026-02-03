@@ -93,6 +93,15 @@ export interface Clinic {
   medicalLicenseNumber?: string;
   availability: Availability;
   paymentAndEarnings: PaymentAndEarnings;
+  responsiblePersonInformation?: ResponsiblePersonInformation;
+}
+
+export interface ResponsiblePersonInformation {
+  name: string;
+  position: string;
+  email: string;
+  contactNumber: string;
+  personalIdNumber: string;
 }
 
 export interface ClinicsResponse {

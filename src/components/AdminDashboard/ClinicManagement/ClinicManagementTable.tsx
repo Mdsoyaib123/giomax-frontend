@@ -528,6 +528,77 @@ const ClinicManagementTable: React.FC<Props> = () => {
               </div>
             </div>
 
+            {/* Responsible Person Information */}
+            {/* Responsible Person Information */}
+            {openProfile.responsiblePersonInformation && (
+              <div className="mb-6">
+                <h3 className="font-medium text-gray-700 mb-3">
+                  Responsible Person Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      value={openProfile.responsiblePersonInformation.name}
+                      readOnly
+                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                      Position
+                    </label>
+                    <input
+                      type="text"
+                      value={openProfile.responsiblePersonInformation.position}
+                      readOnly
+                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      value={openProfile.responsiblePersonInformation.email}
+                      readOnly
+                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                      Contact Number
+                    </label>
+                    <input
+                      type="text"
+                      value={
+                        openProfile.responsiblePersonInformation.contactNumber
+                      }
+                      readOnly
+                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                      Personal ID Number
+                    </label>
+                    <input
+                      type="text"
+                      value={
+                        openProfile.responsiblePersonInformation.personalIdNumber
+                      }
+                      readOnly
+                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-xl bg-[#F8F9FA] text-gray-900"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Divider */}
             <hr className="my-6 border-gray-200" />
 
