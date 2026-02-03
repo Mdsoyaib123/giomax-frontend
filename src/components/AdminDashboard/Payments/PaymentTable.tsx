@@ -487,7 +487,7 @@ const PaymentTable: React.FC = () => {
                         handleStatusUpdate(selectedRequest._id, "REJECTED")
                       }
                       disabled={isProcessing}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                     >
                       <XCircle className="w-4 h-4" />
                       Reject Request
@@ -497,7 +497,7 @@ const PaymentTable: React.FC = () => {
                         handleStatusUpdate(selectedRequest._id, "PAID")
                       }
                       disabled={isProcessing}
-                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                      className="flex items-center gap-2 text-white bg-green-600 hover:bg-green-700"
                     >
                       <CheckCircle className="w-4 h-4" />
                       {isProcessing ? "Processing..." : "Approve & Pay"}
