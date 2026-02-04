@@ -36,6 +36,8 @@ export interface Patient {
     gender: 'male' | 'female' | 'other' | string;
     bloodGroup: BloodGroup | string; // Allow string if you want flexibility
     age: number;
+    nidFrontImageUrl?: string;
+    nidBackImageUrl?: string;
 }
 
 export interface Doctor {
