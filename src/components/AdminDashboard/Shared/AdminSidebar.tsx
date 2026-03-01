@@ -66,6 +66,11 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Nurse Management",
     href: "/admin-dashboard/nurse-management",
   },
+   {
+    icon: d6,
+    label: "Nurse Withdrawal",
+    href: "/admin-dashboard/nurse-withdraw",
+  },
   {
     icon: d6,
     label: "Clinic Management",

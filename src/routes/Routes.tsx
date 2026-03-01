@@ -29,6 +29,7 @@ import SupportMessage from "@/components/AdminDashboard/SupportMessage";
 import AdminProfile from "@/components/AdminDashboard/Shared/AdminProfile";
 import PaymentRefundPage from "@/pages/Admin/PaymentRefundPage";
 import ProtectedRoute from "@/components/Shared/ProtectedRoute";
+import NurseWithdrawRequest from "@/pages/Admin/NurseWithdrawRequest";
 
 const routes = createBrowserRouter([
   {
@@ -101,6 +102,7 @@ const routes = createBrowserRouter([
       { path: "booking-management", element: <BookingManagementPage /> },
       { path: "payments", element: <PaymentsPage /> },
       { path: "payment-refund", element: <PaymentRefundPage /> },
+      { path: "nurse-withdraw", element: <NurseWithdrawRequest /> },
       { path: "nurse-management", element: <NurseManagementPage /> },
       { path: "clinic-management", element: <ClinicManagementPage /> },
       { path: "clinic-management/:id", element: <PaymentHistoryClinic /> },
