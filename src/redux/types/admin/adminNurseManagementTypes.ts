@@ -46,6 +46,7 @@ export interface PaymentAndEarnings {
 }
 
 export interface User {
+  isAdminVerified: any;
   status: any;
   fcmToken: string | null;
   _id: string;

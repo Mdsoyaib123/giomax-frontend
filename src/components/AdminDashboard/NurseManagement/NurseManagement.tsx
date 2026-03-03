@@ -52,7 +52,7 @@ const NurseManagement: React.FC = () => {
   const [acceptUser, { isLoading: isAcceptingUser }] = useAcceptUserMutation();
 
   const { statusFilter, currentPage } = useAppSelector(
-    (state) => state.nurseManagement
+    (state) => state.nurseManagement,
   );
 
   const [openProfile, setOpenProfile] = useState<any>(null);
@@ -68,27 +68,22 @@ const NurseManagement: React.FC = () => {
   const itemsPerPage = 6;
 
   // Calculate filtered nurses based on status
-  const filteredNurses =
-    nursesResponse?.data?.filter((nurse) => {
-      if (statusFilter === "all") return true;
+const filteredNurses =
+  nursesResponse?.data?.filter((nurse) => {
+    const isVerified = nurse?.userId?.isAdminVerified;
 
-      // Assuming nurse object has a status field
-      // You might need to adjust this based on your actual data structure
-      const nurseStatus = nurse.status || nurse.userId?.status || "active";
+    if (statusFilter === "all") return true;
+    if (statusFilter === "active") return isVerified;
+    if (statusFilter === "pending") return !isVerified;
 
-      if (statusFilter === "active") return nurseStatus === "active";
-      if (statusFilter === "pending") return nurseStatus === "pending";
-      if (statusFilter === "suspended") return nurseStatus === "suspended";
-
-      return true;
-    }) || [];
-
+    return true;
+  }) || [];
   // Calculate pagination
   const totalPages = Math.ceil(filteredNurses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentNurses = filteredNurses.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   const handlePrev = () => {
@@ -121,10 +116,10 @@ const NurseManagement: React.FC = () => {
   // const handleApprovedConfirm = (nurse: any) => {
   //   setConfirmApproved(nurse);
   // };
-  const handleAcceptUser = async (clinicId: string) => {
-    console.log(clinicId);
+  const handleAcceptUser = async (soloNurseUserId: string) => {
+    console.log("soloNurseUserId", soloNurseUserId);
     try {
-      await acceptUser(clinicId).unwrap();
+      await acceptUser(soloNurseUserId).unwrap();
       toast.success("User accepted successfully!");
       refetch();
       setOpenProfile(null);
@@ -206,23 +201,12 @@ const NurseManagement: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-700";
-      case "pending":
-        return "bg-yellow-100 text-yellow-700";
-      case "suspended":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
+
 
   // Get nurse status from data
-  const getNurseStatus = (nurse: any) => {
-    return nurse.status || nurse.userId?.status || "active";
-  };
+  // const getNurseStatus = (nurse: any) => {
+  //   return nurse.status || nurse.userId?.status || "active";
+  // };
 
   // Calculate earnings
   const calculateEarnings = (nurse: any) => {
@@ -251,10 +235,6 @@ const NurseManagement: React.FC = () => {
     );
   }
 
-
-
-
-
   return (
     <div className="">
       <div className="rounded-xl border border-[#DBE0E5] bg-white shadow-sm p-6">
@@ -281,7 +261,6 @@ const NurseManagement: React.FC = () => {
                     <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -320,8 +299,7 @@ const NurseManagement: React.FC = () => {
 
                   <tbody className="divide-y divide-gray-100">
                     {currentNurses.map((nurse) => {
-                      const nurseStatus = getNurseStatus(nurse);
-
+                     
                       return (
                         <tr
                           key={nurse._id}
@@ -341,12 +319,15 @@ const NurseManagement: React.FC = () => {
                           </td>
                           <td className="px-6 py-4">
                             <span
-                              className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                                nurseStatus
-                              )}`}
+                              className={`px-3 py-1 text-xs font-medium rounded-full
+                                 ${nurse?.userId?.isAdminVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}
+                              
+                              `}
                             >
-                              {nurseStatus.charAt(0).toUpperCase() +
-                                nurseStatus.slice(1)}
+                              
+                              {nurse?.userId?.isAdminVerified
+                                ? "Active"
+                                : "Pending"}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-center">
@@ -487,7 +468,9 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile?.professionalInformation?.speciality || "N/A"}
+                  value={
+                    openProfile?.professionalInformation?.speciality || "N/A"
+                  }
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -498,7 +481,9 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile?.professionalInformation?.experience || "N/A"}
+                  value={
+                    openProfile?.professionalInformation?.experience || "N/A"
+                  }
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -509,7 +494,10 @@ const NurseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={openProfile?.professionalInformation?.MedicalLicense || "N/A"}
+                  value={
+                    openProfile?.professionalInformation?.MedicalLicense ||
+                    "N/A"
+                  }
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
                 />
@@ -518,17 +506,15 @@ const NurseManagement: React.FC = () => {
                 <label className="block text-gray-700 font-medium mb-1">
                   Consultation Fee
                 </label>
-          <input
-  type="text"
-  value={`₾ ${safeToFixed(
-    openProfile?.professionalInformation?.consultationFee,
-    2
-  )}`}
-  readOnly
-  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-/>
-
-
+                <input
+                  type="text"
+                  value={`₾ ${safeToFixed(
+                    openProfile?.professionalInformation?.consultationFee,
+                    2,
+                  )}`}
+                  readOnly
+                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
+                />
               </div>
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
@@ -603,7 +589,7 @@ const NurseManagement: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -743,7 +729,7 @@ const NurseManagement: React.FC = () => {
                   <p>
                     Uploaded:{" "}
                     {new Date(
-                      openDocuments.nurse.createdAt
+                      openDocuments.nurse.createdAt,
                     ).toLocaleDateString()}
                   </p>
                 </div>
@@ -761,7 +747,7 @@ const NurseManagement: React.FC = () => {
 
                 <div className="border rounded-lg p-4 border-gray-200">
                   {openDocuments.document.fileUrl.match(
-                    /\.(jpg|jpeg|png|gif)$/i
+                    /\.(jpg|jpeg|png|gif)$/i,
                   ) ? (
                     <img
                       src={openDocuments.document.fileUrl}
@@ -824,7 +810,7 @@ const NurseManagement: React.FC = () => {
                 <input
                   type="text"
                   value={new Date(
-                    openDocuments.nurse.createdAt
+                    openDocuments.nurse.createdAt,
                   ).toLocaleDateString()}
                   readOnly
                   className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
