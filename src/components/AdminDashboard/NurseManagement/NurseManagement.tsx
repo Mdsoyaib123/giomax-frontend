@@ -65,7 +65,7 @@ const NurseManagement: React.FC = () => {
   const [confirmSuspend, setConfirmSuspend] = useState<any>(null);
   const [confirmDelete, setConfirmDelete] = useState<any>(null);
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   // Calculate filtered nurses based on status
 const filteredNurses =
