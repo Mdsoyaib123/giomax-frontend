@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 import { useAcceptUserMutation } from "@/redux/features/admin/clinic/clinicManagementApi";
+import { Input } from "@/components/ui/input";
 
 interface Document {
   title: string;
@@ -65,19 +66,24 @@ const NurseManagement: React.FC = () => {
   const [confirmSuspend, setConfirmSuspend] = useState<any>(null);
   const [confirmDelete, setConfirmDelete] = useState<any>(null);
 
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
+  const [selectedBadgeNurse, setSelectedBadgeNurse] = useState<any>(null);
+  const [badgeImage, setBadgeImage] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const itemsPerPage = 10;
 
   // Calculate filtered nurses based on status
-const filteredNurses =
-  nursesResponse?.data?.filter((nurse) => {
-    const isVerified = nurse?.userId?.isAdminVerified;
+  const filteredNurses =
+    nursesResponse?.data?.filter((nurse) => {
+      const isVerified = nurse?.userId?.isAdminVerified;
 
-    if (statusFilter === "all") return true;
-    if (statusFilter === "active") return isVerified;
-    if (statusFilter === "pending") return !isVerified;
+      if (statusFilter === "all") return true;
+      if (statusFilter === "active") return isVerified;
+      if (statusFilter === "pending") return !isVerified;
 
-    return true;
-  }) || [];
+      return true;
+    }) || [];
   // Calculate pagination
   const totalPages = Math.ceil(filteredNurses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -201,8 +207,77 @@ const filteredNurses =
     }
   };
 
+  const handleAddBadgeConfirm = (nurse: any) => {
+    setSelectedBadgeNurse(nurse);
+    setIsBadgeModalOpen(true);
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // basic validation (production safety)
+    // if (!file.type.startsWith("image/")) {
+    //   throw new Error("Only image files are allowed");
+
+    // }
+
+    // if (file.size > 2 * 1024 * 1024) {
+    //   throw new Error("File size exceeds 2MB limit");
+    // }
 
 
+    setBadgeImage(file);
+  };
+
+  const handleCloseModal = () => {
+    setIsBadgeModalOpen(false);
+    setSelectedBadgeNurse(null);
+    setBadgeImage(null);
+
+    setIsUploading(false);
+  };
+
+  const handleUploadBadge = async () => {
+    if (!badgeImage || !selectedBadgeNurse) return;
+
+    try {
+      setIsUploading(true);
+
+
+      const formData = new FormData();
+      formData.append("assaignSoloNurseProfilebadge", badgeImage);
+
+      console.log("Uploading badge for nurse:", formData);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_ENDPOINT}/admin/assign-solo-nurse-badge/${selectedBadgeNurse._id}`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Upload failed");
+      }
+
+      // success
+      // window.location.reload();
+      await refetch();
+      handleCloseModal();
+
+      // optional: toast instead of alert
+      console.log("Badge uploaded:", data?.data?.adminAssignProfileImageBadge);
+    } catch (err: any) {
+      throw new Error(err.message || "An error occurred during upload");
+    } finally {
+      setIsUploading(false);
+    }
+  };
   // Get nurse status from data
   // const getNurseStatus = (nurse: any) => {
   //   return nurse.status || nurse.userId?.status || "active";
@@ -299,7 +374,7 @@ const filteredNurses =
 
                   <tbody className="divide-y divide-gray-100">
                     {currentNurses.map((nurse) => {
-                     
+
                       return (
                         <tr
                           key={nurse._id}
@@ -324,7 +399,7 @@ const filteredNurses =
                               
                               `}
                             >
-                              
+
                               {nurse?.userId?.isAdminVerified
                                 ? "Active"
                                 : "Pending"}
@@ -334,7 +409,7 @@ const filteredNurses =
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleView(nurse)}
-                                className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-[#2E6FF3] hover:bg-[#1B54D3] text-white text-xs rounded-md transition"
+                                className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-gray-500  text-white text-xs rounded-md transition"
                               >
                                 <FaEye className="text-sm" /> View
                               </button>
@@ -354,6 +429,12 @@ const filteredNurses =
                                   Activate
                                 </button>
                               )} */}
+                              <button
+                                onClick={() => handleAddBadgeConfirm(nurse)}
+                                className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition"
+                              >
+                                Add Profile Badge
+                              </button>
                               <button
                                 onClick={() => handleDeleteConfirm(nurse)}
                                 className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-md transition"
@@ -383,11 +464,10 @@ const filteredNurses =
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
-                currentPage === 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1.5 border rounded-lg text-sm ${currentPage === 1
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-100"
+                }`}
             >
               Prev
             </button>
@@ -397,11 +477,10 @@ const filteredNurses =
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 border rounded-lg text-sm ${
-                currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1.5 border rounded-lg text-sm ${currentPage === totalPages
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-100"
+                }`}
             >
               Next
             </button>
@@ -411,290 +490,190 @@ const filteredNurses =
 
       {/* Nurse Profile Modal */}
       {openProfile && (
-        <div className="fixed px-3 sm:px-4 inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-0.5">
-          <div className="bg-white rounded-lg w-full max-w-4xl shadow-2xl p-6 relative border border-gray-300 max-h-[94vh] overflow-y-auto">
-            <button
-              onClick={() => setOpenProfile(null)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 hover:scale-110 transition cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm px-3 sm:px-4">
 
-            <h2 className="text-2xl font-semibold text-[#1f3a44] mb-2">
-              Nurse Profile
-              {/* {openProfile.userId.fullName} */}
-            </h2>
-            <p className="text-gray-600 text-sm mb-3">
-              View nurse details, credentials, and verification documents
-            </p>
+          <div className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-gray-200 max-h-[94vh] overflow-y-auto">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
               <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.userId.fullName}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Nurse Profile
+                </h2>
+                <p className="text-sm text-gray-500">
+                  View details, services & verification documents
+                </p>
               </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.userId.email}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Phone
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.phoneNumber || "N/A"}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Speciality
-                </label>
-                <input
-                  type="text"
-                  value={
-                    openProfile?.professionalInformation?.speciality || "N/A"
-                  }
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Experience
-                </label>
-                <input
-                  type="text"
-                  value={
-                    openProfile?.professionalInformation?.experience || "N/A"
-                  }
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  License Number
-                </label>
-                <input
-                  type="text"
-                  value={
-                    openProfile?.professionalInformation?.MedicalLicense ||
-                    "N/A"
-                  }
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Consultation Fee
-                </label>
-                <input
-                  type="text"
-                  value={`₾ ${safeToFixed(
-                    openProfile?.professionalInformation?.consultationFee,
-                    2,
-                  )}`}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  National ID
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.nationalIdNumber}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Nationality
-                </label>
-                <input
-                  type="text"
-                  value={openProfile.nationality}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Average Rating
-                </label>
-                <input
-                  type="text"
-                  value={openProfile?.avarageRating?.toFixed(1) || "0.0"}
-                  readOnly
-                  className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                />
-              </div>
+
+              <button
+                onClick={() => setOpenProfile(null)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
 
-            {/* About Section */}
-            <div className="mt-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                About
-              </label>
-              <textarea
-                value={openProfile?.professionalInformation?.about || "N/A"}
-                readOnly
-                rows={3}
-                className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-              />
-            </div>
+            <div className="p-6 space-y-6">
 
-            {/* Services Section */}
-            <div className="mt-4">
-              <h3 className="font-semibold font-sans mb-2">Services</h3>
-              <div className="space-y-3">
-                {openProfile?.professionalInformation?.services?.map(
-                  (service: any) => (
-                    <div
-                      key={service._id}
-                      className="border border-gray-200 rounded-lg p-3"
-                    >
-                      <h4 className="font-medium text-gray-800">
+              {/* Badge */}
+              <div className="flex items-center gap-4">
+                <img
+                  src={openProfile?.adminAssignProfileImageBadge || "https://i.postimg.cc/NjLYQbjH/business-avatar-profile-black-icon-man-of-user-symbol-in-trendy-flat-style-isolated-on-male-profile.jpg"}
+                  className="w-20 h-20 rounded-full border object-cover"
+                />
+                <div>
+                  <p className="text-xs text-gray-500">Profile Badge</p>
+                  <p className="font-medium text-gray-800">Assigned Badge</p>
+                </div>
+              </div>
+
+              {/* GRID INPUTS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {[
+                  ["Name", openProfile.userId.fullName],
+                  ["Email", openProfile.userId.email],
+                  ["Phone", openProfile.phoneNumber || "N/A"],
+                  ["Speciality", openProfile?.professionalInformation?.speciality || "N/A"],
+                  ["Experience", openProfile?.professionalInformation?.experience || "N/A"],
+                  ["License Number", openProfile?.professionalInformation?.MedicalLicense || "N/A"],
+                  ["Consultation Fee", `₾ ${safeToFixed(openProfile?.professionalInformation?.consultationFee, 2)}`],
+                  ["National ID", openProfile.nationalIdNumber],
+                  ["Nationality", openProfile.nationality],
+                  ["Rating", openProfile?.avarageRating?.toFixed(1) || "0.0"],
+                ].map(([label, value], idx) => (
+                  <div key={idx} className="space-y-1">
+                    <label className="text-xs text-gray-500">{label}</label>
+                    <input
+                      value={value}
+                      readOnly
+                      className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-700 focus:outline-none"
+                    />
+                  </div>
+                ))}
+
+              </div>
+
+              {/* ABOUT */}
+              <div>
+                <label className="text-xs text-gray-500">About</label>
+                <textarea
+                  readOnly
+                  value={openProfile?.professionalInformation?.about || "N/A"}
+                  className="w-full mt-1 p-3 border rounded-lg bg-gray-50 text-sm text-gray-700"
+                  rows={3}
+                />
+              </div>
+
+              {/* SERVICES */}
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-3">Services</h3>
+
+                <div className="space-y-3">
+                  {openProfile?.professionalInformation?.services?.map((service: any) => (
+                    <div key={service._id} className="border rounded-xl p-4 bg-gray-50">
+
+                      <p className="font-medium text-gray-800">
                         {service.serviceName}
-                      </h4>
+                      </p>
+
                       <div className="mt-2 space-y-1">
                         {service.subServices?.map((sub: any) => (
-                          <div
-                            key={sub._id}
-                            className="flex justify-between text-sm text-gray-600"
-                          >
+                          <div key={sub._id} className="flex justify-between text-sm text-gray-600">
                             <span>{sub.name}</span>
                             <span>₾ {sub.price}</span>
                           </div>
                         ))}
                       </div>
-                    </div>
-                  ),
-                )}
-              </div>
-            </div>
 
-            {/* Verification Documents */}
-            <div className="mt-4">
-              <h3 className="font-semibold font-sans mb-3">
-                Verification Documents
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* DOCUMENTS */}
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-3">
+                  Verification Documents
+                </h3>
+
+                <div className="grid md:grid-cols-2 gap-3">
                   {openProfile.certificates.map((certificate: any) => (
                     <div
                       key={certificate._id}
-                      className="flex justify-between items-center px-4 py-4 bg-gray-100 rounded-xl border border-gray-300"
+                      className="flex justify-between items-center p-4 border rounded-xl bg-gray-50"
                     >
-                      <div className="flex items-center text-gray-800 font-medium">
-                        <LuClipboardList className="inline-block mr-2 text-lg" />
-                        {certificate.certificateName} (
-                        {certificate.certificateType})
+                      <div className="text-sm text-gray-700">
+                        {certificate.certificateName} ({certificate.certificateType})
                       </div>
+
                       <button
-                        onClick={() =>
-                          handleDocuments(openProfile, certificate)
-                        }
-                        className="text-[#2E6FF3] hover:text-[#0a43b6] font-semibold cursor-pointer transition"
+                        onClick={() => handleDocuments(openProfile, certificate)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
-                        View Document
+                        View
                       </button>
                     </div>
                   ))}
                 </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                      Availability
-                    </label>
-                    <input
-                      type="text"
-                      value={
-                        openProfile?.availability
-                          ? `${openProfile.availability.startTime || "N/A"} - ${
-                              openProfile.availability.endTime || "N/A"
-                            }`
-                          : "N/A"
-                      }
-                      readOnly
-                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-1">
-                      Working Days
-                    </label>
-                    <input
-                      type="text"
-                      value={
-                        openProfile?.availability?.workingDays?.join(", ") ||
-                        "N/A"
-                      }
-                      readOnly
-                      className="w-full px-3 py-3 border border-[#ECEFF1] rounded-lg bg-[#F8F9FA]"
-                    />
-                  </div>
-                </div>
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <button
-                onClick={() => setOpenProfile(null)}
-                className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-[#EFF4FF] text-gray-700 hover:bg-gray-100 transition"
-              >
-                Close
-              </button>
-              {openProfile.userId.isAdminVerified ? (
+
+              {/* AVAILABILITY */}
+              <div className="grid md:grid-cols-2 gap-4">
+
+                <div className="space-y-1">
+                  <label className="text-xs text-gray-500">Availability</label>
+                  <input
+                    readOnly
+                    value={
+                      openProfile?.availability
+                        ? `${openProfile.availability.startTime || "N/A"} - ${openProfile.availability.endTime || "N/A"}`
+                        : "N/A"
+                    }
+                    className="w-full px-3 py-2.5 border rounded-lg bg-gray-50 text-sm"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs text-gray-500">Working Days</label>
+                  <input
+                    readOnly
+                    value={openProfile?.availability?.workingDays?.join(", ") || "N/A"}
+                    className="w-full px-3 py-2.5 border rounded-lg bg-gray-50 text-sm"
+                  />
+                </div>
+
+              </div>
+
+              {/* FOOTER */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+
                 <button
-                  disabled
-                  className="w-full cursor-not-allowed px-5 py-2.5 rounded-lg border border-blue-200 bg-blue-500 text-white white opacity-70"
+                  onClick={() => setOpenProfile(null)}
+                  className="w-full py-2.5 rounded-lg border bg-gray-100 hover:bg-gray-200 transition"
                 >
-                  Approved
+                  Close
                 </button>
-              ) : (
-                <button
-                  onClick={() => handleAcceptUser(openProfile.userId._id)}
-                  className="w-full cursor-pointer px-5 py-2.5 rounded-lg border border-[#ECEFF1] bg-blue-500   transition text-white hover:bg-blue-700"
-                >
-                  {isAcceptingUser ? "Approving..." : "Approve"}
-                </button>
-              )}
+
+                {openProfile.userId.isAdminVerified ? (
+                  <button
+                    disabled
+                    className="w-full py-2.5 rounded-lg bg-green-600 text-white opacity-70"
+                  >
+                    Approved
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleAcceptUser(openProfile.userId._id)}
+                    className="w-full py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    {isAcceptingUser ? "Approving..." : "Approve"}
+                  </button>
+                )}
+
+              </div>
+
             </div>
-            {/* <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <button
-                onClick={() => handleApprovedConfirm(openProfile)}
-                className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#2E6FF3] text-white border border-[#2E6FF3] hover:bg-[#0b51de] transition"
-              >
-                Approve Nurse
-              </button>
-              <button
-                onClick={() => handleSuspendConfirm(openProfile)}
-                className="w-full cursor-pointer px-5 py-2 rounded-lg bg-[#EFF4FF] text-[#2E6FF3] border border-[#ECEFF1] hover:bg-gray-100 transition"
-              >
-                Reject Application
-              </button>
-            </div> */}
           </div>
         </div>
       )}
@@ -931,6 +910,58 @@ const filteredNurses =
               >
                 Confirm
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Profile Badge Modal */}
+      {isBadgeModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-md rounded-lg p-5 shadow-lg">
+
+            <h2 className="text-lg font-semibold mb-4">
+              Add Profile Badge
+            </h2>
+
+            <p className="text-sm text-gray-600 mb-3">
+              Nurse: {selectedBadgeNurse?.name}
+            </p>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mb-3"
+            />
+
+            {error && (
+              <p className="text-xs text-red-600 mb-2">{error}</p>
+            )}
+
+            {badgeImage && (
+              <p className="text-xs text-green-600 mb-3">
+                Selected: {badgeImage.name}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-2">
+
+              <button
+                onClick={handleCloseModal}
+                className="px-3 py-1.5 text-sm bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleUploadBadge}
+                disabled={isUploading || !badgeImage}
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded disabled:opacity-50"
+              >
+                {isUploading ? "Uploading..." : "Upload"}
+              </button>
+
             </div>
           </div>
         </div>
