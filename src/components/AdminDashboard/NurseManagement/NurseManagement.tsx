@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { X } from "lucide-react";
 import { IoWarningOutline } from "react-icons/io5";
-import { LuClipboardList } from "react-icons/lu";
+// import { LuClipboardList } from "react-icons/lu";
 import { toast } from "sonner";
 import {
   useGetAllNursesQuery,
@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/redux-hook";
 import { useAcceptUserMutation } from "@/redux/features/admin/clinic/clinicManagementApi";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 
 interface Document {
   title: string;
